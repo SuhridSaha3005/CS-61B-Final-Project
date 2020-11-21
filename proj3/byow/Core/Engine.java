@@ -2,12 +2,45 @@ package byow.Core;
 
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
+import byow.TileEngine.Tileset;
+
+import java.util.Random;
 
 public class Engine {
     TERenderer ter = new TERenderer();
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
-    public static final int HEIGHT = 30;
+    public static final int HEIGHT = 50;
+    Random RANDOM;
+    TETile[][] world;
+
+    public Engine() {
+
+        RANDOM = new Random(434);
+        ter.initialize(WIDTH, HEIGHT);
+
+        world = new TETile[WIDTH][HEIGHT];
+        for (int x = 0; x < WIDTH; x += 1) {
+            for (int y = 0; y < HEIGHT; y += 1) {
+                world[x][y] = Tileset.NOTHING;
+            }
+        }
+
+    }
+
+    public Engine(int seed) {
+
+        RANDOM = new Random(seed);
+        ter.initialize(WIDTH, HEIGHT);
+
+        world = new TETile[WIDTH][HEIGHT];
+        for (int x = 0; x < WIDTH; x += 1) {
+            for (int y = 0; y < HEIGHT; y += 1) {
+                world[x][y] = Tileset.NOTHING;
+            }
+        }
+
+    }
 
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
@@ -49,4 +82,10 @@ public class Engine {
         TETile[][] finalWorldFrame = null;
         return finalWorldFrame;
     }
+
+    void render() {
+        ter.renderFrame(world);
+    }
+
+
 }

@@ -1,4 +1,5 @@
 package byow.Core;
+import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import org.junit.Test;
 
@@ -147,13 +148,40 @@ public class MapMakerTest {
 
     public static void addRandomHallwaysTest() {
         Engine e = new Engine();
-        MapMaker m = new MapMaker(new Random(1), e.world, Engine.WIDTH, Engine.HEIGHT);
-        XYPosn k = m.addHallway(new XYPosn(40, 10));
-        for (int i = 0; i < 21; i += 1)
-            k = m.addHallway(k);
+        MapMaker m = new MapMaker(new Random(6), e.world, Engine.WIDTH, Engine.HEIGHT);
+        List<XYPosn> k = m.addMultiSpringHallways(new XYPosn(40, 10));
+        singlePath(m, k);
         e.render();
     }
 
+    public static void singlePath(MapMaker m, List<XYPosn> k) {
+        for (int i = 0; i < 10; i += 1) {
+            if (k == null) {
+                continue;
+            }
+            for (XYPosn entry : k) {
+                k = m.addMultiSpringHallways(entry);
+                singlePath(m, k);
+            }
+        }
+    }
+
+    public static void makeMapTest() {
+        Engine e = new Engine();
+        MapMaker m = new MapMaker(new Random(2), e.world, Engine.WIDTH, Engine.HEIGHT);
+        m.makeMap();
+        e.render();
+    }
+
+    public static void generatorTest1() {
+        Engine e = new Engine();
+        GeneratorHelper g = new GeneratorHelper(e.world);
+        XYPosn entry = new XYPosn(40, 10);
+        GeneratorHelper.RoomStuff roomInfo  = g.randomRoom(new Random(), entry, 270);
+        Room r = new Room(e.world, roomInfo.origin, entry, roomInfo.width, roomInfo.length);
+        r.addRoom();
+        e.render();
+    }
 
 
     public static void main(String[] args) {
@@ -162,6 +190,8 @@ public class MapMakerTest {
         // hallwayLongestMakerTest();
         // newHallwayTest();
         // randomizedGeneratorTest();
-        addRandomHallwaysTest();
+        // addRandomHallwaysTest();
+        // makeMapTest();
+        generatorTest1();
     }
 }

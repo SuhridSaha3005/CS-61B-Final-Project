@@ -2,10 +2,8 @@ package byow.Core;
 
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
-import edu.princeton.cs.algs4.In;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -31,7 +29,7 @@ public class MapMaker {
     }
 
     private boolean isWallFloor(int x, int y) {
-        return (isWall(x, y) || isFloor(x, y));
+        return (!isWall(x, y) && !isFloor(x, y));
     }
 
     /** Replaces a block IF it is nothing. */
@@ -53,7 +51,7 @@ public class MapMaker {
         height = h;
     }
 
-    XYPosn addHallway(XYPosn entry) {
+    /* XYPosn addHallway(XYPosn entry) {
         List<Integer> randHallwayParams = newHallwayDirLength(entry);
         if (randHallwayParams.isEmpty()) {
             throw new NullPointerException("Saw no way to proceed. Ending.");
@@ -61,11 +59,48 @@ public class MapMaker {
         int dir = randHallwayParams.get(0);
         int len = randHallwayParams.get(1);
         return hallwayMaker(entry, len, dir);
+    } */
+
+    void makeMap() {
+        int xStart = RandomUtils.uniform(random, 3, width - 4);
+        int yStart = RandomUtils.uniform(random, 3, height - 4);
+        List<XYPosn> k = addMultiSpringHallways(new XYPosn(40, 10));
+        singlePathMaker(k);
+    }
+
+    List<XYPosn> addMultiSpringHallways(XYPosn entry) {
+        List<List<Integer>> randHallwayParams = newHallwayDirLength(entry);
+        List<XYPosn> newXYPosns = new ArrayList<>();
+
+        if (randHallwayParams.isEmpty()) {
+            System.out.println("Saw no way to proceed. Ending this line.");
+            return null;
+        }
+
+        for (List<Integer> hallParams: randHallwayParams) {
+            int dir = hallParams.get(0);
+            int len = hallParams.get(1);
+            newXYPosns.add(hallwayMaker(entry, len, dir));
+        }
+
+        return newXYPosns;
+    }
+
+    void singlePathMaker(List<XYPosn> k) {
+        for (int i = 0; i < 10; i += 1) {
+            if (k == null) {
+                continue;
+            }
+            for (XYPosn entry : k) {
+                k = addMultiSpringHallways(entry);
+                singlePathMaker(k);
+            }
+        }
     }
 
 
     /** Finds the best hallway direction given an entry, and its length, and randomizes. */
-    List<Integer> newHallwayDirLength(XYPosn entry) {
+    List<List<Integer>> newHallwayDirLength(XYPosn entry) {
         ArrayList<Integer> keyList = new ArrayList<>();
         keyList.add(0);
         keyList.add(90);
@@ -88,18 +123,22 @@ public class MapMaker {
             i += 1;
         }
 
-        int numSpring = RandomUtils.uniform(random, 2);
-        
-        ArrayList<Integer> best = new ArrayList<>();
+        int numSpring = RandomUtils.geometric(random, 0.7);
+        List<List<Integer>> offSpringParams = new ArrayList<>();
 
         if (!keyList.isEmpty()) {
-            int idx = RandomUtils.uniform(random, keyList.size());
-            System.out.println(idx);
-            best.add(keyList.get(idx));
-            best.add(Math.min(RandomUtils.geometric(random, 0.4) + 2, valueList.get(idx)));
+            for (int j = 0; j < Math.min(numSpring, keyList.size()); j += 1) {
+                ArrayList<Integer> best = new ArrayList<>();
+                int idx = RandomUtils.uniform(random, keyList.size());
+                System.out.println(idx);
+                best.add(keyList.get(idx));
+                best.add(Math.min(RandomUtils.geometric(random, 0.4) + 2, valueList.get(idx)));
+                offSpringParams.add(best);
+                keyList.remove(idx);
+                valueList.remove(idx);
+            }
         }
-
-        return best;
+        return offSpringParams;
     }
 
     /** Returns longest possible length of a hallway from a point, not including it. */
@@ -110,25 +149,25 @@ public class MapMaker {
 
         switch (dir) {
             case 0:
-                while ((xPos <= width - 3) && !isWallFloor(xPos + 1, yPos)) {
+                while ((xPos <= width - 3) && isWallFloor(xPos + 1, yPos)) {
                     length += 1;
                     xPos += 1;
                 }
                 break;
             case 90:
-                while ((yPos <= height - 3) && !isWallFloor(xPos, yPos + 1)) {
+                while ((yPos <= height - 3) && isWallFloor(xPos, yPos + 1)) {
                     length += 1;
                     yPos += 1;
                 }
                 break;
             case 180:
-                while ((xPos >= 2) && !isWallFloor(xPos - 1, yPos)) {
+                while ((xPos >= 2) && isWallFloor(xPos - 1, yPos)) {
                     length += 1;
                     xPos -= 1;
                 }
                 break;
             case 270:
-                while ((yPos >= 2) && !isWallFloor(xPos, yPos - 1)) {
+                while ((yPos >= 2) && isWallFloor(xPos, yPos - 1)) {
                     length += 1;
                     yPos -= 1;
                 }
@@ -206,7 +245,7 @@ public class MapMaker {
                 newPosn = new XYPosn(xPos, yPos);
                 break;
         }
-        replaceBlock(xPos, yPos, Tileset.FLOWER);
+        replaceBlock(xPos, yPos, Tileset.WALL);
         return new XYPosn(xPos, yPos);
     }
 

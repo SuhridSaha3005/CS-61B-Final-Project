@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+
 public class MapMaker {
 
     /** Characteristics of World. */
@@ -14,7 +15,7 @@ public class MapMaker {
     private final int width;
     private final int height;
     private Random random;
-    GeneratorHelper genHelp;
+    private GeneratorHelper genHelp;
 
 
     private boolean isNothing(int x, int y) {
@@ -403,6 +404,13 @@ public class MapMaker {
         return point.getX() >= 0 && point.getX() < world.length && point.getY() >= 0 && point.getY() < world[0].length;
     }
 
+    TETile[][] getWorld() {
+        return world;
+    }
+
+    GeneratorHelper getGenHelp() {
+        return genHelp;
+    }
 
     int getOrientation(XYPosn entry) {
         int xPos = entry.getX();

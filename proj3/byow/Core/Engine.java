@@ -12,7 +12,7 @@ public class Engine {
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 50;
-    public int SEED = -1;
+    public long SEED = -1;
     Random RANDOM;
     TETile[][] world;
     StringBuilder gameSave = null;
@@ -67,7 +67,7 @@ public class Engine {
                 case "s":
                     if ((seed != null) && gameSave != null) {
                         gameSave.append(letter);
-                        SEED = Integer.parseInt(seed.toString());
+                        SEED = Long.parseLong(seed.toString());
                         RANDOM = new Random(SEED);
                     } else {
                         throw new IllegalArgumentException("Map was not initialized with n.");

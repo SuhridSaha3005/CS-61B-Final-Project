@@ -311,8 +311,7 @@ public class MapMakerTest {
 
     public static void makeMapFinal() {
         Engine e = new Engine();
-        e.interactWithInputString("n12:q");
-        e.interactWithInputString("l3s");
+        e.interactWithInputString("n5197880843569031643s");
         e.createWorld();
         e.render();
     }

@@ -299,7 +299,7 @@ public class MapMaker {
                 ArrayList<Integer> best = new ArrayList<>();
                 int idx = RandomUtils.uniform(random, keyList.size());
                 best.add(keyList.get(idx));
-                best.add(Math.min(RandomUtils.geometric(random, 0.5) + 2, valueList.get(idx)));
+                best.add(Math.min(RandomUtils.geometric(random, 0.7) + 2, valueList.get(idx)));
                 offSpringParams.add(best);
                 keyList.remove(idx);
                 valueList.remove(idx);

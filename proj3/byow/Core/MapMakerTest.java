@@ -171,7 +171,7 @@ public class MapMakerTest {
 
     public static void makeMapTest() {
         Engine e = new Engine();
-        MapMaker m = new MapMaker(new Random(), e.world, Engine.WIDTH, Engine.HEIGHT);
+        MapMaker m = new MapMaker(new Random(23), e.world, Engine.WIDTH, Engine.HEIGHT);
         m.makeMap();
         e.render();
     }
@@ -241,6 +241,11 @@ public class MapMakerTest {
         System.out.println(m.genHelp.smallestRoomImpossible(entry, 90));  // should be false
         assertArrayEquals(m.world, m.genHelp.world);
         System.out.println(Arrays.equals(m.world, m.genHelp.world)); // should be true
+        entry = m.hallwayMaker(entry, 8, 90);
+        System.out.println(m.genHelp.smallestRoomImpossible(entry, 90)); // should be false
+        entry = m.hallwayMaker(entry, 5, 90);
+        System.out.println(m.genHelp.smallestRoomImpossible(entry, 90)); // should be TRUE
+        System.out.println("*******************************************************");
         e.render();
     }
 
@@ -272,10 +277,10 @@ public class MapMakerTest {
         // newHallwayTest();
         // randomizedGeneratorTest();
         // addRandomHallwaysTest();
-        // makeMapTest();
+        makeMapTest();
         // generatorTest1();
         // generatorTestCompatibility();
         // scamTest2();
-        smallestRoomImpossibleTest();
+        // smallestRoomImpossibleTest();
     }
 }

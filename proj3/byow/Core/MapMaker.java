@@ -73,7 +73,7 @@ public class MapMaker {
     void makeMap() {
         int xStart = RandomUtils.uniform(random, 3, width - 4);
         int yStart = RandomUtils.uniform(random, 3, height - 4);
-        List<XYPosn> k = addMultiSpringHallways(new XYPosn(40, 10));
+        List<XYPosn> k = addMultiSpringHallways(new XYPosn(xStart, yStart));
         singlePathMaker(k);
         makeFlowersIntoWalls();
     }
@@ -121,43 +121,48 @@ public class MapMaker {
     }
 
     void singlePathMaker(List<XYPosn> k) {
-        for (int i = 0; i < 10; i += 1) {
-            if (k == null) {
-                continue;
-            }
-            for (XYPosn entry : k) {
-                /* If room can fit at this entry point, give it a 50-50 against hallways.
-                Also need the room generator function to list a number of possible exits as a List<XYPosns>!!
-                 */
+        if (k == null) {
+            return;
+        }
+        for (XYPosn entry : k) {
+            /* If room can fit at this entry point, give it a 50-50 against hallways.
+            Also need the room generator function to list a number of possible exits as a List<XYPosns>!!
+             */
 
-                int o = (getOrientation(entry));
-                boolean room = (RandomUtils.uniform(random, 2) == 0);
-                genHelp = new GeneratorHelper(world);
+            int o = (getOrientation(entry));
+            boolean room = (RandomUtils.uniform(random, 2) == 0);
+            genHelp = new GeneratorHelper(world);
 
-                System.out.print("Orientation: ");
-                System.out.println(o);
+            System.out.print("Orientation: ");
+            System.out.println(o);
 
-                System.out.print("Room LuckyVar: ");
-                System.out.println(room);
+            System.out.print("Room LuckyVar: ");
+            System.out.println(room);
 
-                System.out.print("SmallestRoomImpossible: ");
-                System.out.println(genHelp.smallestRoomImpossible(entry, o));
+            System.out.print("SmallestRoomImpossible: ");
+            System.out.println(genHelp.smallestRoomImpossible(entry, o));
+
+            System.out.print("Position: ");
+            System.out.print(entry.getX());
+            System.out.print(" ");
+            System.out.println(entry.getY());
 
 
-                System.out.println("**************************************");
 
-                if ((o >= 0) && !genHelp.smallestRoomImpossible(entry, o)) {
-                    if (room) {
-                        System.out.println("Trying to make room!");
-                        k = genHelp.addMultiSpringRoom(random, entry, o);
-                    } else {
-                        k = addMultiSpringHallways(entry);
-                    }
+            if ((o >= 0) && !genHelp.smallestRoomImpossible(entry, o)) {
+                if (room) {
+                    System.out.println("Trying to make room!");
+                    k = genHelp.addMultiSpringRoom(random, entry, o);
                 } else {
+                    System.out.println("Creating Hallway!");
                     k = addMultiSpringHallways(entry);
                 }
-                singlePathMaker(k);
+            } else {
+                System.out.println("Creating Hallway!");
+                k = addMultiSpringHallways(entry);
             }
+            System.out.println("**************************************");
+            singlePathMaker(k);
         }
     }
 

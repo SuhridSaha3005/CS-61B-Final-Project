@@ -11,13 +11,17 @@ import java.util.Random;
 public class MapMaker {
 
     /** Characteristics of World. */
-    TETile[][] world;
+    private TETile[][] world;
+
+    /** Width of World. */
     private final int width;
+
+    /** Height of World. */
     private final int height;
     private Random random;
     private GeneratorHelper genHelp;
 
-
+    /** Checks if tile isNothing. */
     private boolean isNothing(int x, int y) {
         if (validate(new XYPosn(x, y))) {
             return world[x][y].equals(Tileset.NOTHING);
@@ -25,6 +29,7 @@ public class MapMaker {
         return false;
     }
 
+    /** Checks if tile isWall. */
     private boolean isWall(int x, int y) {
         if (validate(new XYPosn(x, y))) {
             return world[x][y].equals(Tileset.WALL);
@@ -32,6 +37,7 @@ public class MapMaker {
         return false;
     }
 
+    /** Checks if tile isWall. */
     private boolean isFloor(int x, int y) {
         if (validate(new XYPosn(x, y))) {
             return world[x][y].equals(Tileset.FLOOR);
@@ -39,30 +45,50 @@ public class MapMaker {
         return false;
     }
 
+    /** Checks if tile is NOT isWall and isFloor. */
     private boolean isWallFloor(int x, int y) {
         return (!isWall(x, y) && !isFloor(x, y));
     }
 
-    /** Replaces a block IF it is nothing. */
+    /** Replaces a block IF it is nothing.
+     * @param x x
+     * @param y y
+     * @param tile tile to replace with
+     */
     private void replaceBlockIfNothing(int x, int y, TETile tile) {
         if (validate(new XYPosn(x, y)) && isNothing(x, y)) {
             world[x][y] = tile;
         }
     }
 
+    /** Replaces a block if it is not a wall/floor.
+     * @param x x
+     * @param y y
+     * @param tile tile to replace with
+     */
     private void replaceBlockIfNotWallFloor(int x, int y, TETile tile) {
         if (validate(new XYPosn(x, y)) && !isWallFloor(x, y)) {
             world[x][y] = tile;
         }
     }
 
+    /** Replaces a block --force.
+     * @param x x
+     * @param y y
+     * @param tile tile to replace with
+     */
     private void replaceBlock(int x, int y, TETile tile) {
         if (validate(new XYPosn(x, y))) {
             world[x][y] = tile;
         }
     }
 
-    /** Constructor for MapMaker Class. */
+    /** Constructor for MapMaker Class.
+     * @param rand random java with seed
+     * @param wrld world
+     * @param w
+     * @param h
+     */
     public MapMaker(Random rand, TETile[][] wrld, int w, int h) {
         world = wrld;
         random = rand;
@@ -70,16 +96,6 @@ public class MapMaker {
         height = h;
         genHelp= new GeneratorHelper(world);
     }
-
-    /* XYPosn addHallway(XYPosn entry) {
-        List<Integer> randHallwayParams = newHallwayDirLength(entry);
-        if (randHallwayParams.isEmpty()) {
-            throw new NullPointerException("Saw no way to proceed. Ending.");
-        }
-        int dir = randHallwayParams.get(0);
-        int len = randHallwayParams.get(1);
-        return hallwayMaker(entry, len, dir);
-    } */
 
     void makeMap() {
         int xStart = RandomUtils.uniform(random, width / 2 - width/4, width/2 + width/4);
@@ -283,7 +299,7 @@ public class MapMaker {
                 ArrayList<Integer> best = new ArrayList<>();
                 int idx = RandomUtils.uniform(random, keyList.size());
                 best.add(keyList.get(idx));
-                best.add(Math.min(RandomUtils.geometric(random, 0.4) + 2, valueList.get(idx)));
+                best.add(Math.min(RandomUtils.geometric(random, 0.5) + 2, valueList.get(idx)));
                 offSpringParams.add(best);
                 keyList.remove(idx);
                 valueList.remove(idx);

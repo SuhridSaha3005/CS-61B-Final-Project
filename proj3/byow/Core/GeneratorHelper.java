@@ -13,9 +13,9 @@ public class GeneratorHelper {
         this.world = world;
     }
     public static class RoomStuff {
-        public XYPosn origin;
-        public int length;
-        public int width;
+        XYPosn origin;
+        int length;
+        int width;
         public RoomStuff(XYPosn origin, int length, int width) {
             this.origin = origin;
             this.length = length;
@@ -42,7 +42,8 @@ public class GeneratorHelper {
     }
 
     private boolean validate(XYPosn point) {
-        return point.getX() >= 0 && point.getX() < world.length && point.getY() >= 0 && point.getY() < world[0].length;
+        return point.getX() >= 0 && point.getX() < world.length
+                && point.getY() >= 0 && point.getY() < world[0].length;
     }
 
     private XYPosn randomOrigin(Random rand, XYPosn entry, int orientation) {
@@ -157,7 +158,6 @@ public class GeneratorHelper {
     public ArrayList<XYPosn> addMultiSpringRoom(Random rand, XYPosn entry, int orientation) {
         RoomStuff roomStuff = randomRoom(rand, entry, orientation);
         if (roomStuff == null)  {
-            System.out.println("Timed Out.");
             return null;
         }
         Room room = new Room(world, roomStuff.origin, entry, roomStuff.width, roomStuff.length);

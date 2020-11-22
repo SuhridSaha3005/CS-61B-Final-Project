@@ -6,7 +6,7 @@ import byow.TileEngine.Tileset;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Room{
+public class Room {
     private final TETile[][] world;
     private final ArrayList<XYPosn> cornerWalls;
     private final ArrayList<XYPosn> otherWalls;
@@ -19,14 +19,13 @@ public class Room{
         floor = new ArrayList<>();
         for (int x = origin.getX(); x <= origin.getX() + width; x += 1) {
             for (int y = origin.getY(); y <= origin.getY() + length; y += 1) {
-                if ((x == origin.getX() || x == origin.getX() + width) &&
-                        (y == origin.getY() || y == origin.getY() + length)) {
+                if ((x == origin.getX() || x == origin.getX() + width)
+                        && (y == origin.getY() || y == origin.getY() + length)) {
                     cornerWalls.add(new XYPosn(x, y, world));
-                }
-                if (x == entry.getX() && y == entry.getY()) {
+                } else if (x == entry.getX() && y == entry.getY()) {
                     floor.add(new XYPosn(x, y, world));
-                } else if (x == origin.getX() || x == origin.getX() + width ||
-                        y == origin.getY() || y == origin.getY() + length) {
+                } else if (x == origin.getX() || x == origin.getX() + width
+                        || y == origin.getY() || y == origin.getY() + length) {
                     otherWalls.add(new XYPosn(x, y, world));
                 } else {
                     floor.add(new XYPosn(x, y, world));

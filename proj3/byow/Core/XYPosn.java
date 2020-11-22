@@ -34,10 +34,10 @@ public class XYPosn {
 
     @Override
     public String toString() {
-        return "XYPosn{" +
-                "x=" + x +
-                ", y=" + y +
-                ", world=" + Arrays.toString(world) +
-                '}';
+        return "XYPosn{"
+                + "x=" + x
+                + ", y=" + y
+                + ", world=" + Arrays.toString(world)
+                + '}';
     }
 }

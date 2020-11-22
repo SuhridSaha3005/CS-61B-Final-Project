@@ -171,7 +171,7 @@ public class MapMakerTest {
 
     public static void makeMapTest() {
         Engine e = new Engine();
-        MapMaker m = new MapMaker(new Random(23), e.world, Engine.WIDTH, Engine.HEIGHT);
+        MapMaker m = new MapMaker(new Random(11111111), e.world, Engine.WIDTH, Engine.HEIGHT);
         m.makeMap();
         e.render();
     }
@@ -266,7 +266,15 @@ public class MapMakerTest {
 
     }
 
+    public static void addMultiRoomSpringTest() {
+        Engine e = new Engine();
+        GeneratorHelper g = new GeneratorHelper(e.world);
+        Random random = new Random(35);
+        MapMaker m = new MapMaker(random, e.world, Engine.WIDTH, Engine.HEIGHT);
 
+        XYPosn entry = m.hallwayMaker(new XYPosn(30, 20), 4, 90);
+        System.out.println(g.addMultiSpringRoom(random, entry, 90));
+    }
 
 
 
@@ -282,5 +290,6 @@ public class MapMakerTest {
         // generatorTestCompatibility();
         // scamTest2();
         // smallestRoomImpossibleTest();
+        // addMultiRoomSpringTest();
     }
 }

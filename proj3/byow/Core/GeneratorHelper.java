@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 public class GeneratorHelper {
-    private TETile[][] world;
+    TETile[][] world;
 
     public GeneratorHelper(TETile[][] world) {
         this.world = world;
@@ -47,37 +47,54 @@ public class GeneratorHelper {
 
     private XYPosn randomOrigin(Random rand, XYPosn entry, int orientation) {
         XYPosn origin;
+        int numCollide = 0;
         if (orientation == 0) {
             int bottom = RandomUtils.uniform(rand, 1, 4);
             origin = new XYPosn(entry.getX(), entry.getY() - bottom, world);
             while (!validate(origin) || world[origin.getX()][origin.getY()] != Tileset.NOTHING) {
+                if (numCollide > 200) {
+                    return null;
+                }
                 bottom = RandomUtils.uniform(rand, 1, 4);
                 origin = new XYPosn(entry.getX(), entry.getY() - bottom, world);
+                numCollide += 1;
             }
         } else if (orientation == 90) {
             int farLeft = RandomUtils.uniform(rand, 1, 4);
             origin = new XYPosn(entry.getX() - farLeft, entry.getY(), world);
             while (!validate(origin) || world[origin.getX()][origin.getY()] != Tileset.NOTHING) {
+                if (numCollide > 200) {
+                    return null;
+                }
                 farLeft = RandomUtils.uniform(rand, 1, 4);
                 origin = new XYPosn(entry.getX() - farLeft, entry.getY(), world);
+                numCollide += 1;
             }
         } else if (orientation == 180) {
             int bottom = RandomUtils.uniform(rand, 1, 4);
             int farLeft = RandomUtils.uniform(rand, 3, 7);
             origin = new XYPosn(entry.getX() - farLeft, entry.getY() - bottom, world);
             while (!validate(origin) || world[origin.getX()][origin.getY()] != Tileset.NOTHING) {
+                if (numCollide > 200) {
+                    return null;
+                }
                 bottom = RandomUtils.uniform(rand, 1, 4);
                 farLeft = RandomUtils.uniform(rand, 3, 7);
                 origin = new XYPosn(entry.getX() - farLeft, entry.getY() - bottom, world);
+                numCollide += 1;
             }
         } else {
             int bottom = RandomUtils.uniform(rand, 3, 7);
             int farLeft = RandomUtils.uniform(rand, 1, 4);
             origin = new XYPosn(entry.getX() - farLeft, entry.getY() - bottom, world);
             while (!validate(origin) || world[origin.getX()][origin.getY()] != Tileset.NOTHING) {
+                if (numCollide > 200) {
+                    return null;
+                }
                 bottom = RandomUtils.uniform(rand, 3, 7);
                 farLeft = RandomUtils.uniform(rand, 1, 4);
                 origin = new XYPosn(entry.getX() - farLeft, entry.getY() - bottom, world);
+                numCollide += 1;
             }
         }
         return origin;
@@ -86,8 +103,12 @@ public class GeneratorHelper {
     public RoomStuff randomRoom(Random rand, XYPosn entry, int orientation) {
         int length, width;
         RoomStuff room = null;
+        int numCollide = 0;
         while (collision(room)) {
             XYPosn origin = randomOrigin(rand, entry, orientation);
+            if ((numCollide > 500) || (origin == null)) {
+                return null;
+            }
             if (orientation == 0) {
                 length = RandomUtils.uniform(rand, entry.getY() - origin.getY() + 2, 7);
                 width = RandomUtils.uniform(rand, 3, 7);
@@ -102,6 +123,7 @@ public class GeneratorHelper {
                 width = RandomUtils.uniform(rand, entry.getX() - origin.getX() + 2, 7);
             }
             room = new RoomStuff(origin, length, width);
+            numCollide += 1;
         }
         return room;
     }
@@ -137,9 +159,13 @@ public class GeneratorHelper {
 
     public ArrayList<XYPosn> addMultiSpringRoom(Random rand, XYPosn entry, int orientation) {
         RoomStuff roomStuff = randomRoom(rand, entry, orientation);
+        if (roomStuff == null)  {
+            System.out.println("Timed Out.");
+            return null;
+        }
         Room room = new Room(world, roomStuff.origin, entry, roomStuff.width, roomStuff.length);
         room.addRoom();
-        int n = RandomUtils.uniform(rand, 1, 3);
+        int n = RandomUtils.uniform(rand, 1, 4);
         ArrayList<XYPosn> exits = new ArrayList<>();
         XYPosn wall;
         for (int i = 0; i < n; i += 1) {

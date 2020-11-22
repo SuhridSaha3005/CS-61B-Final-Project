@@ -18,15 +18,24 @@ public class MapMaker {
 
 
     private boolean isNothing(int x, int y) {
-        return world[x][y].equals(Tileset.NOTHING);
+        if (validate(new XYPosn(x, y))) {
+            return world[x][y].equals(Tileset.NOTHING);
+        }
+        return false;
     }
 
     private boolean isWall(int x, int y) {
-        return world[x][y].equals(Tileset.WALL);
+        if (validate(new XYPosn(x, y))) {
+            return world[x][y].equals(Tileset.WALL);
+        }
+        return false;
     }
 
     private boolean isFloor(int x, int y) {
-        return world[x][y].equals(Tileset.FLOOR);
+        if (validate(new XYPosn(x, y))) {
+            return world[x][y].equals(Tileset.FLOOR);
+        }
+        return false;
     }
 
     private boolean isWallFloor(int x, int y) {
@@ -35,20 +44,21 @@ public class MapMaker {
 
     /** Replaces a block IF it is nothing. */
     private void replaceBlockIfNothing(int x, int y, TETile tile) {
-        if (isNothing(x, y) && validate(new XYPosn(x, y))) {
+        if (validate(new XYPosn(x, y)) && isNothing(x, y)) {
             world[x][y] = tile;
         }
     }
 
     private void replaceBlockIfNotWallFloor(int x, int y, TETile tile) {
-        if (!isWallFloor(x, y) && validate(new XYPosn(x, y))) {
+        if (validate(new XYPosn(x, y)) && !isWallFloor(x, y)) {
             world[x][y] = tile;
         }
     }
 
     private void replaceBlock(int x, int y, TETile tile) {
-        if (validate(new XYPosn(x, y)))
+        if (validate(new XYPosn(x, y))) {
             world[x][y] = tile;
+        }
     }
 
     /** Constructor for MapMaker Class. */
@@ -71,8 +81,8 @@ public class MapMaker {
     } */
 
     void makeMap() {
-        int xStart = RandomUtils.uniform(random, 3, width - 4);
-        int yStart = RandomUtils.uniform(random, 3, height - 4);
+        int xStart = RandomUtils.uniform(random, width / 2 - width/4, width/2 + width/4);
+        int yStart = RandomUtils.uniform(random, height / 2 - height / 4, height / 2 + height / 4);
         XYPosn entry = new XYPosn(xStart, yStart);
         System.out.println("Creating the initial hallway.");
         System.out.print("Orientation: ");
@@ -127,7 +137,9 @@ public class MapMaker {
         for (List<Integer> hallParams: randHallwayParams) {
             int dir = hallParams.get(0);
             int len = hallParams.get(1);
-            newXYPosns.add(hallwayMaker(entry, len, dir));
+            XYPosn newXYPosn = hallwayMaker(entry, len, dir);
+            if (newXYPosn != null)
+                newXYPosns.add(newXYPosn);
         }
 
         return newXYPosns;
@@ -144,6 +156,7 @@ public class MapMaker {
 
             int o = (getOrientation(entry));
             boolean room = (RandomUtils.uniform(random, 2) == 0);
+            /* room = false; */
             genHelp = new GeneratorHelper(world);
 
             System.out.print("Orientation: ");
@@ -166,6 +179,63 @@ public class MapMaker {
                 if (room) {
                     System.out.println("Trying to make room!");
                     k = genHelp.addMultiSpringRoom(random, entry, o);
+                    if (k == null) {
+                        k = addMultiSpringHallways(entry);
+                    } else {
+                        System.out.println("Making the mandatory hallway after room!");
+                        singlePathMaker(k, false);
+                    }
+                } else {
+                    System.out.println("Creating Hallway!");
+                    k = addMultiSpringHallways(entry);
+                }
+            } else {
+                System.out.println("Creating Hallway!");
+                k = addMultiSpringHallways(entry);
+            }
+            System.out.println("**************************************");
+            singlePathMaker(k);
+        }
+    }
+
+    void singlePathMaker(List<XYPosn> k, boolean room) {
+        if (k == null) {
+            return;
+        }
+        for (XYPosn entry : k) {
+            /* If room can fit at this entry point, give it a 50-50 against hallways.
+            Also need the room generator function to list a number of possible exits as a List<XYPosns>!!
+             */
+
+            int o = (getOrientation(entry));
+            genHelp = new GeneratorHelper(world);
+
+            System.out.print("Orientation: ");
+            System.out.println(o);
+
+            System.out.print("Room LuckyVar: ");
+            System.out.println(room);
+
+            System.out.print("SmallestRoomImpossible: ");
+            System.out.println(genHelp.smallestRoomImpossible(entry, o));
+
+            System.out.print("Position: ");
+            System.out.print(entry.getX());
+            System.out.print(" ");
+            System.out.println(entry.getY());
+
+
+
+            if ((o >= 0) && !genHelp.smallestRoomImpossible(entry, o)) {
+                if (room) {
+                    System.out.println("Trying to make room!");
+                    k = genHelp.addMultiSpringRoom(random, entry, o);
+                    if (k == null) {
+                        k = addMultiSpringHallways(entry);
+                    } else {
+                        System.out.println("Making the mandatory hallway after room!");
+                        singlePathMaker(k, false);
+                    }
                 } else {
                     System.out.println("Creating Hallway!");
                     k = addMultiSpringHallways(entry);
@@ -204,7 +274,7 @@ public class MapMaker {
             i += 1;
         }
 
-        int numSpring = RandomUtils.geometric(random, 0.4);
+        int numSpring = RandomUtils.geometric(random, 0.2);
         List<List<Integer>> offSpringParams = new ArrayList<>();
 
         if (!keyList.isEmpty()) {
@@ -263,6 +333,10 @@ public class MapMaker {
 
     /** Makes a hallway given position, length and direction. */
     XYPosn hallwayMaker(XYPosn entry, int length, int dir) {
+        if (!validate(entry)) {
+            return null;
+        }
+
         int xPos = entry.getX();
         int yPos = entry.getY();
         XYPosn newPosn;
@@ -321,7 +395,7 @@ public class MapMaker {
                 }
                 break;
         }
-        replaceBlockIfNothing(xPos, yPos, Tileset.FLOWER);
+        /* replaceBlockIfNothing(xPos, yPos, Tileset.FLOWER); */
         return new XYPosn(xPos, yPos);
     }
 

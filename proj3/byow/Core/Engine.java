@@ -12,34 +12,11 @@ public class Engine {
     /* Feel free to change the width and height. */
     public static final int WIDTH = 80;
     public static final int HEIGHT = 50;
+    public int SEED = -1;
     Random RANDOM;
     TETile[][] world;
+    StringBuilder gameSave = null;
 
-    public Engine() {
-
-        RANDOM = new Random(434);
-
-        world = new TETile[WIDTH][HEIGHT];
-        for (int x = 0; x < WIDTH; x += 1) {
-            for (int y = 0; y < HEIGHT; y += 1) {
-                world[x][y] = Tileset.NOTHING;
-            }
-        }
-
-    }
-
-    public Engine(int seed) {
-
-        RANDOM = new Random(seed);
-
-        world = new TETile[WIDTH][HEIGHT];
-        for (int x = 0; x < WIDTH; x += 1) {
-            for (int y = 0; y < HEIGHT; y += 1) {
-                world[x][y] = Tileset.NOTHING;
-            }
-        }
-
-    }
 
     /**
      * Method used for exploring a fresh world. This method should handle all inputs,
@@ -78,32 +55,66 @@ public class Engine {
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
 
+        input = input.toLowerCase();
         StringBuilder seed = null;
         for (int i = 0; i < input.length(); i += 1) {
             String letter = (input.substring(i, i + 1));
-            if (letter.toLowerCase().equals("s")) {
-                break;
+            switch (letter) {
+                case "n":
+                    gameSave = new StringBuilder(letter);
+                    seed = new StringBuilder();
+                    break;
+                case "s":
+                    if ((seed != null) && gameSave != null) {
+                        gameSave.append(letter);
+                        SEED = Integer.parseInt(seed.toString());
+                        RANDOM = new Random(SEED);
+                    } else {
+                        throw new IllegalArgumentException("Map was not initialized with n.");
+                    }
+                    break;
+                case "l":
+                    if ((gameSave) == null) {
+                        throw new IllegalArgumentException("No game in save state.");
+                    }
+                    return interactWithInputString(gameSave.append(input.substring(i + 1)).toString());
+                default:
+                    try {
+                        int l = Integer.parseInt(letter);
+                    } catch (NumberFormatException nfe) {
+                        gameSave.append(letter);
+                        continue;
+                    }
+                    if ((seed == null) || (gameSave == null)) {
+                        continue;
+                    }
+                    seed.append(letter);
+                    gameSave.append(letter);
             }
-            if (letter.toLowerCase().equals("n")) {
-                seed = new StringBuilder();
-            }
-            if (seed != null) {
-                seed.append(letter);
+        }
+        if (SEED != -1) {
+            TETile[][] finalWorldFrame = createWorld();
+            return finalWorldFrame;
+        }
+        return null;
+    }
+
+    TETile[][] createWorld() {
+        world = new TETile[WIDTH][HEIGHT];
+        for (int x = 0; x < WIDTH; x += 1) {
+            for (int y = 0; y < HEIGHT; y += 1) {
+                world[x][y] = Tileset.NOTHING;
             }
         }
 
-        if (seed == null) {
-            throw new IllegalArgumentException("Provided seed string was incorrect.");
-        }
-
-        TETile[][] finalWorldFrame = null;
-        return finalWorldFrame;
+        MapMaker map = new MapMaker(RANDOM, world, WIDTH, HEIGHT);
+        map.makeMap();
+        return world;
     }
 
     void render() {
         ter.initialize(WIDTH, HEIGHT);
         ter.renderFrame(world);
     }
-
 
 }

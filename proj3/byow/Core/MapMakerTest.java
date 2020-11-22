@@ -4,8 +4,10 @@ import byow.TileEngine.Tileset;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.security.spec.ECGenParameterSpec;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import static org.junit.Assert.*;
@@ -276,7 +278,44 @@ public class MapMakerTest {
         System.out.println(g.addMultiSpringRoom(random, entry, 90));
     }
 
+    @Test
+    public void sanityInputStringTest() {
+        Engine e1 = new Engine();
+        e1.interactWithInputString("n123s");
+        assertEquals(123, e1.SEED);
+        Random r = new Random(123);
+        assertEquals(r.nextInt(), e1.RANDOM.nextInt());
+        assertEquals(r.nextInt(), e1.RANDOM.nextInt());
+        assertEquals(r.nextInt(), e1.RANDOM.nextInt());
+        assertEquals(r.nextInt(), e1.RANDOM.nextInt());
+        assertEquals(r.nextInt(), e1.RANDOM.nextInt());
+    }
 
+    @Test
+    public void inputStringTestFinal() {
+        Engine e1 = new Engine();
+        Engine e2 = new Engine();
+        e2.SEED = 123;
+        e2.world = new TETile[e2.WIDTH][e2.HEIGHT];
+        for (int x = 0; x < e2.WIDTH; x += 1) {
+            for (int y = 0; y < e2.HEIGHT; y += 1) {
+                e2.world[x][y] = Tileset.NOTHING;
+            }
+        }
+        MapMaker m = new MapMaker(new Random(123), e2.world, Engine.WIDTH, Engine.HEIGHT);
+        m.makeMap();
+        e1.interactWithInputString("n123s");
+        assertEquals(e1.SEED, e2.SEED);
+        assertArrayEquals(e1.createWorld(), m.world);
+    }
+
+    public static void makeMapFinal() {
+        Engine e = new Engine();
+        e.interactWithInputString("n12:q");
+        e.interactWithInputString("l3s");
+        e.createWorld();
+        e.render();
+    }
 
     public static void main(String[] args) {
         // hallwayMakerTest();
@@ -285,11 +324,12 @@ public class MapMakerTest {
         // newHallwayTest();
         // randomizedGeneratorTest();
         // addRandomHallwaysTest();
-        makeMapTest();
+        // makeMapTest();
         // generatorTest1();
         // generatorTestCompatibility();
         // scamTest2();
         // smallestRoomImpossibleTest();
         // addMultiRoomSpringTest();
+        makeMapFinal();
     }
 }

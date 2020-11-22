@@ -8,20 +8,26 @@ import java.util.Random;
 
 public class Room{
     private final TETile[][] world;
-    private final ArrayList<XYPosn> walls;
+    private final ArrayList<XYPosn> cornerWalls;
+    private final ArrayList<XYPosn> otherWalls;
     private final ArrayList<XYPosn> floor;
 
     public Room(TETile[][] world, XYPosn origin, XYPosn entry, int width, int length) {
         this.world = world;
-        walls = new ArrayList<>();
+        cornerWalls = new ArrayList<>();
+        otherWalls = new ArrayList<>();
         floor = new ArrayList<>();
         for (int x = origin.getX(); x <= origin.getX() + width; x += 1) {
             for (int y = origin.getY(); y <= origin.getY() + length; y += 1) {
+                if ((x == origin.getX() || x == origin.getX() + width) &&
+                        (y == origin.getY() || y == origin.getY() + length)) {
+                    cornerWalls.add(new XYPosn(x, y, world));
+                }
                 if (x == entry.getX() && y == entry.getY()) {
                     floor.add(new XYPosn(x, y, world));
                 } else if (x == origin.getX() || x == origin.getX() + width ||
                         y == origin.getY() || y == origin.getY() + length) {
-                    walls.add(new XYPosn(x, y, world));
+                    otherWalls.add(new XYPosn(x, y, world));
                 } else {
                     floor.add(new XYPosn(x, y, world));
                 }
@@ -30,7 +36,10 @@ public class Room{
     }
 
     public void addRoom() {
-        for (XYPosn wall : walls) {
+        for (XYPosn wall : cornerWalls) {
+            world[wall.getX()][wall.getY()] = Tileset.WALL;
+        }
+        for (XYPosn wall : otherWalls) {
             world[wall.getX()][wall.getY()] = Tileset.WALL;
         }
         for (XYPosn tile : floor) {
@@ -39,6 +48,6 @@ public class Room{
     }
 
     public XYPosn getRandomWall(Random rand) {
-        return walls.get(RandomUtils.uniform(rand, 0, walls.size() - 1));
+        return otherWalls.get(RandomUtils.uniform(rand, 0, otherWalls.size() - 1));
     }
 }

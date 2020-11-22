@@ -1,12 +1,14 @@
 package byow.Core;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
+import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class MapMakerTest {
 
@@ -226,6 +228,41 @@ public class MapMakerTest {
         e.render();
     }
 
+    public static void smallestRoomImpossibleTest() {
+        Engine e = new Engine();
+        MapMaker m = new MapMaker(new Random(10), e.world, Engine.WIDTH, Engine.HEIGHT);
+        XYPosn entry = new XYPosn(40, 30);
+        assertTrue(m.getOrientation(entry) < 0);
+        System.out.println(m.genHelp.smallestRoomImpossible(entry, m.getOrientation(entry))); // should be false
+        entry = m.hallwayMaker(entry, 4, 0);
+        entry = m.hallwayMaker(entry, 4, 90);
+        System.out.println(entry.getX());
+        System.out.println(entry.getY());
+        System.out.println(m.genHelp.smallestRoomImpossible(entry, 90));  // should be false
+        assertArrayEquals(m.world, m.genHelp.world);
+        System.out.println(Arrays.equals(m.world, m.genHelp.world)); // should be true
+        e.render();
+    }
+
+    @Test
+    public void getOrientationTest() {
+        Engine e = new Engine();
+        MapMaker m = new MapMaker(new Random(10), e.world, Engine.WIDTH, Engine.HEIGHT);
+        XYPosn entry = new XYPosn(40, 30);
+        assertTrue(m.getOrientation(entry) < 0);
+        entry = m.hallwayMaker(entry, 4, 0);
+        assertEquals(0, m.getOrientation(entry));
+        entry = m.hallwayMaker(entry, 4, 90);
+        assertEquals(90, m.getOrientation(entry));
+        entry = m.hallwayMaker(entry, 4, 0);
+        assertEquals(0, m.getOrientation(entry));
+        entry = m.hallwayMaker(entry, 4, 270);
+        assertEquals(270, m.getOrientation(entry));
+
+    }
+
+
+
 
 
     public static void main(String[] args) {
@@ -235,9 +272,10 @@ public class MapMakerTest {
         // newHallwayTest();
         // randomizedGeneratorTest();
         // addRandomHallwaysTest();
-        makeMapTest();
+        // makeMapTest();
         // generatorTest1();
         // generatorTestCompatibility();
         // scamTest2();
+        smallestRoomImpossibleTest();
     }
 }

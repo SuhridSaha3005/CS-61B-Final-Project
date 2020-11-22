@@ -10,7 +10,7 @@ import java.util.Random;
 public class MapMaker {
 
     /** Characteristics of World. */
-    private TETile[][] world;
+    TETile[][] world;
     private final int width;
     private final int height;
     private Random random;
@@ -312,7 +312,7 @@ public class MapMaker {
     }
 
 
-    private int getOrientation(XYPosn entry) {
+    int getOrientation(XYPosn entry) {
         int xPos = entry.getX();
         int yPos = entry.getY();
         int orientation = -1;

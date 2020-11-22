@@ -130,18 +130,27 @@ public class MapMaker {
                 Also need the room generator function to list a number of possible exits as a List<XYPosns>!!
                  */
 
-                /* int o = (getOrientation(entry));
+                int o = (getOrientation(entry));
                 boolean room = (RandomUtils.uniform(random, 2) == 0);
+
+                System.out.print("Orientation: ");
+                System.out.println(o);
+
+                System.out.print("Trying to Make Room(0)/Hallway(1): ");
+                System.out.println(room);
+
+                System.out.println("**************************************");
+
                 if ((o >= 0) && !genHelp.smallestRoomImpossible(entry, o)) {
                     if (room) {
+                        System.out.println("Trying to make room!");
                         k = genHelp.addMultiSpringRoom(random, entry, o);
                     } else {
                         k = addMultiSpringHallways(entry);
                     }
                 } else {
                     k = addMultiSpringHallways(entry);
-                } */
-                k = addMultiSpringHallways(entry);
+                }
                 singlePathMaker(k);
             }
         }

@@ -107,7 +107,7 @@ public class GeneratorHelper {
         return room;
     }
 
-    private boolean smallestRoomImpossible(XYPosn entry, int orientation) {
+    boolean smallestRoomImpossible(XYPosn entry, int orientation) {
         RoomStuff room1, room2;
         if (orientation == 0) {
             room1 = new RoomStuff(new XYPosn(entry.getX(), entry.getY() - 1, world), 3, 3);

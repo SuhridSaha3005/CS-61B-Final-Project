@@ -177,11 +177,12 @@ public class MapMakerTest {
     public static void generatorTest1() {
         Engine e = new Engine();
         GeneratorHelper g = new GeneratorHelper(e.world);
-        XYPosn entry = new XYPosn(30, 20);
+        XYPosn entry = new XYPosn(5, 10);
         GeneratorHelper.RoomStuff roomInfo = g.randomRoom(new Random(), entry, 180);
         System.out.println("hiiiiiiiiiiiiiiii");
         Room r = new Room(e.world, roomInfo.origin, entry, roomInfo.width, roomInfo.length);
         r.addRoom();
+        e.render();
     }
 
     public static void generatorTestCompatibility() {
@@ -234,9 +235,9 @@ public class MapMakerTest {
         // newHallwayTest();
         // randomizedGeneratorTest();
         // addRandomHallwaysTest();
-        // makeMapTest();
+        makeMapTest();
         // generatorTest1();
         // generatorTestCompatibility();
-        scamTest2();
+        // scamTest2();
     }
 }

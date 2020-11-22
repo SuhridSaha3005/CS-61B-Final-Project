@@ -22,8 +22,7 @@ public class Room {
                 if ((x == origin.getX() || x == origin.getX() + width)
                         && (y == origin.getY() || y == origin.getY() + length)) {
                     cornerWalls.add(new XYPosn(x, y, world));
-                }
-                if (x == entry.getX() && y == entry.getY()) {
+                } else if (x == entry.getX() && y == entry.getY()) {
                     floor.add(new XYPosn(x, y, world));
                 } else if (x == origin.getX() || x == origin.getX() + width
                         || y == origin.getY() || y == origin.getY() + length) {

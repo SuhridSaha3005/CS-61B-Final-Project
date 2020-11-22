@@ -83,36 +83,36 @@ public class Engine {
         for (int i = 0; i < input.length(); i += 1) {
             String letter = (input.substring(i, i + 1));
             switch (letter) {
-            case "n":
-                gameSave = new StringBuilder(letter);
-                seed = new StringBuilder();
-                break;
-            case "s":
-                if ((seed != null) && gameSave != null) {
+                case "n":
+                    gameSave = new StringBuilder(letter);
+                    seed = new StringBuilder();
+                    break;
+                case "s":
+                    if ((seed != null) && gameSave != null) {
+                        gameSave.append(letter);
+                        givenSeed = Long.parseLong(seed.toString());
+                        seedRandom = new Random(givenSeed);
+                    } else {
+                        throw new IllegalArgumentException("Map was not initialized with n.");
+                    }
+                    break;
+                case "l":
+                    if ((gameSave) == null) {
+                        throw new IllegalArgumentException("No game in save state.");
+                    }
+                    return interactWithInputString(gameSave.append(input.substring(i + 1)).toString());
+                default:
+                    try {
+                        int l = Integer.parseInt(letter);
+                    } catch (NumberFormatException nfe) {
+                        gameSave.append(letter);
+                        continue;
+                    }
+                    if ((seed == null) || (gameSave == null)) {
+                        continue;
+                    }
+                    seed.append(letter);
                     gameSave.append(letter);
-                    givenSeed = Long.parseLong(seed.toString());
-                    seedRandom = new Random(givenSeed);
-                } else {
-                    throw new IllegalArgumentException("Map was not initialized with n.");
-                }
-                break;
-            case "l":
-                if ((gameSave) == null) {
-                    throw new IllegalArgumentException("No game in save state.");
-                }
-                return interactWithInputString(gameSave.append(input.substring(i + 1)).toString());
-            default:
-                try {
-                    int l = Integer.parseInt(letter);
-                } catch (NumberFormatException nfe) {
-                    gameSave.append(letter);
-                    continue;
-                }
-                if ((seed == null) || (gameSave == null)) {
-                    continue;
-                }
-                seed.append(letter);
-                gameSave.append(letter);
             }
         }
         if (givenSeed != -1) {

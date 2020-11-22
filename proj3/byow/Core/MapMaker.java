@@ -73,7 +73,20 @@ public class MapMaker {
     void makeMap() {
         int xStart = RandomUtils.uniform(random, 3, width - 4);
         int yStart = RandomUtils.uniform(random, 3, height - 4);
-        List<XYPosn> k = addMultiSpringHallways(new XYPosn(xStart, yStart));
+        XYPosn entry = new XYPosn(xStart, yStart);
+        System.out.println("Creating the initial hallway.");
+        System.out.print("Orientation: ");
+        System.out.println(getOrientation(entry));
+
+
+        System.out.print("Position: ");
+        System.out.print(entry.getX());
+        System.out.print(" ");
+        System.out.println(entry.getY());
+
+        List<XYPosn> k = addMultiSpringHallways(entry);
+
+        System.out.println("***************************************");
         singlePathMaker(k);
         makeFlowersIntoWalls();
     }

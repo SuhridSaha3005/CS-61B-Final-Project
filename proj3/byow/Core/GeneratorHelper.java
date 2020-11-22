@@ -34,7 +34,6 @@ public class GeneratorHelper {
             for (int y = y0; y <= y0 + room.length; y += 1) {
                 point = new XYPosn(x, y, world);
                 if (!validate(point) || world[x][y] != Tileset.NOTHING) {
-                    System.out.println(x0 + " " + y0 + " " + room.width + " " + room.length + " " + x + " " + y);
                     return true;
                 }
             }
@@ -108,18 +107,32 @@ public class GeneratorHelper {
     }
 
     boolean smallestRoomImpossible(XYPosn entry, int orientation) {
-        RoomStuff room1, room2;
+        RoomStuff room1, room2, room3, room4;
         if (orientation == 0) {
             room1 = new RoomStuff(new XYPosn(entry.getX(), entry.getY() - 1, world), 3, 3);
             room2 = new RoomStuff(new XYPosn(entry.getX(), entry.getY() - 2, world), 3, 3);
+            room3 = new RoomStuff(new XYPosn(entry.getX(), entry.getY() + 1, world), 3, 3);
+            room4 = new RoomStuff(new XYPosn(entry.getX(), entry.getY() + 2, world), 3, 3);
         } else if (orientation == 90) {
             room1 = new RoomStuff(new XYPosn(entry.getX() - 2, entry.getY(), world), 3, 3);
             room2 = new RoomStuff(new XYPosn(entry.getX() - 1, entry.getY(), world), 3, 3);
+            room3 = new RoomStuff(new XYPosn(entry.getX() + 1, entry.getY(), world), 3, 3);
+            room4 = new RoomStuff(new XYPosn(entry.getX() + 2, entry.getY(), world), 3, 3);
+        } else if (orientation == 180) {
+            room1 = new RoomStuff(new XYPosn(entry.getX() - 3, entry.getY() - 1, world), 3, 3);
+            room2 = new RoomStuff(new XYPosn(entry.getX() - 3, entry.getY() - 2, world), 3, 3);
+            room3 = new RoomStuff(new XYPosn(entry.getX() - 3, entry.getY() + 1, world), 3, 3);
+            room4 = new RoomStuff(new XYPosn(entry.getX() - 3, entry.getY() + 2, world), 3, 3);
         } else {
-            room1 = new RoomStuff(new XYPosn(entry.getX() - 1, entry.getY() - 2, world), 3, 3);
-            room2 = new RoomStuff(new XYPosn(entry.getX() - 2, entry.getY() - 1, world), 3, 3);
+            room1 = new RoomStuff(new XYPosn(entry.getX() - 1, entry.getY() - 3, world), 3, 3);
+            room2 = new RoomStuff(new XYPosn(entry.getX() - 2, entry.getY() - 3, world), 3, 3);
+            room3 = new RoomStuff(new XYPosn(entry.getX() + 1, entry.getY() - 3, world), 3, 3);
+            room4 = new RoomStuff(new XYPosn(entry.getX() + 2, entry.getY() - 3, world), 3, 3);
         }
-        return collision(room1) && collision(room2);
+        if (collision(room1) && collision(room2) && collision(room3) && collision(room4)) {
+            System.out.println(entry.getX() + " " + entry.getY() + " " + orientation);
+        }
+        return collision(room1) && collision(room2) && collision(room3) && collision(room4);
     }
 
     public ArrayList<XYPosn> addMultiSpringRoom(Random rand, XYPosn entry, int orientation) {

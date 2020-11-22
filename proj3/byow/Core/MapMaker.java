@@ -18,10 +18,18 @@ public class MapMaker {
 
     /** Height of World. */
     private final int height;
+
+    /** Random Class of particular seed. */
     private Random random;
+
+    /** GeneratorHelper for this mapmaker. */
     private GeneratorHelper genHelp;
 
-    /** Checks if tile isNothing. */
+    /** Checks if tile isNothing.
+     * @param x x
+     * @param y y
+     * @return is it nothing?
+     */
     private boolean isNothing(int x, int y) {
         if (validate(new XYPosn(x, y))) {
             return world[x][y].equals(Tileset.NOTHING);
@@ -29,7 +37,11 @@ public class MapMaker {
         return false;
     }
 
-    /** Checks if tile isWall. */
+    /** Checks if tile isWall.
+     * @param x x
+     * @param y y
+     * @return is it a wall?
+     */
     private boolean isWall(int x, int y) {
         if (validate(new XYPosn(x, y))) {
             return world[x][y].equals(Tileset.WALL);
@@ -86,8 +98,8 @@ public class MapMaker {
     /** Constructor for MapMaker Class.
      * @param rand random java with seed
      * @param wrld world
-     * @param w
-     * @param h
+     * @param w width of world
+     * @param h height of world
      */
     public MapMaker(Random rand, TETile[][] wrld, int w, int h) {
         world = wrld;
@@ -97,6 +109,7 @@ public class MapMaker {
         genHelp= new GeneratorHelper(world);
     }
 
+    /** Puts everything together, takes the map for the world. */
     void makeMap() {
         int xStart = RandomUtils.uniform(random, width / 2 - width/4, width/2 + width/4);
         int yStart = RandomUtils.uniform(random, height / 2 - height / 4, height / 2 + height / 4);
@@ -118,6 +131,7 @@ public class MapMaker {
         makeFlowersIntoWalls();
     }
 
+    /** Hack to make flowers into walls. */
     void makeFlowersIntoWalls() {
         for (int i = 0; i < width; i += 1) {
             for (int j = 0; j < height; j += 1) {
@@ -128,6 +142,10 @@ public class MapMaker {
         }
     }
 
+    /** Creates a hallway that returns positions of new hallways to offspring.
+     * @param entry entry
+     * @return list of xyposns
+     */
     List<XYPosn> addMultiSpringHallways(XYPosn entry) {
         List<List<Integer>> randHallwayParams = newHallwayDirLength(entry);
         List<XYPosn> newXYPosns = new ArrayList<>();
@@ -162,18 +180,17 @@ public class MapMaker {
         return newXYPosns;
     }
 
+    /** Makes a single branch of the branching offsprings.
+     * @param k list of next positions
+     */
     void singlePathMaker(List<XYPosn> k) {
         if (k == null) {
             return;
         }
         for (XYPosn entry : k) {
-            /* If room can fit at this entry point, give it a 50-50 against hallways.
-            Also need the room generator function to list a number of possible exits as a List<XYPosns>!!
-             */
 
             int o = (getOrientation(entry));
             boolean room = (RandomUtils.uniform(random, 2) == 0);
-            /* room = false; */
             genHelp = new GeneratorHelper(world);
 
             System.out.print("Orientation: ");
@@ -215,14 +232,15 @@ public class MapMaker {
         }
     }
 
+    /** Same as above function, but specifies that we don't want a room.
+     * @param k List of new XYPosns
+     * @param room false
+     */
     void singlePathMaker(List<XYPosn> k, boolean room) {
         if (k == null) {
             return;
         }
         for (XYPosn entry : k) {
-            /* If room can fit at this entry point, give it a 50-50 against hallways.
-            Also need the room generator function to list a number of possible exits as a List<XYPosns>!!
-             */
 
             int o = (getOrientation(entry));
             genHelp = new GeneratorHelper(world);
@@ -267,7 +285,10 @@ public class MapMaker {
     }
 
 
-    /** Finds the best hallway direction given an entry, and its length, and randomizes. */
+    /** Finds the best hallway direction given an entry, and its length, and randomizes.
+     * @param entry starting posn
+     * @return list of keys and values
+     */
     List<List<Integer>> newHallwayDirLength(XYPosn entry) {
         ArrayList<Integer> keyList = new ArrayList<>();
         keyList.add(0);
@@ -308,7 +329,11 @@ public class MapMaker {
         return offSpringParams;
     }
 
-    /** Returns longest possible length of a hallway from a point, not including it. */
+    /** Returns longest possible length of a hallway from a point, not including it.
+     * @param entry entry position
+     * @param dir direction
+     * @return
+     */
     int longestHallway(XYPosn entry, int dir) {
         int xPos = entry.getX();
         int yPos = entry.getY();
@@ -343,12 +368,13 @@ public class MapMaker {
         return length;
     }
 
-    /** TESTING PURPOSES */
-    void longestHallwayMaker(XYPosn entry, int dir) {
-        hallwayMaker(entry, longestHallway(entry, dir), dir);
-    }
 
-    /** Makes a hallway given position, length and direction. */
+    /** Makes a hallway given position, length and direction.
+     * @param entry entry position
+     * @param length length of hallway
+     * @param dir direction of hallway
+     * @return position of next hallway/room to be made
+     */
     XYPosn hallwayMaker(XYPosn entry, int length, int dir) {
         if (!validate(entry)) {
             return null;
@@ -412,22 +438,35 @@ public class MapMaker {
                 }
                 break;
         }
-        /* replaceBlockIfNothing(xPos, yPos, Tileset.FLOWER); */
         return new XYPosn(xPos, yPos);
     }
 
+    /** Validates if a point is within the map.
+     * @param point point to be validated
+     * @return whether point is valid
+     */
     private boolean validate(XYPosn point) {
         return point.getX() >= 0 && point.getX() < world.length && point.getY() >= 0 && point.getY() < world[0].length;
     }
 
+    /** Gets the world.
+     * @return world
+     */
     TETile[][] getWorld() {
         return world;
     }
 
+    /** Gets the GeneratorHelper
+     * @return genHelper
+     */
     GeneratorHelper getGenHelp() {
         return genHelp;
     }
 
+    /** Gets the predicted orientation of a hallway/room up to this point.
+     * @param entry point to be tested
+     * @return orientation of new room made at that point
+     */
     int getOrientation(XYPosn entry) {
         int xPos = entry.getX();
         int yPos = entry.getY();

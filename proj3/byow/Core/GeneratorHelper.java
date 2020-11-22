@@ -158,7 +158,6 @@ public class GeneratorHelper {
     public ArrayList<XYPosn> addMultiSpringRoom(Random rand, XYPosn entry, int orientation) {
         RoomStuff roomStuff = randomRoom(rand, entry, orientation);
         if (roomStuff == null)  {
-            System.out.println("Timed Out.");
             return null;
         }
         Room room = new Room(world, roomStuff.origin, entry, roomStuff.width, roomStuff.length);

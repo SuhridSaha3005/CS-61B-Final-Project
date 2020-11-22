@@ -100,7 +100,8 @@ public class Engine {
                     if ((gameSave) == null) {
                         throw new IllegalArgumentException("No game in save state.");
                     }
-                    return interactWithInputString(gameSave.append(input.substring(i + 1)).toString());
+                    String s = gameSave.append(input.substring(i + 1)).toString();
+                    return interactWithInputString(s);
                 default:
                     try {
                         int l = Integer.parseInt(letter);

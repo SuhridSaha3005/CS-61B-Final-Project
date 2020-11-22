@@ -132,12 +132,17 @@ public class MapMaker {
 
                 int o = (getOrientation(entry));
                 boolean room = (RandomUtils.uniform(random, 2) == 0);
+                genHelp = new GeneratorHelper(world);
 
                 System.out.print("Orientation: ");
                 System.out.println(o);
 
-                System.out.print("Trying to Make Room(0)/Hallway(1): ");
+                System.out.print("Room LuckyVar: ");
                 System.out.println(room);
+
+                System.out.print("SmallestRoomImpossible: ");
+                System.out.println(genHelp.smallestRoomImpossible(entry, o));
+
 
                 System.out.println("**************************************");
 

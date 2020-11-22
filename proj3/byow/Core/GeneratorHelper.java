@@ -49,50 +49,50 @@ public class GeneratorHelper {
         XYPosn origin;
         int numCollide = 0;
         if (orientation == 0) {
-            int bottom = RandomUtils.uniform(rand, 1, 4);
+            int bottom = RandomUtils.uniform(rand, 1, 5);
             origin = new XYPosn(entry.getX(), entry.getY() - bottom, world);
             while (!validate(origin) || world[origin.getX()][origin.getY()] != Tileset.NOTHING) {
                 if (numCollide > 200) {
                     return null;
                 }
-                bottom = RandomUtils.uniform(rand, 1, 4);
+                bottom = RandomUtils.uniform(rand, 1, 5);
                 origin = new XYPosn(entry.getX(), entry.getY() - bottom, world);
                 numCollide += 1;
             }
         } else if (orientation == 90) {
-            int farLeft = RandomUtils.uniform(rand, 1, 4);
+            int farLeft = RandomUtils.uniform(rand, 1, 5);
             origin = new XYPosn(entry.getX() - farLeft, entry.getY(), world);
             while (!validate(origin) || world[origin.getX()][origin.getY()] != Tileset.NOTHING) {
                 if (numCollide > 200) {
                     return null;
                 }
-                farLeft = RandomUtils.uniform(rand, 1, 4);
+                farLeft = RandomUtils.uniform(rand, 1, 5);
                 origin = new XYPosn(entry.getX() - farLeft, entry.getY(), world);
                 numCollide += 1;
             }
         } else if (orientation == 180) {
-            int bottom = RandomUtils.uniform(rand, 1, 4);
-            int farLeft = RandomUtils.uniform(rand, 3, 7);
+            int bottom = RandomUtils.uniform(rand, 1, 5);
+            int farLeft = RandomUtils.uniform(rand, 3, 9);
             origin = new XYPosn(entry.getX() - farLeft, entry.getY() - bottom, world);
             while (!validate(origin) || world[origin.getX()][origin.getY()] != Tileset.NOTHING) {
                 if (numCollide > 200) {
                     return null;
                 }
-                bottom = RandomUtils.uniform(rand, 1, 4);
-                farLeft = RandomUtils.uniform(rand, 3, 7);
+                bottom = RandomUtils.uniform(rand, 1, 5);
+                farLeft = RandomUtils.uniform(rand, 3, 9);
                 origin = new XYPosn(entry.getX() - farLeft, entry.getY() - bottom, world);
                 numCollide += 1;
             }
         } else {
-            int bottom = RandomUtils.uniform(rand, 3, 7);
-            int farLeft = RandomUtils.uniform(rand, 1, 4);
+            int bottom = RandomUtils.uniform(rand, 3, 9);
+            int farLeft = RandomUtils.uniform(rand, 1, 5);
             origin = new XYPosn(entry.getX() - farLeft, entry.getY() - bottom, world);
             while (!validate(origin) || world[origin.getX()][origin.getY()] != Tileset.NOTHING) {
                 if (numCollide > 200) {
                     return null;
                 }
-                bottom = RandomUtils.uniform(rand, 3, 7);
-                farLeft = RandomUtils.uniform(rand, 1, 4);
+                bottom = RandomUtils.uniform(rand, 3, 9);
+                farLeft = RandomUtils.uniform(rand, 1, 5);
                 origin = new XYPosn(entry.getX() - farLeft, entry.getY() - bottom, world);
                 numCollide += 1;
             }
@@ -110,17 +110,17 @@ public class GeneratorHelper {
                 return null;
             }
             if (orientation == 0) {
-                length = RandomUtils.uniform(rand, entry.getY() - origin.getY() + 2, 7);
-                width = RandomUtils.uniform(rand, 3, 7);
+                length = RandomUtils.uniform(rand, entry.getY() - origin.getY() + 2, 9);
+                width = RandomUtils.uniform(rand, 3, 9);
             } else if (orientation == 90) {
-                length = RandomUtils.uniform(rand, 3, 7);
-                width = RandomUtils.uniform(rand, entry.getX() - origin.getX() + 2, 7);
+                length = RandomUtils.uniform(rand, 3, 9);
+                width = RandomUtils.uniform(rand, entry.getX() - origin.getX() + 2, 9);
             } else if (orientation == 180) {
-                length = RandomUtils.uniform(rand, entry.getY() - origin.getY() + 2, 7);
+                length = RandomUtils.uniform(rand, entry.getY() - origin.getY() + 2, 9);
                 width = entry.getX() - origin.getX();
             } else {
                 length = entry.getY() - origin.getY();
-                width = RandomUtils.uniform(rand, entry.getX() - origin.getX() + 2, 7);
+                width = RandomUtils.uniform(rand, entry.getX() - origin.getX() + 2, 9);
             }
             room = new RoomStuff(origin, length, width);
             numCollide += 1;
@@ -150,9 +150,6 @@ public class GeneratorHelper {
             room2 = new RoomStuff(new XYPosn(entry.getX() - 2, entry.getY() - 3, world), 3, 3);
             room3 = new RoomStuff(new XYPosn(entry.getX() + 1, entry.getY() - 3, world), 3, 3);
             room4 = new RoomStuff(new XYPosn(entry.getX() + 2, entry.getY() - 3, world), 3, 3);
-        }
-        if (collision(room1) && collision(room2) && collision(room3) && collision(room4)) {
-            System.out.println(entry.getX() + " " + entry.getY() + " " + orientation);
         }
         return collision(room1) && collision(room2) && collision(room3) && collision(room4);
     }

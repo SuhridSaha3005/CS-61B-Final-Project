@@ -34,6 +34,7 @@ public class GeneratorHelper {
             for (int y = y0; y <= y0 + room.length; y += 1) {
                 point = new XYPosn(x, y, world);
                 if (!validate(point) || world[x][y] != Tileset.NOTHING) {
+                    System.out.println(x0 + " " + y0 + " " + room.width + " " + room.length + " " + x + " " + y);
                     return true;
                 }
             }
@@ -89,17 +90,17 @@ public class GeneratorHelper {
         while (collision(room)) {
             XYPosn origin = randomOrigin(rand, entry, orientation);
             if (orientation == 0) {
-                length = RandomUtils.uniform(rand, entry.getY() - origin.getY() + 1, 7);
+                length = RandomUtils.uniform(rand, entry.getY() - origin.getY() + 2, 7);
                 width = RandomUtils.uniform(rand, 3, 7);
             } else if (orientation == 90) {
                 length = RandomUtils.uniform(rand, 3, 7);
-                width = RandomUtils.uniform(rand, entry.getX() - origin.getX() + 1, 7);
+                width = RandomUtils.uniform(rand, entry.getX() - origin.getX() + 2, 7);
             } else if (orientation == 180) {
-                length = RandomUtils.uniform(rand, entry.getY() - origin.getY() + 1, 7);
+                length = RandomUtils.uniform(rand, entry.getY() - origin.getY() + 2, 7);
                 width = entry.getX() - origin.getX();
             } else {
                 length = entry.getY() - origin.getY();
-                width = RandomUtils.uniform(rand, entry.getX() - origin.getX() + 1, 7);
+                width = RandomUtils.uniform(rand, entry.getX() - origin.getX() + 2, 7);
             }
             room = new RoomStuff(origin, length, width);
         }

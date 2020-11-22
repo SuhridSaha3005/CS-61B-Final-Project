@@ -66,7 +66,7 @@ public class GeneratorHelper {
             int farLeft = RandomUtils.uniform(rand, 3, 7);
             origin = new XYPosn(entry.getX() - farLeft, entry.getY() - bottom, world);
             while (!validate(origin) || world[origin.getX()][origin.getY()] != Tileset.NOTHING) {
-                bottom = RandomUtils.uniform(rand, 2, 4);
+                bottom = RandomUtils.uniform(rand, 1, 4);
                 farLeft = RandomUtils.uniform(rand, 3, 7);
                 origin = new XYPosn(entry.getX() - farLeft, entry.getY() - bottom, world);
             }
@@ -76,7 +76,7 @@ public class GeneratorHelper {
             origin = new XYPosn(entry.getX() - farLeft, entry.getY() - bottom, world);
             while (!validate(origin) || world[origin.getX()][origin.getY()] != Tileset.NOTHING) {
                 bottom = RandomUtils.uniform(rand, 3, 7);
-                farLeft = RandomUtils.uniform(rand, 2, 4);
+                farLeft = RandomUtils.uniform(rand, 1, 4);
                 origin = new XYPosn(entry.getX() - farLeft, entry.getY() - bottom, world);
             }
         }

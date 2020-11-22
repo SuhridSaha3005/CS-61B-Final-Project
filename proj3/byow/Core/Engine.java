@@ -4,6 +4,7 @@ import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Engine {
@@ -17,7 +18,6 @@ public class Engine {
     public Engine() {
 
         RANDOM = new Random(434);
-        ter.initialize(WIDTH, HEIGHT);
 
         world = new TETile[WIDTH][HEIGHT];
         for (int x = 0; x < WIDTH; x += 1) {
@@ -31,7 +31,6 @@ public class Engine {
     public Engine(int seed) {
 
         RANDOM = new Random(seed);
-        ter.initialize(WIDTH, HEIGHT);
 
         world = new TETile[WIDTH][HEIGHT];
         for (int x = 0; x < WIDTH; x += 1) {
@@ -79,11 +78,30 @@ public class Engine {
         // See proj3.byow.InputDemo for a demo of how you can make a nice clean interface
         // that works for many different input types.
 
+        StringBuilder seed = null;
+        for (int i = 0; i < input.length(); i += 1) {
+            String letter = (input.substring(i, i + 1));
+            if (letter.toLowerCase().equals("s")) {
+                break;
+            }
+            if (letter.toLowerCase().equals("n")) {
+                seed = new StringBuilder();
+            }
+            if (seed != null) {
+                seed.append(letter);
+            }
+        }
+
+        if (seed == null) {
+            throw new IllegalArgumentException("Provided seed string was incorrect.");
+        }
+
         TETile[][] finalWorldFrame = null;
         return finalWorldFrame;
     }
 
     void render() {
+        ter.initialize(WIDTH, HEIGHT);
         ter.renderFrame(world);
     }
 

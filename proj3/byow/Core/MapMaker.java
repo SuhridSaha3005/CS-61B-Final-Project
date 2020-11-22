@@ -172,7 +172,7 @@ public class MapMaker {
             i += 1;
         }
 
-        int numSpring = RandomUtils.geometric(random, 0.7);
+        int numSpring = RandomUtils.geometric(random, 0.4);
         List<List<Integer>> offSpringParams = new ArrayList<>();
 
         if (!keyList.isEmpty()) {

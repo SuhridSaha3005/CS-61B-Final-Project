@@ -199,6 +199,32 @@ public class MapMakerTest {
 
     }
 
+    public static void scamTest2() {
+        Engine e = new Engine();
+        MapMaker m = new MapMaker(new Random(), e.world, Engine.WIDTH, Engine.HEIGHT);
+
+        Room r = new Room(e.world, new XYPosn(30, 12), new XYPosn(30, 13), 5, 6);
+        r.addRoom();
+        r = new Room(e.world, new XYPosn(60, 10), new XYPosn(62, 10), 6, 5);
+        r.addRoom();
+        r = new Room(e.world, new XYPosn(45, 20), new XYPosn(47, 20), 4, 4);
+        r.addRoom();
+        r = new Room(e.world, new XYPosn(20, 20), new XYPosn(22, 20), 4, 4);
+        r.addRoom();
+        r = new Room(e.world, new XYPosn(30, 32), new XYPosn(30, 33), 5, 6);
+        r.addRoom();
+        r = new Room(e.world, new XYPosn(60, 30), new XYPosn(62, 30), 6, 5);
+        r.addRoom();
+        r = new Room(e.world, new XYPosn(45, 40), new XYPosn(47, 40), 4, 4);
+        r.addRoom();
+        r = new Room(e.world, new XYPosn(20, 40), new XYPosn(22, 40), 4, 4);
+        r.addRoom();
+
+
+        m.makeMap();
+        e.render();
+    }
+
 
 
     public static void main(String[] args) {
@@ -208,8 +234,9 @@ public class MapMakerTest {
         // newHallwayTest();
         // randomizedGeneratorTest();
         // addRandomHallwaysTest();
-        makeMapTest();
+        // makeMapTest();
         // generatorTest1();
         // generatorTestCompatibility();
+        scamTest2();
     }
 }

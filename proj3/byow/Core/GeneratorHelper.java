@@ -31,8 +31,8 @@ public class GeneratorHelper {
         int y0 = room.origin.getY();
         XYPosn point;
         for (int x = x0; x <= x0 + room.width; x += 1) {
-            for (int y = y0; x <= y0 + room.length; y += 1) {
-                point = new XYPosn(x, y);
+            for (int y = y0; y <= y0 + room.length; y += 1) {
+                point = new XYPosn(x, y, world);
                 if (!validate(point) || world[x][y] != Tileset.NOTHING) {
                     return true;
                 }
@@ -61,13 +61,22 @@ public class GeneratorHelper {
                 farLeft = RandomUtils.uniform(rand, 1, 4);
                 origin = new XYPosn(entry.getX() - farLeft, entry.getY(), world);
             }
-        } else {
+        } else if (orientation == 180) {
             int bottom = RandomUtils.uniform(rand, 1, 4);
+            int farLeft = RandomUtils.uniform(rand, 3, 7);
+            origin = new XYPosn(entry.getX() - farLeft, entry.getY() - bottom, world);
+            while (!validate(origin) || world[origin.getX()][origin.getY()] != Tileset.NOTHING) {
+                bottom = RandomUtils.uniform(rand, 2, 4);
+                farLeft = RandomUtils.uniform(rand, 3, 7);
+                origin = new XYPosn(entry.getX() - farLeft, entry.getY() - bottom, world);
+            }
+        } else {
+            int bottom = RandomUtils.uniform(rand, 3, 7);
             int farLeft = RandomUtils.uniform(rand, 1, 4);
             origin = new XYPosn(entry.getX() - farLeft, entry.getY() - bottom, world);
             while (!validate(origin) || world[origin.getX()][origin.getY()] != Tileset.NOTHING) {
-                bottom = RandomUtils.uniform(rand, 1, 4);
-                farLeft = RandomUtils.uniform(rand, 1, 4);
+                bottom = RandomUtils.uniform(rand, 3, 7);
+                farLeft = RandomUtils.uniform(rand, 2, 4);
                 origin = new XYPosn(entry.getX() - farLeft, entry.getY() - bottom, world);
             }
         }
@@ -80,17 +89,17 @@ public class GeneratorHelper {
         while (collision(room)) {
             XYPosn origin = randomOrigin(rand, entry, orientation);
             if (orientation == 0) {
-                length = RandomUtils.uniform(rand, entry.getY() - origin.getY() + 3, 7);
+                length = RandomUtils.uniform(rand, entry.getY() - origin.getY() + 1, 7);
                 width = RandomUtils.uniform(rand, 3, 7);
             } else if (orientation == 90) {
                 length = RandomUtils.uniform(rand, 3, 7);
-                width = RandomUtils.uniform(rand, entry.getX() - origin.getX() + 3, 7);
+                width = RandomUtils.uniform(rand, entry.getX() - origin.getX() + 1, 7);
             } else if (orientation == 180) {
-                length = RandomUtils.uniform(rand, entry.getY() - origin.getY() + 3, 7);
+                length = RandomUtils.uniform(rand, entry.getY() - origin.getY() + 1, 7);
                 width = entry.getX() - origin.getX();
             } else {
                 length = entry.getY() - origin.getY();
-                width = RandomUtils.uniform(rand, entry.getX() - origin.getX() + 3, 7);
+                width = RandomUtils.uniform(rand, entry.getX() - origin.getX() + 1, 7);
             }
             room = new RoomStuff(origin, length, width);
         }

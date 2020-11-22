@@ -157,13 +157,13 @@ public class MapMaker {
             int orient = getOrientation(entry);
             replaceBlockIfNothing(xPos, yPos, Tileset.WALL);
             switch (orient) {
-                case 0, 180 -> {
-                    replaceBlockIfNothing(xPos, yPos + 1, Tileset.WALL);
-                    replaceBlockIfNothing(xPos, yPos - 1, Tileset.WALL);
+            case 0, 180 -> {
+                replaceBlockIfNothing(xPos, yPos + 1, Tileset.WALL);
+                replaceBlockIfNothing(xPos, yPos - 1, Tileset.WALL);
                 }
-                case 90, 270 -> {
-                    replaceBlockIfNothing(xPos + 1, yPos, Tileset.WALL);
-                    replaceBlockIfNothing(xPos - 1, yPos, Tileset.WALL);
+            case 90, 270 -> {
+                replaceBlockIfNothing(xPos + 1, yPos, Tileset.WALL);
+                replaceBlockIfNothing(xPos - 1, yPos, Tileset.WALL);
                 }
             }
             return null;
@@ -389,54 +389,54 @@ public class MapMaker {
         }
 
         switch (dir) {
-            case 0:
-                replaceBlockIfNothing(xPos - 1, yPos + 1, Tileset.WALL);
-                replaceBlockIfNothing(xPos - 1, yPos - 1, Tileset.WALL);
-                replaceBlockIfNothing(xPos - 1, yPos, Tileset.WALL);
-                while (length > 0) {
-                    replaceBlock(xPos, yPos, Tileset.FLOOR);
-                    replaceBlockIfNothing(xPos, yPos + 1, Tileset.WALL);
-                    replaceBlockIfNothing(xPos, yPos - 1, Tileset.WALL);
-                    xPos += 1;
-                    length -= 1;
-                }
-                break;
-            case 90:
-                replaceBlockIfNothing(xPos + 1, yPos - 1, Tileset.WALL);
-                replaceBlockIfNothing(xPos - 1, yPos - 1, Tileset.WALL);
-                replaceBlockIfNothing(xPos, yPos - 1, Tileset.WALL);
-                while (length > 0) {
-                    replaceBlock(xPos, yPos, Tileset.FLOOR);
-                    replaceBlockIfNothing(xPos - 1, yPos, Tileset.WALL);
-                    replaceBlockIfNothing(xPos + 1, yPos, Tileset.WALL);
-                    yPos += 1;
-                    length -= 1;
-                }
-                break;
-            case 180:
-                replaceBlockIfNothing(xPos + 1, yPos + 1, Tileset.WALL);
-                replaceBlockIfNothing(xPos + 1, yPos - 1, Tileset.WALL);
-                replaceBlockIfNothing(xPos + 1, yPos, Tileset.WALL);
-                while (length > 0) {
-                    replaceBlock(xPos, yPos, Tileset.FLOOR);
-                    replaceBlockIfNothing(xPos, yPos + 1, Tileset.WALL);
-                    replaceBlockIfNothing(xPos, yPos - 1, Tileset.WALL);
-                    xPos -= 1;
-                    length -= 1;
-                }
-                break;
-            case 270:
-                replaceBlockIfNothing(xPos + 1, yPos + 1, Tileset.WALL);
-                replaceBlockIfNothing(xPos - 1, yPos + 1, Tileset.WALL);
+        case 0:
+            replaceBlockIfNothing(xPos - 1, yPos + 1, Tileset.WALL);
+            replaceBlockIfNothing(xPos - 1, yPos - 1, Tileset.WALL);
+            replaceBlockIfNothing(xPos - 1, yPos, Tileset.WALL);
+            while (length > 0) {
+                replaceBlock(xPos, yPos, Tileset.FLOOR);
                 replaceBlockIfNothing(xPos, yPos + 1, Tileset.WALL);
-                while (length > 0) {
-                    replaceBlock(xPos, yPos, Tileset.FLOOR);
-                    replaceBlockIfNothing(xPos - 1, yPos, Tileset.WALL);
-                    replaceBlockIfNothing(xPos + 1, yPos, Tileset.WALL);
-                    yPos -= 1;
-                    length -= 1;
-                }
-                break;
+                replaceBlockIfNothing(xPos, yPos - 1, Tileset.WALL);
+                xPos += 1;
+                length -= 1;
+            }
+            break;
+        case 90:
+            replaceBlockIfNothing(xPos + 1, yPos - 1, Tileset.WALL);
+            replaceBlockIfNothing(xPos - 1, yPos - 1, Tileset.WALL);
+            replaceBlockIfNothing(xPos, yPos - 1, Tileset.WALL);
+            while (length > 0) {
+                replaceBlock(xPos, yPos, Tileset.FLOOR);
+                replaceBlockIfNothing(xPos - 1, yPos, Tileset.WALL);
+                replaceBlockIfNothing(xPos + 1, yPos, Tileset.WALL);
+                yPos += 1;
+                length -= 1;
+            }
+            break;
+        case 180:
+            replaceBlockIfNothing(xPos + 1, yPos + 1, Tileset.WALL);
+            replaceBlockIfNothing(xPos + 1, yPos - 1, Tileset.WALL);
+            replaceBlockIfNothing(xPos + 1, yPos, Tileset.WALL);
+            while (length > 0) {
+                replaceBlock(xPos, yPos, Tileset.FLOOR);
+                replaceBlockIfNothing(xPos, yPos + 1, Tileset.WALL);
+                replaceBlockIfNothing(xPos, yPos - 1, Tileset.WALL);
+                xPos -= 1;
+                length -= 1;
+            }
+            break;
+        case 270:
+            replaceBlockIfNothing(xPos + 1, yPos + 1, Tileset.WALL);
+            replaceBlockIfNothing(xPos - 1, yPos + 1, Tileset.WALL);
+            replaceBlockIfNothing(xPos, yPos + 1, Tileset.WALL);
+            while (length > 0) {
+                replaceBlock(xPos, yPos, Tileset.FLOOR);
+                replaceBlockIfNothing(xPos - 1, yPos, Tileset.WALL);
+                replaceBlockIfNothing(xPos + 1, yPos, Tileset.WALL);
+                yPos -= 1;
+                length -= 1;
+            }
+            break;
         }
         return new XYPosn(xPos, yPos);
     }

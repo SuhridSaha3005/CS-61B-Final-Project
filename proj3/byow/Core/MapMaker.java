@@ -114,19 +114,9 @@ public class MapMaker {
         int xStart = RandomUtils.uniform(random, width / 2 - width/4, width/2 + width/4);
         int yStart = RandomUtils.uniform(random, height / 2 - height / 4, height / 2 + height / 4);
         XYPosn entry = new XYPosn(xStart, yStart);
-        System.out.println("Creating the initial hallway.");
-        System.out.print("Orientation: ");
-        System.out.println(getOrientation(entry));
-
-
-        System.out.print("Position: ");
-        System.out.print(entry.getX());
-        System.out.print(" ");
-        System.out.println(entry.getY());
 
         List<XYPosn> k = addMultiSpringHallways(entry);
 
-        System.out.println("***************************************");
         singlePathMaker(k);
         makeFlowersIntoWalls();
     }
@@ -151,7 +141,6 @@ public class MapMaker {
         List<XYPosn> newXYPosns = new ArrayList<>();
 
         if (randHallwayParams.isEmpty()) {
-            System.out.println("Saw no way to proceed. Ending this line.");
             int xPos = entry.getX();
             int yPos = entry.getY();
             int orient = getOrientation(entry);
@@ -193,41 +182,21 @@ public class MapMaker {
             boolean room = (RandomUtils.uniform(random, 2) == 0);
             genHelp = new GeneratorHelper(world);
 
-            System.out.print("Orientation: ");
-            System.out.println(o);
-
-            System.out.print("Room LuckyVar: ");
-            System.out.println(room);
-
-            System.out.print("SmallestRoomImpossible: ");
-            System.out.println(genHelp.smallestRoomImpossible(entry, o));
-
-            System.out.print("Position: ");
-            System.out.print(entry.getX());
-            System.out.print(" ");
-            System.out.println(entry.getY());
-
-
 
             if ((o >= 0) && !genHelp.smallestRoomImpossible(entry, o)) {
                 if (room) {
-                    System.out.println("Trying to make room!");
                     k = genHelp.addMultiSpringRoom(random, entry, o);
                     if (k == null) {
                         k = addMultiSpringHallways(entry);
                     } else {
-                        System.out.println("Making the mandatory hallway after room!");
                         singlePathMaker(k, false);
                     }
                 } else {
-                    System.out.println("Creating Hallway!");
                     k = addMultiSpringHallways(entry);
                 }
             } else {
-                System.out.println("Creating Hallway!");
                 k = addMultiSpringHallways(entry);
             }
-            System.out.println("**************************************");
             singlePathMaker(k);
         }
     }
@@ -245,41 +214,21 @@ public class MapMaker {
             int o = (getOrientation(entry));
             genHelp = new GeneratorHelper(world);
 
-            System.out.print("Orientation: ");
-            System.out.println(o);
-
-            System.out.print("Room LuckyVar: ");
-            System.out.println(room);
-
-            System.out.print("SmallestRoomImpossible: ");
-            System.out.println(genHelp.smallestRoomImpossible(entry, o));
-
-            System.out.print("Position: ");
-            System.out.print(entry.getX());
-            System.out.print(" ");
-            System.out.println(entry.getY());
-
-
 
             if ((o >= 0) && !genHelp.smallestRoomImpossible(entry, o)) {
                 if (room) {
-                    System.out.println("Trying to make room!");
                     k = genHelp.addMultiSpringRoom(random, entry, o);
                     if (k == null) {
                         k = addMultiSpringHallways(entry);
                     } else {
-                        System.out.println("Making the mandatory hallway after room!");
                         singlePathMaker(k, false);
                     }
                 } else {
-                    System.out.println("Creating Hallway!");
                     k = addMultiSpringHallways(entry);
                 }
             } else {
-                System.out.println("Creating Hallway!");
                 k = addMultiSpringHallways(entry);
             }
-            System.out.println("**************************************");
             singlePathMaker(k);
         }
     }

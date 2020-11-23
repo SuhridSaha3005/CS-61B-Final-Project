@@ -94,10 +94,10 @@ public class MapMakerTest {
         Engine e = new Engine();
         MapMaker m = new MapMaker(e.getSeedRandom(), e.getWorld(), Engine.WIDTH, Engine.HEIGHT);
 
-        m.longestHallwayMaker(new XYPosn(10, 15), 0);
+        //m.longestHallwayMaker(new XYPosn(10, 15), 0);
         // m.longestHallwayMaker(new XYPosn(10, 15),90);
         // m.longestHallwayMaker(new XYPosn(10, 15), 180);
-        m.longestHallwayMaker(new XYPosn(10, 15), 270);
+        // m.longestHallwayMaker(new XYPosn(10, 15), 270);
 
         /* m.longestHallwayMaker(new XYPosn(18, 15), 0);
         m.longestHallwayMaker(new XYPosn(20, 15), 90);

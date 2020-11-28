@@ -119,8 +119,10 @@ public class Overlay {
     }
 
     public void updatePosn(XYPosn newPlayerPosn, ArrayList<XYPosn> newGhostPosn) {
+        brighten(playerPosn, -50);
         updateGhostPosn(newGhostPosn);
         updatePlayerPosn(newPlayerPosn);
+        brighten(newPlayerPosn, 50);
     }
 
     public ArrayList<XYPosn> get(TETile tileType) {
@@ -133,10 +135,13 @@ public class Overlay {
     }
 
     private void brighten(XYPosn sourcePosn, double wattage) {
-        for (int x = sourcePosn.getX() - 10; x < sourcePosn.getX() + 10; x += 1) {
-            for (int y = sourcePosn.getY() - 10; y < sourcePosn.getY() + 10; y += 1) {
+        if (sourcePosn == null) {
+            return;
+        }
+        for (int x = sourcePosn.getX() - 20; x < sourcePosn.getX() + 20; x += 1) {
+            for (int y = sourcePosn.getY() - 20; y < sourcePosn.getY() + 20; y += 1) {
                 XYPosn point = new XYPosn(x, y);
-                if (validate(point) && (euclidean(sourcePosn, point) < 10)) {
+                if (validate(point) && (euclidean(sourcePosn, point) < 20)) {
                     addLuminosity(sourcePosn, point, wattage);
                 }
             }
@@ -149,7 +154,7 @@ public class Overlay {
 
     private void addLuminosity(XYPosn sourcePosn, XYPosn point, double wattage) {
         if (luminosity[point.getX()][point.getY()] < 100) {
-            luminosity[point.getX()][point.getY()] += wattage / Math.max((Math.pow(euclidean(sourcePosn, point), 1.1)), 1);
+            luminosity[point.getX()][point.getY()] += wattage / Math.max((Math.pow(euclidean(sourcePosn, point), 1.5)), 1);
         }
     }
 

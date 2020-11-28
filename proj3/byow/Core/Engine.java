@@ -223,7 +223,7 @@ public class Engine {
 
     public static void main(String[] args) {
         Engine e = new Engine();
-        e.interactWithInputString("n123s");
+        e.interactWithInputString("n1234s");
         e.initialize();
         e.createWorld();
         e.render();

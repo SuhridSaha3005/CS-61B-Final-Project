@@ -22,10 +22,11 @@ public class Overlay {
     private Random rand;
     private Random rand2Flicker = new Random();
 
-    private final double LAMPFALLOFF = 1.6;
+    private final double LAMPFALLOFF = 1.8;
     private final double PLAYERFALLOFF = 1.2;
-    private final int LAMPFLICKERYNESS = 7;
+    private final int LAMPFLICKERYNESS = 10;
     private final int KEYDISPLAYTIME = 1000;
+    private final int LAMPWATTAGE = 100;
 
     /** Overlays objects in the world and adds color and lighting. */
     public Overlay(Random r, TETile[][] wrld, int w, int h) {
@@ -54,11 +55,11 @@ public class Overlay {
                 luminosity[i][j] = 0.0;
             }
         }
-        lampPosn = addLampsRandPosn(15);
+        lampPosn = addLampsRandPosn(Math.max(tilePosn.get(Tileset.FLOOR).size() / 100, 1));
         keyPosn = addKeysRandPosn(3);
         doorPosn = addDoorRandPosn();
         for (XYPosn singLampPosn: lampPosn) {
-            brighten(singLampPosn, 100, LAMPFALLOFF);
+            brighten(singLampPosn, LAMPWATTAGE, LAMPFALLOFF);
             lightState.put(singLampPosn, 0);
         }
 

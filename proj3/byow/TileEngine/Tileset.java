@@ -17,7 +17,8 @@ import java.awt.Color;
  */
 
 public class Tileset {
-    private static Color purpleColor = new Color(Color.yellow.getRed(), Color.yellow.getBlue(), Color.yellow.getGreen(), Color.yellow.getAlpha());
+    private static Color purpleColorDark = new Color(Color.yellow.getRed(), Color.yellow.getBlue(), Color.yellow.getGreen(), Color.yellow.getAlpha() - 100);
+    private static Color purpleColorBright = new Color(Color.yellow.getRed(), Color.yellow.getBlue(), Color.yellow.getGreen(), Color.yellow.getAlpha() - 75);
 
     public static final TETile AVATAR = new TETile('@', Color.white, Color.black, "you");
     public static final TETile WALL = new TETile('#', new Color(216, 128, 128), Color.darkGray,
@@ -36,9 +37,9 @@ public class Tileset {
     public static final TETile MOUNTAIN = new TETile('▲', Color.gray, Color.black, "mountain");
     public static final TETile TREE = new TETile('♠', Color.green, Color.black, "tree");
     public static final TETile PLAYER = new TETile('☺', Color.white, Color.black, "player");
-    public static final TETile GHOST = new TETile('☠', purpleColor, Color.black, "ghost");
-    public static final TETile KEY = new TETile('⚷', purpleColor, Color.black, "key");
-    public static final TETile LAMP = new TETile('0', purpleColor, Color.black, "lamp");
+    public static final TETile GHOST = new TETile('☠', purpleColorBright, Color.black, "ghost");
+    public static final TETile KEY = new TETile('⚷', purpleColorBright, Color.black, "key");
+    public static final TETile LAMP = new TETile('☀', purpleColorDark, Color.black, "lamp");
 
     public static TETile modTile(double a, TETile tileType) {
         double alpha = Math.min(a, 100);

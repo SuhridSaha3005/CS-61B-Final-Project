@@ -5,6 +5,8 @@ import byow.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 
 public class Avatar {
@@ -19,62 +21,62 @@ public class Avatar {
         this.position = position;
     }
 
-    private XYPosn up(TETile[][] world, XYPosn pos) {
-        if (pos.getY() + 1 == world[0].length) {
+    private XYPosn up() {
+        if (position.getY() + 1 == world[0].length) {
             return null;
         } else {
-            return new XYPosn(pos.getX(), pos.getY() + 1, world);
+            return new XYPosn(position.getX(), position.getY() + 1, world);
         }
     }
 
-    private XYPosn down(TETile[][] world, XYPosn pos) {
-        if (pos.getY() == 0) {
+    private XYPosn down() {
+        if (position.getY() == 0) {
             return null;
         } else {
-            return new XYPosn(pos.getX(), pos.getY() - 1, world);
+            return new XYPosn(position.getX(), position.getY() - 1, world);
         }
     }
 
-    private XYPosn right(TETile[][] world, XYPosn pos) {
-        if (pos.getX() + 1 == world.length) {
+    private XYPosn right() {
+        if (position.getX() + 1 == world.length) {
             return null;
         } else {
-            return new XYPosn(pos.getX() + 1, pos.getY(), world);
+            return new XYPosn(position.getX() + 1, position.getY(), world);
         }
     }
 
-    private XYPosn left(TETile[][] world, XYPosn pos) {
-        if (pos.getX() == 0) {
+    private XYPosn left() {
+        if (position.getX() == 0) {
             return null;
         } else {
-            return new XYPosn(pos.getX() - 1, pos.getY(), world);
+            return new XYPosn(position.getX() - 1, position.getY(), world);
         }
     }
 
     public void move(char key) {
         if (key == 'w') {
-            XYPosn up = up(world, position);
+            XYPosn up = up();
             if (up != null && world[up.getX()][up.getY()] == Tileset.FLOOR) {
                 world[position.getX()][position.getY()] = Tileset.FLOOR;
                 position = up;
                 world[up.getX()][up.getY()] = appearance;
             }
         } else if (key == 's') {
-            XYPosn down = down(world, position);
+            XYPosn down = down();
             if (down != null && world[down.getX()][down.getY()] == Tileset.FLOOR) {
                 world[position.getX()][position.getY()] = Tileset.FLOOR;
                 position = down;
                 world[down.getX()][down.getY()] = appearance;
             }
         } else if (key == 'd') {
-            XYPosn right = right(world, position);
+            XYPosn right = right();
             if (right != null && world[right.getX()][right.getY()] == Tileset.FLOOR) {
                 world[position.getX()][position.getY()] = Tileset.FLOOR;
                 position = right;
                 world[right.getX()][right.getY()] = appearance;
             }
         } else if (key == 'a') {
-            XYPosn left = left(world, position);
+            XYPosn left = left();
             if (left != null && world[left.getX()][left.getY()] == Tileset.FLOOR) {
                 world[position.getX()][position.getY()] = Tileset.FLOOR;
                 position = left;
@@ -85,6 +87,32 @@ public class Avatar {
 
     public XYPosn getPosition() {
         return position;
+    }
+
+    private static double metric(XYPosn pos1, XYPosn pos2) {
+        return Math.pow(pos1.getX() - pos2.getX(), 2) + Math.pow(pos1.getY() - pos2.getY(), 2);
+    }
+
+    public void moveCloser(Avatar player) {
+        HashMap<XYPosn, Character> directionsAll = new HashMap<>();
+        directionsAll.put(up(), 'w');
+        directionsAll.put(down(), 's');
+        directionsAll.put(right(), 'd');
+        directionsAll.put(left(), 'a');
+        HashMap<XYPosn, Character> directions = new HashMap<>();
+        for (XYPosn pos : directionsAll.keySet()) {
+            if (pos != null && world[pos.getX()][pos.getY()] == Tileset.FLOOR) {
+                directions.put(pos, directionsAll.get(pos));
+            }
+        }
+        XYPosn nearest = new XYPosn(0, 0);
+        double minDist = Double.POSITIVE_INFINITY;
+        for (XYPosn pos : directions.keySet()) {
+            if (metric(pos, player.position) < minDist) {
+                nearest = pos;
+            }
+        }
+        move(directions.get(nearest));
     }
 
     public static void main(String[] args) {
@@ -107,20 +135,14 @@ public class Avatar {
         Avatar player = new Avatar(w, Tileset.PLAYER, init1);
         Avatar ghost = new Avatar(w, Tileset.GHOST, init2);
         Avatar key = new Avatar(w, Tileset.KEY, init3);
-        ArrayList<Character> input = new ArrayList<>();
         char[] keys = "wasd".toCharArray();
         char ghostKey;
         e.render();
-        while (input.size() < 100) {
+        while (true) {
             if (StdDraw.hasNextKeyTyped()) {
-                input.add(StdDraw.nextKeyTyped());
-                player.move(input.get(input.size() - 1));
-                XYPosn oldPos = ghost.position;
-                while (ghost.position == oldPos) {
-                    ghostKey = keys[RandomUtils.uniform(rand, 0, keys.length)];
-                    ghost.move(ghostKey);
-                    e.render();
-                }
+                player.move(StdDraw.nextKeyTyped());
+                ghost.moveCloser(player);
+                e.render();
             }
         }
     }

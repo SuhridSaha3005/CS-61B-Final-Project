@@ -145,10 +145,13 @@ public class Engine {
         return world;
     }
 
+    void initialize() {
+        ter.initialize(WIDTH, HEIGHT);
+    }
+
 
     /** Initializes and renders the map instance. */
     void render() {
-        ter.initialize(WIDTH, HEIGHT);
         ter.renderFrame(world);
         hud.update();
         StdDraw.show();

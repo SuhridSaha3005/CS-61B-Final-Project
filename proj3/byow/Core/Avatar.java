@@ -54,28 +54,28 @@ public class Avatar {
     public void move(char key) {
         if (key == 'w') {
             XYPosn up = up();
-            if (up != null && world[up.getX()][up.getY()] == Tileset.FLOOR) {
+            if (up != null && world[up.getX()][up.getY()] != Tileset.WALL) {
                 world[position.getX()][position.getY()] = Tileset.FLOOR;
                 position = up;
                 world[up.getX()][up.getY()] = appearance;
             }
         } else if (key == 's') {
             XYPosn down = down();
-            if (down != null && world[down.getX()][down.getY()] == Tileset.FLOOR) {
+            if (down != null && world[down.getX()][down.getY()] != Tileset.WALL) {
                 world[position.getX()][position.getY()] = Tileset.FLOOR;
                 position = down;
                 world[down.getX()][down.getY()] = appearance;
             }
         } else if (key == 'd') {
             XYPosn right = right();
-            if (right != null && world[right.getX()][right.getY()] == Tileset.FLOOR) {
+            if (right != null && world[right.getX()][right.getY()] != Tileset.WALL) {
                 world[position.getX()][position.getY()] = Tileset.FLOOR;
                 position = right;
                 world[right.getX()][right.getY()] = appearance;
             }
         } else if (key == 'a') {
             XYPosn left = left();
-            if (left != null && world[left.getX()][left.getY()] == Tileset.FLOOR) {
+            if (left != null && world[left.getX()][left.getY()] != Tileset.WALL) {
                 world[position.getX()][position.getY()] = Tileset.FLOOR;
                 position = left;
                 world[left.getX()][left.getY()] = appearance;

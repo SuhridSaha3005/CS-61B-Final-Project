@@ -61,7 +61,6 @@ public class Overlay {
         int randIndex = RandomUtils.uniform(rand, oldTilePosn.size());
         XYPosn replacePosn = oldTilePosn.get(randIndex);
         world[replacePosn.getX()][replacePosn.getY()] = newTile;
-        tilePosn.get(oldTile).remove(randIndex);
         return replacePosn;
     }
 
@@ -82,7 +81,6 @@ public class Overlay {
                 world[replacePosn.getX()][replacePosn.getY()] = newTile;
                 temp.add(randIndex);
                 newObjPosn.add(replacePosn);
-                tilePosn.get(oldTile).remove(randIndex);
                 numReplace -= 1;
             }
         }

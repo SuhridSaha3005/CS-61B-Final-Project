@@ -99,8 +99,10 @@ public class Avatar {
         Random rand = new Random(5000);
         XYPosn init1 = floors.get(RandomUtils.uniform(rand, 0, floors.size()));
         XYPosn init2 = floors.get(RandomUtils.uniform(rand, 0, floors.size()));
+        XYPosn init3 = floors.get(RandomUtils.uniform(rand, 0, floors.size()));
         Avatar player = new Avatar(w, Tileset.PLAYER, init1);
         Avatar ghost = new Avatar(w, Tileset.GHOST, init2);
+        Avatar key = new Avatar(w, Tileset.KEY, init3);
         ArrayList<Character> input = new ArrayList<>();
         char[] keys = "wasd".toCharArray();
         char ghostKey;

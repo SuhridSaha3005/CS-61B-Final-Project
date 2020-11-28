@@ -83,6 +83,10 @@ public class Avatar {
         }
     }
 
+    public XYPosn getPosition() {
+        return position;
+    }
+
     public static void main(String[] args) {
         Engine e = new Engine();
         e.initialize();

@@ -183,12 +183,7 @@ public class Engine {
                 }
                 player.move(typed);
                 for (Avatar g: ghost) {
-                    XYPosn oldPos = g.getPosn();
-                    char ghostKey;
-                    while (g.getPosn().equals(oldPos)) {
-                        ghostKey = keys[RandomUtils.uniform(seedRandom, 0, keys.length)];
-                        g.move(ghostKey);
-                    }
+                    g.randomMove(seedRandom);
                 }
             }
             render();

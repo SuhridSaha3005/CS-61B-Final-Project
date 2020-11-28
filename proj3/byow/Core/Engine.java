@@ -183,8 +183,8 @@ public class Engine {
                     ghostPosn.add(g.getPosn());
                 }
                 finalMap.updatePosn(player.getPosn(), ghostPosn);
+                render();
             }
-            render();
         }
     }
 
@@ -195,7 +195,11 @@ public class Engine {
 
     /** Renders the map instance. */
     void render() {
-        ter.renderFrame(finalMap.getDarkWorld());
+        if (lighting) {
+            ter.renderFrame(finalMap.getDarkWorld());
+        } else {
+            ter.renderFrame(world);
+        }
         hud.update();
         StdDraw.show();
     }
@@ -223,7 +227,7 @@ public class Engine {
 
     public static void main(String[] args) {
         Engine e = new Engine();
-        e.interactWithInputString("n1234s");
+        e.interactWithInputString("n3005s");
         e.initialize();
         e.createWorld();
         e.render();

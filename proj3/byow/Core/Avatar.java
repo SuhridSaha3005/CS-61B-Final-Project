@@ -85,6 +85,7 @@ public class Avatar {
 
     public static void main(String[] args) {
         Engine e = new Engine();
+        e.initialize();
         e.interactWithInputString("n3005s");
         TETile[][] w = e.getWorld();
         ArrayList<XYPosn> floors = new ArrayList<>();

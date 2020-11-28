@@ -3,6 +3,7 @@ package byow.Core;
 import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
+import edu.princeton.cs.introcs.StdDraw;
 
 import java.util.Random;
 
@@ -30,8 +31,12 @@ public class Engine {
     /** Saves the game save state. */
     private StringBuilder gameSave = null;
 
+    /** Heads Up Display. */
+    private HeadsUpDisplay hud;
+
     /** Constructor for Engine Class. */
     public Engine() {
+        hud = new HeadsUpDisplay(0, WIDTH, HEIGHT);
     }
 
     /** Constructor with seed for Engine Class.
@@ -127,22 +132,26 @@ public class Engine {
      * @return TETile array corresponding to generated map
      */
     TETile[][] createWorld() {
-        world = new TETile[WIDTH][HEIGHT];
+        int height = HEIGHT - 3;
+        world = new TETile[WIDTH][height];
         for (int x = 0; x < WIDTH; x += 1) {
-            for (int y = 0; y < HEIGHT; y += 1) {
+            for (int y = 0; y < height; y += 1) {
                 world[x][y] = Tileset.NOTHING;
             }
         }
 
-        MapMaker map = new MapMaker(seedRandom, world, WIDTH, HEIGHT);
+        MapMaker map = new MapMaker(seedRandom, world, WIDTH, height);
         map.makeMap();
         return world;
     }
+
 
     /** Initializes and renders the map instance. */
     void render() {
         ter.initialize(WIDTH, HEIGHT);
         ter.renderFrame(world);
+        hud.update();
+        StdDraw.show();
     }
 
     /** Gets the seed, as desired.

@@ -5,6 +5,7 @@ import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 /** @author Shrihan Agarwal, Suhrid Saha
@@ -33,6 +34,15 @@ public class Engine {
 
     /** Heads Up Display. */
     private HeadsUpDisplay hud;
+
+    /** Overlay/Theme. */
+    private Overlay finalMap;
+
+    /** Player Instance. */
+    Avatar player;
+
+    /** Ghosts Instance List. */
+    ArrayList<Avatar> ghost;
 
     /** Constructor for Engine Class. */
     public Engine() {
@@ -133,6 +143,9 @@ public class Engine {
      */
     TETile[][] createWorld() {
         int height = HEIGHT - 3;
+        int numGhosts = 2;
+
+
         world = new TETile[WIDTH][height];
         for (int x = 0; x < WIDTH; x += 1) {
             for (int y = 0; y < height; y += 1) {
@@ -142,15 +155,52 @@ public class Engine {
 
         MapMaker map = new MapMaker(seedRandom, world, WIDTH, height);
         map.makeMap();
+
+        finalMap = new Overlay(seedRandom, world, WIDTH, height);
+        player = new Avatar(world, Tileset.PLAYER, finalMap.addPlayerRandPosn());
+        ArrayList<XYPosn> ghostPosns = finalMap.addGhostRandPosn(numGhosts);
+        ghost = new ArrayList<>();
+        for (int i = 0; i < numGhosts; i++) {
+            ghost.add(new Avatar(world, Tileset.GHOST, ghostPosns.get(i)));
+        }
+
+        finalMap.updatePosn(player.getPosn(), ghostPosns);
         return world;
     }
 
+    void runWorld() {
+        char[] keys = "wasd".toCharArray();
+        while (true) {
+            if (StdDraw.hasNextKeyTyped()) {
+                char typed = StdDraw.nextKeyTyped();
+                if (typed == "g".charAt(0)) {
+                    for (XYPosn xy: finalMap.get(Tileset.FLOOR)) {
+                        if (xy != null) {
+                            world[xy.getX()][xy.getY()] = Tileset.GRASS;
+                        }
+                        render();
+                    }
+                }
+                player.move(typed);
+                for (Avatar g: ghost) {
+                    XYPosn oldPos = g.getPosn();
+                    char ghostKey;
+                    while (g.getPosn().equals(oldPos)) {
+                        ghostKey = keys[RandomUtils.uniform(seedRandom, 0, keys.length)];
+                        g.move(ghostKey);
+                    }
+                }
+            }
+            render();
+        }
+    }
+
+    /** Initializes the Map Instance. */
     void initialize() {
         ter.initialize(WIDTH, HEIGHT);
     }
 
-
-    /** Initializes and renders the map instance. */
+    /** Renders the map instance. */
     void render() {
         ter.renderFrame(world);
         hud.update();
@@ -178,4 +228,12 @@ public class Engine {
         return seedRandom;
     }
 
+    public static void main(String[] args) {
+        Engine e = new Engine();
+        e.interactWithInputString("n123s");
+        e.initialize();
+        e.createWorld();
+        e.render();
+        e.runWorld();
+    }
 }

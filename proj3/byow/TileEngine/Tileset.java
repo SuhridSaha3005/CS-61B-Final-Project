@@ -36,6 +36,7 @@ public class Tileset {
     public static final TETile PLAYER = new TETile('☺', Color.white, Color.black, "player");
     public static final TETile GHOST = new TETile('☠', Color.yellow, Color.black, "ghost");
     public static final TETile KEY = new TETile('⚷', Color.yellow, Color.black, "key");
+    public static final TETile LAMP = new TETile('0', Color.yellow, Color.black, "lamp");
 }
 
 

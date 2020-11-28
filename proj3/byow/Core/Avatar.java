@@ -100,6 +100,10 @@ public class Avatar {
         }
     }
 
+    public XYPosn getPosn() {
+        return position;
+    }
+
     public static void main(String[] args) {
         Engine e = new Engine();
         e.initialize();

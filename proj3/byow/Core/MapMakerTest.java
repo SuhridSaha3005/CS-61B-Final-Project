@@ -307,9 +307,10 @@ public class MapMakerTest {
     public static void makeMapFinal() {
         Engine e = new Engine();
         Engine e2 = new Engine();
-        e.interactWithInputString("n519743323643s");
+        e.interactWithInputString("n123s");
         e2.interactWithInputString("n5197880843569031643s");
         /* assertArrayEquals(e.createWorld(), e2.createWorld()); */
+        e.initialize();
         e.render();
     }
 

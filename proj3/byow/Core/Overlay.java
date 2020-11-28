@@ -7,6 +7,7 @@ import java.util.*;
 
 public class Overlay {
     private TETile[][] world;
+    private double[][] luminosity;
     private final int width;
     private final int height;
     private HashMap<TETile, ArrayList<XYPosn>> tilePosn;
@@ -23,6 +24,7 @@ public class Overlay {
         rand = r;
         tilePosn = new HashMap<>();
         ghostPosn = new ArrayList<>();
+        luminosity = new double[width][height];
 
         for (int i = 0; i < width; i += 1) {
             for (int j = 0; j < height; j += 1) {
@@ -35,10 +37,20 @@ public class Overlay {
                     a.add(new XYPosn(i, j));
                     tilePosn.put(world[i][j], a);
                 }
+                luminosity[i][j] = 0.0;
             }
         }
 
-        lampPosn = addLampsRandPosn(10);
+        lampPosn = addLampsRandPosn(15);
+        for (XYPosn singLampPosn: lampPosn) {
+            brighten(singLampPosn, 100);
+        }
+
+        StringJoiner sj = new StringJoiner(System.lineSeparator());
+        for (double[] row : luminosity) {
+            sj.add(Arrays.toString(row));
+        }
+        System.out.println(sj.toString());
     }
 
     public XYPosn addPlayerRandPosn() {
@@ -59,6 +71,9 @@ public class Overlay {
         }
         ArrayList<XYPosn> oldTilePosn = tilePosn.get(oldTile);
         int randIndex = RandomUtils.uniform(rand, oldTilePosn.size());
+        while (world[oldTilePosn.get(randIndex).getX()][oldTilePosn.get(randIndex).getY()] != oldTile) {
+            randIndex = RandomUtils.uniform(rand, oldTilePosn.size());
+        }
         XYPosn replacePosn = oldTilePosn.get(randIndex);
         world[replacePosn.getX()][replacePosn.getY()] = newTile;
         return replacePosn;
@@ -76,6 +91,9 @@ public class Overlay {
         ArrayList<XYPosn> newObjPosn = new ArrayList<>();
         while (numReplace > 0) {
             int randIndex = RandomUtils.uniform(rand, oldTilePosn.size());
+            while (world[oldTilePosn.get(randIndex).getX()][oldTilePosn.get(randIndex).getY()] != oldTile) {
+                randIndex = RandomUtils.uniform(rand, oldTilePosn.size());
+            }
             if (!temp.contains(randIndex)) {
                 XYPosn replacePosn = oldTilePosn.get(randIndex);
                 world[replacePosn.getX()][replacePosn.getY()] = newTile;
@@ -107,6 +125,43 @@ public class Overlay {
 
     public ArrayList<XYPosn> get(TETile tileType) {
         return tilePosn.get(tileType);
+    }
+
+
+    private boolean validate(XYPosn point) {
+        return point.getX() >= 0 && point.getX() < world.length && point.getY() >= 0 && point.getY() < world[0].length;
+    }
+
+    private void brighten(XYPosn sourcePosn, double wattage) {
+        for (int x = sourcePosn.getX() - 10; x < sourcePosn.getX() + 10; x += 1) {
+            for (int y = sourcePosn.getY() - 10; y < sourcePosn.getY() + 10; y += 1) {
+                XYPosn point = new XYPosn(x, y);
+                if (validate(point) && (euclidean(sourcePosn, point) < 10)) {
+                    addLuminosity(sourcePosn, point, wattage);
+                }
+            }
+        }
+    }
+
+    private double euclidean(XYPosn source, XYPosn point) {
+        return Math.sqrt(Math.pow((source.getX() - point.getX()), 2) + Math.pow((source.getY() - point.getY()), 2));
+    }
+
+    private void addLuminosity(XYPosn sourcePosn, XYPosn point, double wattage) {
+        if (luminosity[point.getX()][point.getY()] < 100) {
+            luminosity[point.getX()][point.getY()] += wattage / Math.max((Math.pow(euclidean(sourcePosn, point), 1.1)), 1);
+        }
+    }
+
+    public TETile[][] getDarkWorld() {
+        TETile[][] darkWorld = new TETile[width][height];
+
+        for (int i = 0; i < width; i += 1) {
+            for (int j = 0; j < height; j += 1) {
+                darkWorld[i][j] = Tileset.modTile(luminosity[i][j], world[i][j]);
+            }
+        }
+        return darkWorld;
     }
 
 }

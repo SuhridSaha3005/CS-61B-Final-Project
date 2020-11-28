@@ -44,6 +44,9 @@ public class Engine {
     /** Ghosts Instance List. */
     ArrayList<Avatar> ghost;
 
+    /** Turn on/off lighting. */
+    boolean lighting = true;
+
     /** Constructor for Engine Class. */
     public Engine() {
         hud = new HeadsUpDisplay(0, WIDTH, HEIGHT);
@@ -173,18 +176,13 @@ public class Engine {
         while (true) {
             if (StdDraw.hasNextKeyTyped()) {
                 char typed = StdDraw.nextKeyTyped();
-                if (typed == "g".charAt(0)) {
-                    for (XYPosn xy: finalMap.get(Tileset.FLOOR)) {
-                        if (xy != null) {
-                            world[xy.getX()][xy.getY()] = Tileset.GRASS;
-                        }
-                        render();
-                    }
-                }
                 player.move(typed);
+                ArrayList<XYPosn> ghostPosn = new ArrayList<>();
                 for (Avatar g: ghost) {
                     g.randomMove(seedRandom);
+                    ghostPosn.add(g.getPosn());
                 }
+                finalMap.updatePosn(player.getPosn(), ghostPosn);
             }
             render();
         }
@@ -197,7 +195,7 @@ public class Engine {
 
     /** Renders the map instance. */
     void render() {
-        ter.renderFrame(world);
+        ter.renderFrame(finalMap.getDarkWorld());
         hud.update();
         StdDraw.show();
     }

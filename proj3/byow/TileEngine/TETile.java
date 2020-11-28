@@ -28,6 +28,15 @@ public class TETile {
     private final String description;
     private final String filepath;
 
+    public Color getTextColor() {
+        return textColor;
+    }
+
+    public Color getBackgroundColor() {
+        return backgroundColor;
+    }
+
+
     /**
      * Full constructor for TETile objects.
      * @param character The character displayed on the screen.

@@ -37,6 +37,16 @@ public class Tileset {
     public static final TETile GHOST = new TETile('☠', Color.yellow, Color.black, "ghost");
     public static final TETile KEY = new TETile('⚷', Color.yellow, Color.black, "key");
     public static final TETile LAMP = new TETile('0', Color.yellow, Color.black, "lamp");
+
+    public static TETile modTile(double a, TETile tileType) {
+        int alpha = (int) Math.min(a, 100);
+        Color text = tileType.getTextColor();
+        Color bg = tileType.getBackgroundColor();
+        return new TETile(tileType.character(),
+                new Color(text.getRed(), text.getBlue(), text.getGreen(), (int) (text.getAlpha() * alpha / 100)),
+                new Color(bg.getRed(), bg.getBlue(), bg.getGreen(), (int) (bg.getAlpha() * alpha / 100)),
+                tileType.description());
+    }
 }
 
 

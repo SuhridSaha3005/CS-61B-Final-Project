@@ -5,8 +5,6 @@ import byow.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Random;
 
 public class Avatar {
@@ -89,30 +87,17 @@ public class Avatar {
         return position;
     }
 
-    private static double metric(XYPosn pos1, XYPosn pos2) {
-        return Math.pow(pos1.getX() - pos2.getX(), 2) + Math.pow(pos1.getY() - pos2.getY(), 2);
+    private static double distance(Avatar avatar1, Avatar avatar2) {
+        return Math.sqrt(Math.pow(avatar1.position.getX() - avatar2.position.getX(), 2)
+                + Math.pow(avatar1.position.getY() - avatar2.position.getY(), 2));
     }
 
-    public void moveCloser(Avatar player) {
-        HashMap<XYPosn, Character> directionsAll = new HashMap<>();
-        directionsAll.put(up(), 'w');
-        directionsAll.put(down(), 's');
-        directionsAll.put(right(), 'd');
-        directionsAll.put(left(), 'a');
-        HashMap<XYPosn, Character> directions = new HashMap<>();
-        for (XYPosn pos : directionsAll.keySet()) {
-            if (pos != null && world[pos.getX()][pos.getY()] == Tileset.FLOOR) {
-                directions.put(pos, directionsAll.get(pos));
-            }
+    public void randomMove(Random rand) {
+        XYPosn oldPos = position;
+        while (position == oldPos) {
+            char[] keys = "wasd".toCharArray();
+            move(keys[RandomUtils.uniform(rand, 0, 4)]);
         }
-        XYPosn nearest = new XYPosn(0, 0);
-        double minDist = Double.POSITIVE_INFINITY;
-        for (XYPosn pos : directions.keySet()) {
-            if (metric(pos, player.position) < minDist) {
-                nearest = pos;
-            }
-        }
-        move(directions.get(nearest));
     }
 
     public static void main(String[] args) {
@@ -129,19 +114,25 @@ public class Avatar {
             }
         }
         Random rand = new Random(5000);
-        XYPosn init1 = floors.get(RandomUtils.uniform(rand, 0, floors.size()));
-        XYPosn init2 = floors.get(RandomUtils.uniform(rand, 0, floors.size()));
-        XYPosn init3 = floors.get(RandomUtils.uniform(rand, 0, floors.size()));
-        Avatar player = new Avatar(w, Tileset.PLAYER, init1);
-        Avatar ghost = new Avatar(w, Tileset.GHOST, init2);
-        Avatar key = new Avatar(w, Tileset.KEY, init3);
-        char[] keys = "wasd".toCharArray();
-        char ghostKey;
+        XYPosn init = floors.get(RandomUtils.uniform(rand, 0, floors.size()));
+        Avatar player = new Avatar(w, Tileset.PLAYER, init);
+        Avatar key;
+        for (int i = 0; i < 3; i += 1) {
+            init = floors.get(RandomUtils.uniform(rand, 0, floors.size()));
+            key = new Avatar(w, Tileset.KEY, init);
+        }
+        Avatar[] ghosts = new Avatar[5];
+        for (int i = 0; i < 5; i += 1) {
+            init = floors.get(RandomUtils.uniform(rand, 0, floors.size()));
+            ghosts[i] = new Avatar(w, Tileset.GHOST, init);
+        }
         e.render();
         while (true) {
             if (StdDraw.hasNextKeyTyped()) {
                 player.move(StdDraw.nextKeyTyped());
-                ghost.moveCloser(player);
+                for (Avatar ghost : ghosts) {
+                    ghost.randomMove(rand);
+                }
                 e.render();
             }
         }

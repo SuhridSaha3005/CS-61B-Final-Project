@@ -5,6 +5,7 @@ import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -49,7 +50,7 @@ public class Engine {
 
     /** Constructor for Engine Class. */
     public Engine() {
-        hud = new HeadsUpDisplay(0, WIDTH, HEIGHT);
+        hud = new HeadsUpDisplay(3, WIDTH, HEIGHT);
     }
 
     /** Constructor with seed for Engine Class.
@@ -173,6 +174,8 @@ public class Engine {
 
     void runWorld() {
         char[] keys = "wasd".toCharArray();
+        int i = 0;
+        int j = 0;
         while (true) {
             if (StdDraw.hasNextKeyTyped()) {
                 char typed = StdDraw.nextKeyTyped();
@@ -183,8 +186,14 @@ public class Engine {
                     ghostPosn.add(g.getPosn());
                 }
                 finalMap.updatePosn(player.getPosn(), ghostPosn);
-                render();
             }
+            if (i == 10) {
+                finalMap.modulateLights(j);
+                render();
+                i = 0;
+                j += 1;
+            }
+            i += 1;
         }
     }
 
@@ -195,12 +204,14 @@ public class Engine {
 
     /** Renders the map instance. */
     void render() {
+        StdDraw.show();
         if (lighting) {
             ter.renderFrame(finalMap.getDarkWorld());
         } else {
             ter.renderFrame(world);
         }
-        hud.update();
+        StdDraw.setPenColor(new Color(Color.yellow.getRed(), Color.yellow.getBlue(), Color.yellow.getGreen(), Color.yellow.getAlpha() - 70));
+        hud.update(player, ghost);
         StdDraw.show();
     }
 
@@ -227,7 +238,7 @@ public class Engine {
 
     public static void main(String[] args) {
         Engine e = new Engine();
-        e.interactWithInputString("n3005s");
+        e.interactWithInputString("n12345s");
         e.initialize();
         e.createWorld();
         e.render();

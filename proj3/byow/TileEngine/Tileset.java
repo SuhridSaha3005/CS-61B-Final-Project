@@ -17,6 +17,8 @@ import java.awt.Color;
  */
 
 public class Tileset {
+    private static Color purpleColor = new Color(Color.yellow.getRed(), Color.yellow.getBlue(), Color.yellow.getGreen(), Color.yellow.getAlpha());
+
     public static final TETile AVATAR = new TETile('@', Color.white, Color.black, "you");
     public static final TETile WALL = new TETile('#', new Color(216, 128, 128), Color.darkGray,
             "wall");
@@ -34,17 +36,17 @@ public class Tileset {
     public static final TETile MOUNTAIN = new TETile('▲', Color.gray, Color.black, "mountain");
     public static final TETile TREE = new TETile('♠', Color.green, Color.black, "tree");
     public static final TETile PLAYER = new TETile('☺', Color.white, Color.black, "player");
-    public static final TETile GHOST = new TETile('☠', Color.yellow, Color.black, "ghost");
-    public static final TETile KEY = new TETile('⚷', Color.yellow, Color.black, "key");
-    public static final TETile LAMP = new TETile('0', Color.yellow, Color.black, "lamp");
+    public static final TETile GHOST = new TETile('☠', purpleColor, Color.black, "ghost");
+    public static final TETile KEY = new TETile('⚷', purpleColor, Color.black, "key");
+    public static final TETile LAMP = new TETile('0', purpleColor, Color.black, "lamp");
 
     public static TETile modTile(double a, TETile tileType) {
-        int alpha = (int) Math.min(a, 100);
+        double alpha = Math.min(a, 100);
         Color text = tileType.getTextColor();
         Color bg = tileType.getBackgroundColor();
         return new TETile(tileType.character(),
-                new Color(text.getRed(), text.getBlue(), text.getGreen(), (int) (text.getAlpha() * alpha / 100)),
-                new Color(bg.getRed(), bg.getBlue(), bg.getGreen(), (int) (bg.getAlpha() * alpha / 100)),
+                new Color(text.getRed(), text.getGreen(), text.getBlue(), (int) ((text.getAlpha()) * alpha / 100)),
+                new Color(bg.getRed(), bg.getGreen(), bg.getBlue(), (int) ((bg.getAlpha()) * alpha / 100)),
                 tileType.description());
     }
 }

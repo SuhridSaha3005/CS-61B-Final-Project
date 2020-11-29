@@ -296,11 +296,11 @@ public class Engine {
             }
         }
         if (givenSeed != -1) {
-            initialize();
+            /* initialize(); */
             createWorld();
-            render();
+            /* render(); */
             runWorldKeys();
-            if (!gameOver) {
+            /* if (!gameOver) {
                 int i,j;
                 i = j = 0;
                 while (!gameOver) {
@@ -344,7 +344,7 @@ public class Engine {
                 }
             }
             StdDraw.clear(Color.BLACK);
-            StdDraw.show();
+            StdDraw.show(); */
             return world;
         } else {
             return null;

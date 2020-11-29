@@ -7,10 +7,14 @@ import java.io.PrintWriter;
 
 public class SaveNLoad {
 
-    public static void saveGame(String game) throws FileNotFoundException {
-        PrintWriter writer = new PrintWriter("byow/core/SavedGame.txt");
-        writer.print(game);
-        writer.close();
+    public static void saveGame(String game) {
+        try {
+            PrintWriter writer = new PrintWriter("byow/core/SavedGame.txt");
+            writer.print(game);
+            writer.close();
+        } catch (FileNotFoundException f) {
+            System.out.println("Could not find file.");
+        }
     }
 
     public static String loadGame() {
@@ -18,7 +22,7 @@ public class SaveNLoad {
         return in.readString();
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) {
         System.out.println(loadGame());
     }
 }

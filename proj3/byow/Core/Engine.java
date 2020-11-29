@@ -77,12 +77,12 @@ public class Engine {
      * This method should handle all inputs,
      * including inputs from the main menu.
      */
-    public void interactWithKeyboard() throws FileNotFoundException{
+    public void interactWithKeyboard() {
         startGame();
         playGame();
     }
 
-    private void playGame() throws FileNotFoundException {
+    private void playGame() {
         gameOver = false;
         StringBuilder savedGame = new StringBuilder();
         StringBuilder randomSeed = new StringBuilder();
@@ -239,7 +239,7 @@ public class Engine {
      * @param input the input string to feed to your program
      * @return the 2D TETile[][] representing the state of the world
      */
-    public TETile[][] interactWithInputString(String input) throws FileNotFoundException {
+    public TETile[][] interactWithInputString(String input) {
         input = input.toLowerCase();
         gameOver = false;
         StringBuilder savedGame = new StringBuilder();
@@ -298,7 +298,7 @@ public class Engine {
         if (givenSeed != -1) {
             initialize();
             createWorld();
-            /* render(); */
+            render();
             runWorldKeys();
             if (!gameOver) {
                 int i,j;
@@ -323,8 +323,8 @@ public class Engine {
                             }
                             finalMap.updatePosn(player.getPosn(), ghostPosn, player);
                             if (finalMap.isGameOver()) {
-                                /* render();
-                                StdDraw.pause(3000); */
+                                render();
+                                StdDraw.pause(3000);
                                 startGame();
                                 playGame();
                                 return null;
@@ -336,7 +336,7 @@ public class Engine {
                     }
                     if (i == 10) {
                         finalMap.modulateLights(j);
-                        /* render(); */
+                        render();
                         i = 0;
                         j += 1;
                     }
@@ -379,7 +379,7 @@ public class Engine {
         finalMap.updatePosn(player.getPosn(), ghostPosns, player);
     }
 
-    void runWorldKeys() throws FileNotFoundException {
+    void runWorldKeys() {
         for (char typed : gameKeys.toString().toCharArray()) {
             player.move(typed);
             ArrayList<XYPosn> ghostPosn = new ArrayList<>();
@@ -419,7 +419,7 @@ public class Engine {
 
     /** Renders the map instance. */
     void render() {
-        StdDraw.show();
+        /* StdDraw.show();
         if (lighting) {
             ter.renderFrame(finalMap.getDarkWorld());
         } else {
@@ -436,7 +436,7 @@ public class Engine {
                         finalMap.getDisplayColor(),
                         currTile
                     );
-        StdDraw.show();
+        StdDraw.show(); */
     }
 
     /** Gets the seed, as desired.

@@ -176,25 +176,24 @@ public class Engine {
                 }
                 if (gameInitialized && seedFinished) {
                     player.move(c);
+                    ArrayList<XYPosn> ghostPosn = new ArrayList<>();
                     if ("wasd".contains(Character.toString(c))) {
                         savedGame.append(c);
                         gameKeys.append(c);
+                        for (Avatar g: ghost) {
+                            g.randomMove(seedRandom, finalMap.getWallObjs(), player, finalMap.getFlashState());
+                            ghostPosn.add(g.getPosn());
+                        }
                     }
-                    ArrayList<XYPosn> ghostPosn = new ArrayList<>();
-                    for (Avatar g: ghost) {
-                        g.randomMove(seedRandom, finalMap.getWallObjs(), player);
-                        ghostPosn.add(g.getPosn());
+                    if (c == 'f') {
+                        finalMap.toggleFlashlight();
                     }
                     finalMap.updatePosn(player.getPosn(), ghostPosn, player);
-                    System.out.println(finalMap.isGameOver());
                     if (finalMap.isGameOver()) {
                         render();
-                        System.out.println("After Pause");
                         StdDraw.pause(3000);
-                        System.out.println("After Pause");
                         startGame();
                         playGame();
-                        System.out.println("Before Return");
                         return;
                     }
                 }
@@ -319,20 +318,20 @@ public class Engine {
                             player.move(c);
                             ArrayList<XYPosn> ghostPosn = new ArrayList<>();
                             for (Avatar g: ghost) {
-                                g.randomMove(seedRandom, finalMap.getWallObjs(), player);
+                                g.randomMove(seedRandom, finalMap.getWallObjs(), player, finalMap.getFlashState());
                                 ghostPosn.add(g.getPosn());
                             }
                             finalMap.updatePosn(player.getPosn(), ghostPosn, player);
                             if (finalMap.isGameOver()) {
                                 render();
-                                System.out.println("After Pause");
                                 StdDraw.pause(3000);
-                                System.out.println("After Pause");
                                 startGame();
                                 playGame();
-                                System.out.println("Before Return");
                                 return null;
                             }
+                        }
+                        if (c == 'f') {
+                            finalMap.toggleFlashlight();
                         }
                     }
                     if (i == 10) {
@@ -385,7 +384,7 @@ public class Engine {
             player.move(typed);
             ArrayList<XYPosn> ghostPosn = new ArrayList<>();
             for (Avatar g: ghost) {
-                g.randomMove(seedRandom, finalMap.getWallObjs(), player);
+                g.randomMove(seedRandom, finalMap.getWallObjs(), player, finalMap.getFlashState());
                 ghostPosn.add(g.getPosn());
             }
             finalMap.updatePosn(player.getPosn(), ghostPosn, player);

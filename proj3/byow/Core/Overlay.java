@@ -8,29 +8,52 @@ import edu.princeton.cs.introcs.Stopwatch;
 import java.awt.*;
 import java.util.*;
 
+/** Handles and tracks the Game State and prepares display.
+ *
+ * Tracks the entire game state and combines everything
+ * for display, based on interactive inputs from Engine.
+ *
+ * Places and tracks player, ghosts, lamps, keys and door.
+ * Handles their lighting, flickering and changing state.
+ * Relays with Engine on Keyboard inputs and saves its effects on the game.
+ *
+ */
 public class Overlay {
+    /** Characteristics of World. */
+    private final Random rand;
     private final TETile[][] world;
     private final double[][] luminosity;
     private final int width;
     private final int height;
+
+    /** Object Positions in World. */
     private final HashMap<TETile, ArrayList<XYPosn>> tilePosn;
-    private final HashMap<XYPosn, Integer> lightState;
-    private final HashMap<Integer, Integer> lightChange;
+    private ArrayList<XYPosn> ghostPosn;
+    private ArrayList<XYPosn> lampPosn;
+    private ArrayList<XYPosn> keyPosn;
     private XYPosn playerPosn;
     private XYPosn doorPosn;
-    private ArrayList<XYPosn> ghostPosn;
-    private final ArrayList<XYPosn> lampPosn;
-    private ArrayList<XYPosn> keyPosn;
-    private final Random rand;
+
+
+    /** Light/Flickering Handling Helpers. */
     private final Random rand2Flicker = new Random();
-    private boolean gameOver = false;
-    private ArrayList<XYPosn> keyWhileLit;
+    private final HashMap<XYPosn, Integer> lightState;
+    private final HashMap<Integer, Integer> lightChange;
     private boolean keyLit;
+    private boolean flashlightOn = true;
+    private ArrayList<XYPosn> keyWhileLit;
+
+    /** Gameplay Handling Helpers. */
+    private boolean gameOver = false;
     private int playerLives;
+
+    /** HUD Handling Helpers. */
     private String displayString;
     private Color displayColor;
-    private Stopwatch sw;
+    private final Stopwatch sw;
 
+
+    /** Variable Parameters. */
     private final double LAMPFALLOFF = 1.8;
     private final double PLAYERFALLOFF = 1.2;
     private final int LAMPFLICKERYNESS = 10;
@@ -162,11 +185,26 @@ public class Overlay {
         ghostPosn = newPosn;
     }
 
+    public void toggleFlashlight() {
+        if (flashlightOn) {
+            brighten(playerPosn, -70, PLAYERFALLOFF);
+        } else {
+            brighten(playerPosn, 70, PLAYERFALLOFF);
+        }
+        flashlightOn = !flashlightOn;
+    }
+
+    public boolean getFlashState() {
+        return flashlightOn;
+    }
+
     public void updatePosn(XYPosn newPlayerPosn, ArrayList<XYPosn> newGhostPosn, Avatar player) {
-        brighten(playerPosn, -70, PLAYERFALLOFF);
+        if (flashlightOn) {
+            brighten(playerPosn, -70, PLAYERFALLOFF);
+            brighten(newPlayerPosn, 70, PLAYERFALLOFF);
+        }
         updateGhostPosn(newGhostPosn);
         updatePlayerPosn(newPlayerPosn);
-        brighten(newPlayerPosn, 70, PLAYERFALLOFF);
         ArrayList<XYPosn> temp = (ArrayList<XYPosn>) keyPosn.clone();
         for (XYPosn k: keyPosn) {
             if ((k.getX() == newPlayerPosn.getX()) && (k.getY() == newPlayerPosn.getY())) {

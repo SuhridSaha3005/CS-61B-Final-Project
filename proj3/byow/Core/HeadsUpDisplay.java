@@ -33,7 +33,7 @@ public class HeadsUpDisplay {
         StdDraw.setFont(font);
         double textHeight = height  - 1;
         StdDraw.text(15, textHeight, "Keys Remaining: " + keys);
-        StdDraw.text(width - 15, textHeight, "Closest Ghost: "
+        StdDraw.text(width - 15, textHeight, "Closest Ghost Distance: "
                 + df.format(getMinGhostDist(player, ghost)));
         StdDraw.text(15, textHeight - 1, "Lives Remaining: " + lives);
         StdDraw.text(width - 15, textHeight - 1, "Current Tile: " + currTile.description());

@@ -97,7 +97,7 @@ public class Avatar {
                 + Math.pow(avatar1.position.getY() - avatar2.position.getY(), 2));
     }
 
-    public void randomMove(Random rand, List<XYPosn> keyPosns, Avatar player) {
+    public void randomMove(Random rand, List<XYPosn> keyPosns, Avatar player, boolean flashlightOn) {
         XYPosn oldPos = position;
         ArrayList<String> keys = new ArrayList<>(List.of("w", "a", "s", "d"));
         if (keyPosns.contains(up())) {
@@ -110,13 +110,10 @@ public class Avatar {
             keys.remove("a");
         }
 
-        if (manhattan(position, player.getPosn()) < 8) {
-            if (RandomUtils.uniform(rand, 2) == 0) {
+        if ((manhattan(position, player.getPosn()) < 8) && (flashlightOn)) {
                 move(calcMinKey(keys, player).charAt(0));
-            } else {
-                move(keys.get(RandomUtils.uniform(rand, keys.size())).charAt(0));
-            }
         }
+
 
         if (position == oldPos) {
             while (position == oldPos) {
@@ -136,6 +133,11 @@ public class Avatar {
                         if (dist < minim) {
                             bestChar = "w";
                             minim = dist;
+                        } else if (dist == minim) {
+                            if (world[up().getX()][up().getY()] != Tileset.WALL) {
+                                bestChar = "w";
+                                minim = dist;
+                            }
                         }
                     }
                     break;
@@ -145,6 +147,11 @@ public class Avatar {
                         if (dist < minim) {
                             bestChar = "a";
                             minim = dist;
+                        } else if (dist == minim) {
+                            if (world[left().getX()][left().getY()] != Tileset.WALL) {
+                                bestChar = "a";
+                                minim = dist;
+                            }
                         }
                     }
                     break;
@@ -154,6 +161,11 @@ public class Avatar {
                         if (dist < minim) {
                             bestChar = "s";
                             minim = dist;
+                        } else if (dist == minim) {
+                            if (world[down().getX()][down().getY()] != Tileset.WALL) {
+                                bestChar = "s";
+                                minim = dist;
+                            }
                         }
                     }
                     break;
@@ -163,6 +175,11 @@ public class Avatar {
                         if (dist < minim) {
                             bestChar = "d";
                             minim = dist;
+                        } else if (dist == minim) {
+                            if (world[right().getX()][right().getY()] != Tileset.WALL) {
+                                bestChar = "d";
+                                minim = dist;
+                            }
                         }
                     }
                     break;

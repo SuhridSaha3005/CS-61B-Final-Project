@@ -6,6 +6,7 @@ import byow.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
 
 import java.awt.*;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -30,14 +31,14 @@ public class Engine {
     /** Array for the world. */
     private TETile[][] world;
 
-    /** Saves the game save state. */
-    private StringBuilder gameSave = null;
-
     /** Heads Up Display. */
     private HeadsUpDisplay hud;
 
     /** Overlay/Theme. */
     private Overlay finalMap;
+
+    /** Keys (w,a,s,d) pressed for game */
+    private StringBuilder gameKeys;
 
     /** Player Instance. */
     Avatar player;
@@ -47,6 +48,9 @@ public class Engine {
 
     /** Turn on/off lighting. */
     boolean lighting = true;
+
+    /** Whether game is over or not */
+    private boolean gameOver;
 
     /** Constructor for Engine Class. */
     public Engine() {
@@ -66,7 +70,89 @@ public class Engine {
      * This method should handle all inputs,
      * including inputs from the main menu.
      */
-    public void interactWithKeyboard() {
+    public void interactWithKeyboard() throws FileNotFoundException{
+        startGame();
+        playGame();
+    }
+
+    private void playGame() throws FileNotFoundException {
+        gameOver = false;
+        StringBuilder savedGame = new StringBuilder();
+        StringBuilder randomSeed = new StringBuilder();
+        gameKeys = new StringBuilder();
+        boolean gameInitialized = false;
+        boolean seedFinished = false;
+        int i,j;
+        i = j = 0;
+        while (!gameOver) {
+            if (StdDraw.hasNextKeyTyped()) {
+                char c = StdDraw.nextKeyTyped();
+                if (c == 'l') {
+                    world = interactWithInputString(SaveNLoad.loadGame());
+                } else if (c == 'q') {
+                    gameOver = true;
+                    if (gameInitialized && seedFinished) {
+                        SaveNLoad.saveGame(savedGame.toString());
+                    }
+                } else if (c == 's') {
+                    if (randomSeed.length() == 0) {
+                        throw new IllegalArgumentException("No seed provided");
+                    }
+                    if (!seedFinished) {
+                        givenSeed = Long.parseLong(randomSeed.toString());
+                        seedRandom = new Random(givenSeed);
+                        initialize();
+                        createWorld();
+                        render();
+                    }
+                    seedFinished = true;
+                } else if (c == 'n') {
+                    gameInitialized = true;
+                    savedGame.append(c);
+                    StdDraw.clear(Color.BLACK);
+                    double w = WIDTH;
+                    double h = HEIGHT;
+                    StdDraw.setPenColor(Color.white);
+                    Font font2 = new Font("Arial", Font.ITALIC, 40);
+                    StdDraw.text(w/2, h/2, "Seed: ");
+                    StdDraw.show();
+                } else if (Character.isDigit(c) && gameInitialized) {
+                    randomSeed.append(c);
+                    savedGame.append(c);
+                    StdDraw.clear();
+                    double w = WIDTH;
+                    double h = HEIGHT;
+                    StdDraw.setPenColor(Color.white);
+                    Font font2 = new Font("Arial", Font.ITALIC, 40);
+                    StdDraw.text(w/2, h/2, "Seed: " + randomSeed.toString());
+                    StdDraw.show();
+                }
+                if (gameInitialized && seedFinished) {
+                    player.move(c);
+                    if ("wasd".contains(Character.toString(c))) {
+                        savedGame.append(c);
+                        gameKeys.append(c);
+                    }
+                    ArrayList<XYPosn> ghostPosn = new ArrayList<>();
+                    for (Avatar g: ghost) {
+                        g.randomMove(seedRandom);
+                        ghostPosn.add(g.getPosn());
+                    }
+                    finalMap.updatePosn(player.getPosn(), ghostPosn);
+                }
+            }
+            if (gameInitialized && seedFinished) {
+                if (i == 10) {
+                    finalMap.modulateLights(j);
+                    render();
+                    i = 0;
+                    j += 1;
+                }
+                i += 1;
+            }
+        }
+        StdDraw.clear(Color.BLACK);
+        StdDraw.show();
     }
 
     /**
@@ -96,56 +182,112 @@ public class Engine {
      * @param input the input string to feed to your program
      * @return the 2D TETile[][] representing the state of the world
      */
-    public TETile[][] interactWithInputString(String input) {
+    public TETile[][] interactWithInputString(String input) throws FileNotFoundException {
         input = input.toLowerCase();
-        StringBuilder seed = null;
-        for (int i = 0; i < input.length(); i += 1) {
-            String letter = (input.substring(i, i + 1));
-            switch (letter) {
-                case "n":
-                    gameSave = new StringBuilder(letter);
-                    seed = new StringBuilder();
-                    break;
-                case "s":
-                    if ((seed != null) && gameSave != null) {
-                        gameSave.append(letter);
-                        givenSeed = Long.parseLong(seed.toString());
-                        seedRandom = new Random(givenSeed);
+        gameOver = false;
+        StringBuilder savedGame = new StringBuilder();
+        StringBuilder randomSeed = new StringBuilder();
+        gameKeys = new StringBuilder();
+        boolean gameInitialized = false;
+        boolean seedFinished = false;
+        boolean quit = false;
+        for (char c : input.toCharArray()) {
+            if (c == 'l') {
+                interactWithInputString(SaveNLoad.loadGame());
+            }
+            if (c == ':') {
+                quit = true;
+            } else if (c == 'q') {
+                if (quit && gameInitialized && seedFinished) {
+                    if (gameKeys.length() == 0) {
+                        throw new IllegalArgumentException("No keys (w,a,s,d) pressed for game");
+                    }
+                    SaveNLoad.saveGame(savedGame.toString());
+                    gameOver = true;
+                } else {
+                    throw new IllegalArgumentException("Invalid key");
+                }
+            }
+            if ("nwasd".contains(Character.toString(c)) || Character.isDigit(c)) {
+                savedGame.append(c);
+                if (quit) {
+                    throw new IllegalArgumentException("Invalid key");
+                }
+                if (c == 'n') {
+                    if (gameInitialized) {
+                        throw new IllegalArgumentException("Invalid key");
+                    }
+                    gameInitialized = true;
+                } else if (Character.isDigit(c)) {
+                    if (seedFinished) {
+                        throw new IllegalArgumentException("Invalid key");
                     } else {
-                        throw new IllegalArgumentException("Map was not initialized with n.");
+                        randomSeed.append(c);
                     }
-                    break;
-                case "l":
-                    if ((gameSave) == null) {
-                        throw new IllegalArgumentException("No game in save state.");
+                } else {
+                    if (c == 's') {
+                        seedFinished = true;
+                        givenSeed = Long.parseLong(randomSeed.toString());
+                        seedRandom = new Random(givenSeed);
                     }
-                    String s = gameSave.append(input.substring(i + 1)).toString();
-                    return interactWithInputString(s);
-                default:
-                    try {
-                        int l = Integer.parseInt(letter);
-                    } catch (NumberFormatException nfe) {
-                        gameSave.append(letter);
-                        continue;
+                    if (seedFinished) {
+                        gameKeys.append(c);
+                    } else {
+                        throw new IllegalArgumentException("Keys must begin with 's'");
                     }
-                    if ((seed == null) || (gameSave == null)) {
-                        continue;
-                    }
-                    seed.append(letter);
-                    gameSave.append(letter);
+                }
             }
         }
         if (givenSeed != -1) {
-            TETile[][] finalWorldFrame = createWorld();
-            return finalWorldFrame;
+            initialize();
+            createWorld();
+            render();
+            runWorldKeys();
+            if (!gameOver) {
+                int i,j;
+                i = j = 0;
+                while (!gameOver) {
+                    if (StdDraw.hasNextKeyTyped()) {
+                        char c = StdDraw.nextKeyTyped();
+                        if (c == 'q') {
+                            gameOver = true;
+                            if (gameInitialized && seedFinished) {
+                                SaveNLoad.saveGame(savedGame.toString());
+                            }
+                        }
+                        if ("wasd".contains(Character.toString(c))) {
+                            savedGame.append(c);
+                            gameKeys.append(c);
+                            player.move(c);
+                            ArrayList<XYPosn> ghostPosn = new ArrayList<>();
+                            for (Avatar g: ghost) {
+                                g.randomMove(seedRandom);
+                                ghostPosn.add(g.getPosn());
+                            }
+                            finalMap.updatePosn(player.getPosn(), ghostPosn);
+                        }
+                    }
+                    if (i == 10) {
+                        finalMap.modulateLights(j);
+                        render();
+                        i = 0;
+                        j += 1;
+                    }
+                    i += 1;
+                }
+            }
+            StdDraw.clear(Color.BLACK);
+            StdDraw.show();
+            return world;
+        } else {
+            return null;
         }
-        return null;
     }
 
     /** Mutates to a randomly generated map with instance seed.
      * @return TETile array corresponding to generated map
      */
-    TETile[][] createWorld() {
+    void createWorld() {
         int height = HEIGHT - 3;
         int numGhosts = 2;
 
@@ -167,26 +309,20 @@ public class Engine {
         for (int i = 0; i < numGhosts; i++) {
             ghost.add(new Avatar(world, Tileset.GHOST, ghostPosns.get(i)));
         }
-
         finalMap.updatePosn(player.getPosn(), ghostPosns);
-        return world;
     }
 
-    void runWorld() {
-        char[] keys = "wasd".toCharArray();
+    void runWorldKeys() {
         int i = 0;
         int j = 0;
-        while (true) {
-            if (StdDraw.hasNextKeyTyped()) {
-                char typed = StdDraw.nextKeyTyped();
-                player.move(typed);
-                ArrayList<XYPosn> ghostPosn = new ArrayList<>();
-                for (Avatar g: ghost) {
-                    g.randomMove(seedRandom);
-                    ghostPosn.add(g.getPosn());
-                }
-                finalMap.updatePosn(player.getPosn(), ghostPosn);
+        for (char typed : gameKeys.toString().toCharArray()) {
+            player.move(typed);
+            ArrayList<XYPosn> ghostPosn = new ArrayList<>();
+            for (Avatar g: ghost) {
+                g.randomMove(seedRandom);
+                ghostPosn.add(g.getPosn());
             }
+            finalMap.updatePosn(player.getPosn(), ghostPosn);
             if (i == 10) {
                 finalMap.modulateLights(j);
                 render();
@@ -200,6 +336,24 @@ public class Engine {
     /** Initializes the Map Instance. */
     void initialize() {
         ter.initialize(WIDTH, HEIGHT);
+    }
+
+    private void startGame() {
+        StdDraw.setCanvasSize(WIDTH * 16, HEIGHT * 16);
+        StdDraw.clear(Color.BLACK);
+        double w = WIDTH;
+        double h = HEIGHT;
+        StdDraw.setXscale(0, w);
+        StdDraw.setYscale(0, h);
+        StdDraw.enableDoubleBuffering();
+        StdDraw.setPenColor(Color.white);
+        Font font1 = new Font("Arial", Font.BOLD, 60);
+        StdDraw.text(w/2, 0.7*h, "MENU");
+        Font font2 = new Font("Arial", Font.ITALIC, 40);
+        StdDraw.text(w/2, h*0.55, "New Game(N)");
+        StdDraw.text(w/2, h*0.5, "Load Game(L)");
+        StdDraw.text(w/2, h*0.45, "Quit(Q)");
+        StdDraw.show();
     }
 
     /** Renders the map instance. */
@@ -236,12 +390,8 @@ public class Engine {
         return seedRandom;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException {
         Engine e = new Engine();
-        e.interactWithInputString("n123456s");
-        e.initialize();
-        e.createWorld();
-        e.render();
-        e.runWorld();
+        e.interactWithKeyboard();
     }
 }

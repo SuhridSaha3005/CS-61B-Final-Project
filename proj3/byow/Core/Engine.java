@@ -119,7 +119,7 @@ public class Engine {
                 } else if (Character.isDigit(c) && gameInitialized) {
                     randomSeed.append(c);
                     savedGame.append(c);
-                    StdDraw.clear();
+                    StdDraw.clear(Color.BLACK);
                     double w = WIDTH;
                     double h = HEIGHT;
                     StdDraw.setPenColor(Color.white);

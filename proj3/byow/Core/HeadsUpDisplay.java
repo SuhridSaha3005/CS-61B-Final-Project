@@ -7,9 +7,9 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class HeadsUpDisplay {
-    int keys;
-    int width;
-    int height;
+    private int keys;
+    private final int width;
+    private int height;
     static DecimalFormat df = new DecimalFormat("0.00");
 
     public HeadsUpDisplay(int k, int w, int h) {
@@ -35,4 +35,7 @@ public class HeadsUpDisplay {
         return min;
     }
 
+    public void changeKeys(int keyNum) {
+        keys = keyNum;
+    }
 }

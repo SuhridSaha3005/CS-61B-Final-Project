@@ -14,11 +14,15 @@ public class Overlay {
     private final HashMap<XYPosn, Integer> lightState;
     private final HashMap<Integer, Integer> lightChange;
     private XYPosn playerPosn;
+    private XYPosn doorPosn;
     private ArrayList<XYPosn> ghostPosn;
     private final ArrayList<XYPosn> lampPosn;
     private ArrayList<XYPosn> keyPosn;
     private final Random rand;
     private final Random rand2Flicker = new Random();
+    private boolean gameOver = true;
+    private ArrayList<XYPosn> keyWhileLit;
+    private boolean keyLit;
 
     private final double LAMPFALLOFF = 1.8;
     private final double PLAYERFALLOFF = 1.2;
@@ -35,9 +39,11 @@ public class Overlay {
         tilePosn = new HashMap<>();
         ghostPosn = new ArrayList<>();
         keyPosn = new ArrayList<>();
+        keyWhileLit = new ArrayList<>();
         luminosity = new double[width][height];
         lightState = new HashMap<>();
         lightChange = new HashMap<>();
+        doorPosn = null;
 
         for (int i = 0; i < width; i += 1) {
             for (int j = 0; j < height; j += 1) {
@@ -55,7 +61,6 @@ public class Overlay {
         }
         lampPosn = addLampsRandPosn(Math.max(tilePosn.get(Tileset.FLOOR).size() / 100, 1));
         keyPosn = addKeysRandPosn(3);
-        XYPosn doorPosn = addDoorRandPosn();
         for (XYPosn singLampPosn: lampPosn) {
             brighten(singLampPosn, LAMPWATTAGE, LAMPFALLOFF);
             lightState.put(singLampPosn, 0);
@@ -157,14 +162,31 @@ public class Overlay {
         updateGhostPosn(newGhostPosn);
         updatePlayerPosn(newPlayerPosn);
         brighten(newPlayerPosn, 70, PLAYERFALLOFF);
-
-        /* t
+        ArrayList<XYPosn> temp = (ArrayList<XYPosn>) keyPosn.clone();
         for (XYPosn k: keyPosn) {
-            if ((k.getX() == newPlayerPosn.getX()) {
-
+            if ((k.getX() == newPlayerPosn.getX()) && (k.getY() == newPlayerPosn.getY())) {
+                if (keyLit) {
+                    keyWhileLit.add(k);
+                }
+                temp.remove(k);
             }
-        } */
+        }
+        keyPosn = temp;
+        if ((doorPosn == null) && (keyPosn.size() == 0)) {
+            doorPosn = addDoorRandPosn();
+        }
 
+        if (doorPosn != null) {
+            if ((doorPosn.getX() == newPlayerPosn.getX()) && (doorPosn.getY() == newPlayerPosn.getY())) {
+                System.out.println("game over true!");
+                gameOver = true;
+            }
+        }
+
+    }
+
+    public ArrayList<XYPosn> getKeys() {
+        return keyPosn;
     }
 
     public void modulateLights(int ticks) {
@@ -172,21 +194,27 @@ public class Overlay {
         XYPosn singLampPosn = lampPosn.get(randIndex);
         brighten(singLampPosn, lightChange.get(lightState.get(singLampPosn) % 10), LAMPFALLOFF);
         lightState.put(singLampPosn, lightState.get(singLampPosn) + 1);
-
         if (ticks % KEYDISPLAYTIME == 0) {
+            System.out.println(getKeys().toString());
             for (XYPosn k: keyPosn) {
                 addLuminosity(k, k, 100, 1000);
+                keyLit = true;
             }
         } else if (ticks % KEYDISPLAYTIME == 50) {
+            keyLit = false;
             for (XYPosn k: keyPosn) {
                 addLuminosity(k, k, -100, 1000);
             }
+            if (keyWhileLit.size() != 0) {
+                for (XYPosn k : keyWhileLit) {
+                    addLuminosity(k, k, -100, 1000);
+                }
+                for (XYPosn k: keyPosn) {
+                    addLuminosity(k, k, -100, 1000);
+                }
+            }
+            keyWhileLit = new ArrayList<>();
         }
-    }
-
-
-    public ArrayList<XYPosn> get(TETile tileType) {
-        return tilePosn.get(tileType);
     }
 
 
@@ -214,6 +242,10 @@ public class Overlay {
 
     private void addLuminosity(XYPosn sourcePosn, XYPosn point, double wattage, double falloff) {
         luminosity[point.getX()][point.getY()] += wattage / Math.max((Math.pow(euclidean(sourcePosn, point), falloff)), 1);
+    }
+
+    public boolean isGameOver() {
+        return gameOver;
     }
 
     public TETile[][] getDarkWorld() {

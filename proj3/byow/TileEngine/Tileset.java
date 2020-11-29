@@ -41,6 +41,11 @@ public class Tileset {
     public static final TETile KEY = new TETile('⚷', Color.yellow, Color.black, "key");
     public static final TETile LAMP = new TETile('☀', purpleColorDark, Color.black, "lamp");
 
+
+    public static TETile newTextColor(TETile tileType, Color c) {
+        return new TETile(tileType.character(), c, tileType.getBackgroundColor(), tileType.description());
+    }
+
     public static TETile modTile(double a, TETile tileType) {
         double alpha = Math.min(a, 100);
         Color text = tileType.getTextColor();

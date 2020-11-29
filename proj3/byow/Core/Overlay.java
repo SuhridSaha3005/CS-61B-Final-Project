@@ -3,24 +3,22 @@ package byow.Core;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
-import javax.imageio.plugins.tiff.TIFFDirectory;
 import java.util.*;
 
 public class Overlay {
-    private TETile[][] world;
-    private double[][] luminosity;
+    private final TETile[][] world;
+    private final double[][] luminosity;
     private final int width;
     private final int height;
-    private HashMap<TETile, ArrayList<XYPosn>> tilePosn;
-    private HashMap<XYPosn, Integer> lightState;
-    private HashMap<Integer, Integer> lightChange;
+    private final HashMap<TETile, ArrayList<XYPosn>> tilePosn;
+    private final HashMap<XYPosn, Integer> lightState;
+    private final HashMap<Integer, Integer> lightChange;
     private XYPosn playerPosn;
-    private XYPosn doorPosn;
     private ArrayList<XYPosn> ghostPosn;
-    private ArrayList<XYPosn> lampPosn;
+    private final ArrayList<XYPosn> lampPosn;
     private ArrayList<XYPosn> keyPosn;
-    private Random rand;
-    private Random rand2Flicker = new Random();
+    private final Random rand;
+    private final Random rand2Flicker = new Random();
 
     private final double LAMPFALLOFF = 1.8;
     private final double PLAYERFALLOFF = 1.2;
@@ -57,7 +55,7 @@ public class Overlay {
         }
         lampPosn = addLampsRandPosn(Math.max(tilePosn.get(Tileset.FLOOR).size() / 100, 1));
         keyPosn = addKeysRandPosn(3);
-        doorPosn = addDoorRandPosn();
+        XYPosn doorPosn = addDoorRandPosn();
         for (XYPosn singLampPosn: lampPosn) {
             brighten(singLampPosn, LAMPWATTAGE, LAMPFALLOFF);
             lightState.put(singLampPosn, 0);
@@ -159,6 +157,14 @@ public class Overlay {
         updateGhostPosn(newGhostPosn);
         updatePlayerPosn(newPlayerPosn);
         brighten(newPlayerPosn, 70, PLAYERFALLOFF);
+
+        /* t
+        for (XYPosn k: keyPosn) {
+            if ((k.getX() == newPlayerPosn.getX()) {
+
+            }
+        } */
+
     }
 
     public void modulateLights(int ticks) {

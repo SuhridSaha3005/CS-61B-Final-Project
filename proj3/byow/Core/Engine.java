@@ -370,6 +370,7 @@ public class Engine {
         }
         StdDraw.setPenColor(new Color(Color.yellow.getRed(), Color.yellow.getBlue(), Color.yellow.getGreen(), Color.yellow.getAlpha() - 70));
         hud.update(player, ghost);
+        hud.changeKeys(finalMap.getKeys().size());
         StdDraw.show();
     }
 

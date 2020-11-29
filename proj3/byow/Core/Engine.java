@@ -296,11 +296,11 @@ public class Engine {
             }
         }
         if (givenSeed != -1) {
-            /* initialize(); */
+            initialize();
             createWorld();
-            /* render(); */
+            render();
             runWorldKeys();
-            /* if (!gameOver) {
+            if (!gameOver) {
                 int i,j;
                 i = j = 0;
                 while (!gameOver) {
@@ -344,7 +344,7 @@ public class Engine {
                 }
             }
             StdDraw.clear(Color.BLACK);
-            StdDraw.show(); */
+            StdDraw.show();
             return world;
         } else {
             return null;
@@ -419,7 +419,7 @@ public class Engine {
 
     /** Renders the map instance. */
     void render() {
-        /* StdDraw.show();
+        StdDraw.show();
         if (lighting) {
             ter.renderFrame(finalMap.getDarkWorld());
         } else {
@@ -436,7 +436,7 @@ public class Engine {
                         finalMap.getDisplayColor(),
                         currTile
                     );
-        StdDraw.show(); */
+        StdDraw.show();
     }
 
     /** Gets the seed, as desired.

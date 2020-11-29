@@ -298,7 +298,7 @@ public class Engine {
         if (givenSeed != -1) {
             initialize();
             createWorld();
-            render();
+            /* render(); */
             runWorldKeys();
             if (!gameOver) {
                 int i,j;
@@ -323,8 +323,8 @@ public class Engine {
                             }
                             finalMap.updatePosn(player.getPosn(), ghostPosn, player);
                             if (finalMap.isGameOver()) {
-                                render();
-                                StdDraw.pause(3000);
+                                /* render();
+                                StdDraw.pause(3000); */
                                 startGame();
                                 playGame();
                                 return null;
@@ -336,7 +336,7 @@ public class Engine {
                     }
                     if (i == 10) {
                         finalMap.modulateLights(j);
-                        render();
+                        /* render(); */
                         i = 0;
                         j += 1;
                     }

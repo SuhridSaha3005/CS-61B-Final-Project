@@ -2,6 +2,9 @@ package byow.Core;
 import byow.TileEngine.Tileset;
 import org.junit.Test;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.nio.file.FileAlreadyExistsException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -275,7 +278,7 @@ public class MapMakerTest {
     }
 
     @Test
-    public void sanityInputStringTest() {
+    public void sanityInputStringTest() throws FileNotFoundException {
         Engine e1 = new Engine();
         e1.interactWithInputString("n123s");
         assertEquals(123, e1.getSeed());
@@ -304,7 +307,7 @@ public class MapMakerTest {
         assertArrayEquals(e1.createWorld(), m.getWorld());
     } */
 
-    public static void makeMapFinal() {
+    public static void makeMapFinal() throws FileNotFoundException {
         Engine e = new Engine();
         Engine e2 = new Engine();
         e.interactWithInputString("n123s");
@@ -314,7 +317,7 @@ public class MapMakerTest {
         e.render();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FileNotFoundException{
         // hallwayMakerTest();
         // hallwayScamTest();
         // hallwayLongestMakerTest();

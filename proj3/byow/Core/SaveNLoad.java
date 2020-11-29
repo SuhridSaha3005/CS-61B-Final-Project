@@ -19,7 +19,7 @@ public class SaveNLoad {
     }
 
     public static String loadGame() {
-        In in = new In("byow/core/SavedGame.txt");
+        In in = new In(System.getProperty("user.dir") + "\\byow\\Core\\SavedGame.txt");
         return in.readString();
     }
 

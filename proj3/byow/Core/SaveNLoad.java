@@ -10,7 +10,7 @@ public class SaveNLoad {
 
     public static void saveGame(String game) {
         try {
-            PrintWriter writer = new PrintWriter("SavedGame.txt");
+            PrintWriter writer = new PrintWriter(System.getProperty("user.dir") + "\\byow\\Core\\SavedGame.txt");
             writer.print(game);
             writer.close();
         } catch (FileNotFoundException f) {

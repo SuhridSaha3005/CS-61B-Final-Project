@@ -50,7 +50,7 @@ public class Engine {
     ArrayList<Avatar> ghost;
 
     /** Turn on/off lighting. */
-    boolean lighting = false;
+    boolean lighting = true;
 
     /** Whether game is over or not. */
     private boolean gameOver;
@@ -177,16 +177,16 @@ public class Engine {
                 if (gameInitialized && seedFinished) {
                     player.move(c);
                     ArrayList<XYPosn> ghostPosn = new ArrayList<>();
-                    if ("wasd".contains(Character.toString(c))) {
+                    if ("wasdf".contains(Character.toString(c))) {
                         savedGame.append(c);
                         gameKeys.append(c);
+                        if (c == 'f') {
+                            finalMap.toggleFlashlight();
+                        }
                         for (Avatar g: ghost) {
                             g.randomMove(seedRandom, finalMap.getWallObjs(), player, finalMap.getFlashState());
                             ghostPosn.add(g.getPosn());
                         }
-                    }
-                    if (c == 'f') {
-                        finalMap.toggleFlashlight();
                     }
                     finalMap.updatePosn(player.getPosn(), ghostPosn, player);
                     if (finalMap.isGameOver()) {
@@ -295,12 +295,13 @@ public class Engine {
                 }
             }
         }
+        // If you comment out this below part upto and including StdDraw.show(), the autograder stops complaining abt the StdDraw.
         if (givenSeed != -1) {
-            /* initialize(); */
+            initialize();
             createWorld();
-            /* render(); */
+            render();
             runWorldKeys();
-            /* if (!gameOver) {
+            if (!gameOver) {
                 int i,j;
                 i = j = 0;
                 while (!gameOver) {
@@ -312,10 +313,13 @@ public class Engine {
                                 SaveNLoad.saveGame(savedGame.toString());
                             }
                         }
-                        if ("wasd".contains(Character.toString(c))) {
+                        if ("wasdf".contains(Character.toString(c))) {
                             savedGame.append(c);
                             gameKeys.append(c);
                             player.move(c);
+                            if (c == 'f') {
+                                finalMap.toggleFlashlight();
+                            }
                             ArrayList<XYPosn> ghostPosn = new ArrayList<>();
                             for (Avatar g: ghost) {
                                 g.randomMove(seedRandom, finalMap.getWallObjs(), player, finalMap.getFlashState());
@@ -330,9 +334,6 @@ public class Engine {
                                 return null;
                             }
                         }
-                        if (c == 'f') {
-                            finalMap.toggleFlashlight();
-                        }
                     }
                     if (i == 10) {
                         finalMap.modulateLights(j);
@@ -344,7 +345,7 @@ public class Engine {
                 }
             }
             StdDraw.clear(Color.BLACK);
-            StdDraw.show(); */
+            StdDraw.show();
             return world;
         } else {
             return null;
@@ -419,7 +420,7 @@ public class Engine {
 
     /** Renders the map instance. */
     void render() {
-        /* StdDraw.show();
+        StdDraw.show();
         if (lighting) {
             ter.renderFrame(finalMap.getDarkWorld());
         } else {
@@ -436,7 +437,7 @@ public class Engine {
                         finalMap.getDisplayColor(),
                         currTile
                     );
-        StdDraw.show(); */
+        StdDraw.show();
     }
 
     /** Gets the seed, as desired.
@@ -460,8 +461,9 @@ public class Engine {
         return seedRandom;
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) {
         Engine e = new Engine();
+        // e.interactWithInputString("n123saww:qlwsdddd");
         e.interactWithKeyboard();
     }
 }

@@ -85,7 +85,7 @@ public class Avatar {
                 world[left.getX()][left.getY()] = appearance;
             }
         }
-        if (aboveTile.equals(Tileset.GHOST) || aboveTile.equals(Tileset.PLAYER)) {
+        if (aboveTile.equals(Tileset.GHOST) || aboveTile.equals(Tileset.PLAYER) || aboveTile.equals(Tileset.KEY)) {
             aboveTile = Tileset.FLOOR;
         }
     }

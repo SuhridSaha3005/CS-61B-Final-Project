@@ -139,7 +139,7 @@ public class Overlay {
         ArrayList<XYPosn> oldTilePosn = tilePosn.get(oldTile);
         int randIndex = RandomUtils.uniform(rand, oldTilePosn.size());
         if (newTile.equals(Tileset.LOCKED_DOOR)) {
-            while (!checkAdjacent(oldTilePosn.get(randIndex), Tileset.LOCKED_DOOR)) {
+            while (!checkAdjacent(oldTilePosn.get(randIndex), Tileset.FLOOR)) {
                 randIndex = RandomUtils.uniform(rand, oldTilePosn.size());
             }
         }
@@ -285,10 +285,18 @@ public class Overlay {
 
     private boolean checkAdjacent(XYPosn xy, TETile tile) {
         boolean hasPath = false;
-        hasPath = (hasPath || (world[up(xy).getX()][up(xy).getY()].equals(tile)));
-        hasPath = (hasPath || (world[down(xy).getX()][down(xy).getY()].equals(tile)));
-        hasPath = (hasPath || (world[left(xy).getX()][left(xy).getY()].equals(tile)));
-        hasPath = (hasPath || (world[right(xy).getX()][right(xy).getY()].equals(tile)));
+        if (up(xy) != null) {
+            hasPath = (hasPath || (world[up(xy).getX()][up(xy).getY()].equals(tile)));
+        }
+        if (down(xy) != null) {
+            hasPath = (hasPath || (world[down(xy).getX()][down(xy).getY()].equals(tile)));
+        }
+        if (left(xy) != null) {
+            hasPath = (hasPath || (world[left(xy).getX()][left(xy).getY()].equals(tile)));
+        }
+        if (right(xy) != null) {
+            hasPath = (hasPath || (world[right(xy).getX()][right(xy).getY()].equals(tile)));
+        }
         return hasPath;
     }
 

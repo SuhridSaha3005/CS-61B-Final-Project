@@ -43,6 +43,9 @@ public class Engine {
     /** Player Instance. */
     Avatar player;
 
+    /** Player instance appearance */
+    TETile playerTile = Tileset.PLAYER;
+
     /** Ghosts Instance List. */
     ArrayList<Avatar> ghost;
 
@@ -82,14 +85,52 @@ public class Engine {
         gameKeys = new StringBuilder();
         boolean gameInitialized = false;
         boolean seedFinished = false;
+        boolean quit = false;
+        boolean customize = false;
         int i,j;
         i = j = 0;
         while (!gameOver) {
             if (StdDraw.hasNextKeyTyped()) {
                 char c = StdDraw.nextKeyTyped();
+                if (c == 'c') {
+                    customize = true;
+                    StdDraw.clear(Color.BLACK);
+                    double w = WIDTH;
+                    double h = HEIGHT;
+                    StdDraw.setFont(new Font("Arial", Font.PLAIN, 30));
+                    StdDraw.setPenColor(Color.white);
+                    StdDraw.text(w/2, 0.575*h, "White(W): ☺");
+                    StdDraw.setPenColor(Color.blue);
+                    StdDraw.text(w/2, 0.525*h, "Blue(B): ☺");
+                    StdDraw.setPenColor(Color.green);
+                    StdDraw.text(w/2, 0.475*h, "Green(G): ☺");
+                    StdDraw.setPenColor(Color.yellow);
+                    StdDraw.text(w/2, 0.425*h, "Exit(E)");
+                    StdDraw.show();
+                }
+                if (customize) {
+                    if (c == 'w') {
+                        playerTile = Tileset.newTextColor(playerTile, Color.WHITE);
+                        customize = false;
+                        interactWithKeyboard();
+                    } else if (c == 'b') {
+                        playerTile = Tileset.newTextColor(playerTile, Color.BLUE);
+                        customize = false;
+                        interactWithKeyboard();
+                    } else if (c == 'g') {
+                        playerTile = Tileset.newTextColor(playerTile, Color.GREEN);
+                        customize = false;
+                        interactWithKeyboard();
+                    } else if (c == 'e') {
+                        customize = false;
+                        interactWithKeyboard();
+                    }
+                }
                 if (c == 'l') {
                     world = interactWithInputString(SaveNLoad.loadGame());
-                } else if (c == 'q') {
+                } else if (c == ':') {
+                    quit = true;
+                } else if (quit && c == 'q') {
                     gameOver = true;
                     if (gameInitialized && seedFinished) {
                         SaveNLoad.saveGame(savedGame.toString());
@@ -305,7 +346,7 @@ public class Engine {
         map.makeMap();
 
         finalMap = new Overlay(seedRandom, world, WIDTH, height);
-        player = new Avatar(world, Tileset.PLAYER, finalMap.addPlayerRandPosn());
+        player = new Avatar(world, playerTile, finalMap.addPlayerRandPosn());
         ArrayList<XYPosn> ghostPosns = finalMap.addGhostRandPosn(numGhosts);
         ghost = new ArrayList<>();
         for (int i = 0; i < numGhosts; i++) {
@@ -315,8 +356,6 @@ public class Engine {
     }
 
     void runWorldKeys() {
-        int i = 0;
-        int j = 0;
         for (char typed : gameKeys.toString().toCharArray()) {
             player.move(typed);
             ArrayList<XYPosn> ghostPosn = new ArrayList<>();
@@ -325,13 +364,6 @@ public class Engine {
                 ghostPosn.add(g.getPosn());
             }
             finalMap.updatePosn(player.getPosn(), ghostPosn);
-            if (i == 10) {
-                finalMap.modulateLights(j);
-                render();
-                i = 0;
-                j += 1;
-            }
-            i += 1;
         }
     }
 
@@ -351,12 +383,13 @@ public class Engine {
         StdDraw.setPenColor(Color.white);
         Font font1 = new Font("Arial", Font.BOLD, 40);
         StdDraw.setFont(font1);
-        StdDraw.text(w/2, 0.7*h, "MENU");
+        StdDraw.text(w/2, 0.75*h, "MENU");
         Font font2 = new Font("Arial", Font.ITALIC, 30);
         StdDraw.setFont(font2);
-        StdDraw.text(w/2, h*0.55, "New Game(N)");
-        StdDraw.text(w/2, h*0.5, "Load Game(L)");
-        StdDraw.text(w/2, h*0.45, "Quit(Q)");
+        StdDraw.text(w/2, h*0.575, "New Game(N)");
+        StdDraw.text(w/2, h*0.525, "Load Game(L)");
+        StdDraw.text(w/2, h*0.475, "Customize(C)");
+        StdDraw.text(w/2, h*0.425, "Quit(:Q)");
         StdDraw.show();
     }
 

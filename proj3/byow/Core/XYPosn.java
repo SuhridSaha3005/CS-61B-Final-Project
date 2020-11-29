@@ -37,7 +37,6 @@ public class XYPosn {
         return "XYPosn{"
                 + "x=" + x
                 + ", y=" + y
-                + ", world=" + Arrays.toString(world)
                 + '}';
     }
 

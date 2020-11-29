@@ -77,7 +77,7 @@ public class Overlay {
         doorPosn = null;
         playerLives = 3;
         displayColor = Tileset.purpleColorBright;
-        displayString = "WELCOME TO THE MAZE. ESCAPE IF YOU DARE.";
+        displayString = "WELCOME TO THE MAZE. ATTEMPT ESCAPE IF YOU DARE.";
 
         for (int i = 0; i < width; i += 1) {
             for (int j = 0; j < height; j += 1) {
@@ -138,6 +138,11 @@ public class Overlay {
         }
         ArrayList<XYPosn> oldTilePosn = tilePosn.get(oldTile);
         int randIndex = RandomUtils.uniform(rand, oldTilePosn.size());
+        if (newTile.equals(Tileset.LOCKED_DOOR)) {
+            while (!checkAdjacent(oldTilePosn.get(randIndex), Tileset.LOCKED_DOOR)) {
+                randIndex = RandomUtils.uniform(rand, oldTilePosn.size());
+            }
+        }
         while (world[oldTilePosn.get(randIndex).getX()][oldTilePosn.get(randIndex).getY()] != oldTile) {
             randIndex = RandomUtils.uniform(rand, oldTilePosn.size());
         }
@@ -276,6 +281,47 @@ public class Overlay {
 
     public Color getDisplayColor() {
         return displayColor;
+    }
+
+    private boolean checkAdjacent(XYPosn xy, TETile tile) {
+        boolean hasPath = false;
+        hasPath = (hasPath || (world[up(xy).getX()][up(xy).getY()].equals(tile)));
+        hasPath = (hasPath || (world[down(xy).getX()][down(xy).getY()].equals(tile)));
+        hasPath = (hasPath || (world[left(xy).getX()][left(xy).getY()].equals(tile)));
+        hasPath = (hasPath || (world[right(xy).getX()][right(xy).getY()].equals(tile)));
+        return hasPath;
+    }
+
+    private XYPosn up(XYPosn position) {
+        if (position.getY() + 1 == world[0].length) {
+            return null;
+        } else {
+            return new XYPosn(position.getX(), position.getY() + 1, world);
+        }
+    }
+
+    private XYPosn down(XYPosn position) {
+        if (position.getY() == 0) {
+            return null;
+        } else {
+            return new XYPosn(position.getX(), position.getY() - 1, world);
+        }
+    }
+
+    private XYPosn right(XYPosn position) {
+        if (position.getX() + 1 == world.length) {
+            return null;
+        } else {
+            return new XYPosn(position.getX() + 1, position.getY(), world);
+        }
+    }
+
+    private XYPosn left(XYPosn position) {
+        if (position.getX() == 0) {
+            return null;
+        } else {
+            return new XYPosn(position.getX() - 1, position.getY(), world);
+        }
     }
 
     public void modulateLights(int ticks) {

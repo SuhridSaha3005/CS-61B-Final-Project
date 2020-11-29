@@ -106,7 +106,7 @@ public class MapMaker {
         random = rand;
         width = w;
         height = h;
-        genHelp= new GeneratorHelper(world);
+        genHelp = new GeneratorHelper(world);
     }
 
     /** Puts everything together, takes the map for the world. */

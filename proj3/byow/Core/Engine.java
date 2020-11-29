@@ -50,7 +50,7 @@ public class Engine {
     ArrayList<Avatar> ghost;
 
     /** Turn on/off lighting. */
-    boolean lighting = true;
+    boolean lighting = false;
 
     /** Whether game is over or not. */
     private boolean gameOver;

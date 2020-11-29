@@ -19,9 +19,6 @@ public class SaveNLoad {
     }
 
     public static void main(String[] args) throws FileNotFoundException {
-        saveGame("Test");
-        System.out.println(loadGame());
-        saveGame("Stuff");
         System.out.println(loadGame());
     }
 }

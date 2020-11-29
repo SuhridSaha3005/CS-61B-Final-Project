@@ -37,8 +37,8 @@ public class Tileset {
     public static final TETile MOUNTAIN = new TETile('▲', Color.gray, Color.black, "mountain");
     public static final TETile TREE = new TETile('♠', Color.green, Color.black, "tree");
     public static final TETile PLAYER = new TETile('☺', Color.white, Color.black, "player");
-    public static final TETile GHOST = new TETile('☠', purpleColorBright, Color.black, "ghost");
-    public static final TETile KEY = new TETile('⚷', purpleColorBright, Color.black, "key");
+    public static final TETile GHOST = new TETile('☠', Color.red, Color.black, "ghost");
+    public static final TETile KEY = new TETile('⚷', Color.yellow, Color.black, "key");
     public static final TETile LAMP = new TETile('☀', purpleColorDark, Color.black, "lamp");
 
     public static TETile modTile(double a, TETile tileType) {

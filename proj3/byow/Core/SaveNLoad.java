@@ -4,12 +4,13 @@ import edu.princeton.cs.introcs.In;
 
 import java.io.FileNotFoundException;
 import java.io.PrintWriter;
+import java.nio.file.Paths;
 
 public class SaveNLoad {
 
     public static void saveGame(String game) {
         try {
-            PrintWriter writer = new PrintWriter("byow/core/SavedGame.txt");
+            PrintWriter writer = new PrintWriter(Paths.get("byow", "Core", "SavedGame.txt").toFile());
             writer.print(game);
             writer.close();
         } catch (FileNotFoundException f) {

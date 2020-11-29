@@ -353,8 +353,6 @@ public class Engine {
     }
 
     void runWorldKeys() {
-        int i = 0;
-        int j = 0;
         for (char typed : gameKeys.toString().toCharArray()) {
             player.move(typed);
             ArrayList<XYPosn> ghostPosn = new ArrayList<>();
@@ -363,13 +361,6 @@ public class Engine {
                 ghostPosn.add(g.getPosn());
             }
             finalMap.updatePosn(player.getPosn(), ghostPosn);
-            if (i == 10) {
-                finalMap.modulateLights(j);
-                render();
-                i = 0;
-                j += 1;
-            }
-            i += 1;
         }
     }
 

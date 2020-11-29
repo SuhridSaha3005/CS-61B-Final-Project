@@ -50,7 +50,7 @@ public class Engine {
     ArrayList<Avatar> ghost;
 
     /** Turn on/off lighting. */
-    boolean lighting = false;
+    boolean lighting = true;
 
     /** Whether game is over or not. */
     private boolean gameOver;
@@ -186,6 +186,17 @@ public class Engine {
                         ghostPosn.add(g.getPosn());
                     }
                     finalMap.updatePosn(player.getPosn(), ghostPosn, player);
+                    System.out.println(finalMap.isGameOver());
+                    if (finalMap.isGameOver()) {
+                        render();
+                        System.out.println("After Pause");
+                        StdDraw.pause(3000);
+                        System.out.println("After Pause");
+                        startGame();
+                        playGame();
+                        System.out.println("Before Return");
+                        return;
+                    }
                 }
             }
             if (gameInitialized && seedFinished) {
@@ -312,6 +323,16 @@ public class Engine {
                                 ghostPosn.add(g.getPosn());
                             }
                             finalMap.updatePosn(player.getPosn(), ghostPosn, player);
+                            if (finalMap.isGameOver()) {
+                                render();
+                                System.out.println("After Pause");
+                                StdDraw.pause(3000);
+                                System.out.println("After Pause");
+                                startGame();
+                                playGame();
+                                System.out.println("Before Return");
+                                return null;
+                            }
                         }
                     }
                     if (i == 10) {
@@ -359,7 +380,7 @@ public class Engine {
         finalMap.updatePosn(player.getPosn(), ghostPosns, player);
     }
 
-    void runWorldKeys() {
+    void runWorldKeys() throws FileNotFoundException {
         for (char typed : gameKeys.toString().toCharArray()) {
             player.move(typed);
             ArrayList<XYPosn> ghostPosn = new ArrayList<>();

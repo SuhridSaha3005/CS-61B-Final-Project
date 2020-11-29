@@ -23,7 +23,7 @@ public class Overlay {
     private ArrayList<XYPosn> keyPosn;
     private final Random rand;
     private final Random rand2Flicker = new Random();
-    private boolean gameOver = true;
+    private boolean gameOver = false;
     private ArrayList<XYPosn> keyWhileLit;
     private boolean keyLit;
     private int playerLives;
@@ -190,6 +190,7 @@ public class Overlay {
                 gameOver = true;
                 displayString = "WELL PLAYED. YOU ESCAPED IN " + sw.elapsedTime() + " SECONDS.";
                 displayColor = Color.white;
+                gameOver = true;
             }
         }
 
@@ -211,7 +212,6 @@ public class Overlay {
                 }
             }
         }
-
     }
 
     public ArrayList<XYPosn> getWallObjs() {

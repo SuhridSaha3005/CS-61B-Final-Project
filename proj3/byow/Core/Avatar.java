@@ -2,9 +2,7 @@ package byow.Core;
 
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
-import edu.princeton.cs.introcs.StdDraw;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 public class Avatar {
@@ -92,11 +90,7 @@ public class Avatar {
         }
     }
 
-    public XYPosn getPosition() {
-        return position;
-    }
-
-    private static double distance(Avatar avatar1, Avatar avatar2) {
+    static double distance(Avatar avatar1, Avatar avatar2) {
         return Math.sqrt(Math.pow(avatar1.position.getX() - avatar2.position.getX(), 2)
                 + Math.pow(avatar1.position.getY() - avatar2.position.getY(), 2));
     }
@@ -111,43 +105,5 @@ public class Avatar {
 
     public XYPosn getPosn() {
         return position;
-    }
-
-    public static void main(String[] args) {
-        Engine e = new Engine();
-        e.initialize();
-        e.interactWithInputString("n3005s");
-        TETile[][] w = e.getWorld();
-        ArrayList<XYPosn> floors = new ArrayList<>();
-        for (int x = 0; x < w.length; x += 1) {
-            for (int y = 0; y < w[0].length; y += 1) {
-                if (w[x][y] == Tileset.FLOOR) {
-                    floors.add(new XYPosn(x, y, w));
-                }
-            }
-        }
-        Random rand = new Random(5000);
-        XYPosn init = floors.get(RandomUtils.uniform(rand, 0, floors.size()));
-        Avatar player = new Avatar(w, Tileset.PLAYER, init);
-        Avatar key;
-        for (int i = 0; i < 3; i += 1) {
-            init = floors.get(RandomUtils.uniform(rand, 0, floors.size()));
-            key = new Avatar(w, Tileset.KEY, init);
-        }
-        Avatar[] ghosts = new Avatar[5];
-        for (int i = 0; i < 5; i += 1) {
-            init = floors.get(RandomUtils.uniform(rand, 0, floors.size()));
-            ghosts[i] = new Avatar(w, Tileset.GHOST, init);
-        }
-        e.render();
-        while (true) {
-            if (StdDraw.hasNextKeyTyped()) {
-                player.move(StdDraw.nextKeyTyped());
-                for (Avatar ghost : ghosts) {
-                    ghost.randomMove(rand);
-                }
-                e.render();
-            }
-        }
     }
 }

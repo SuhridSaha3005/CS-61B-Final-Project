@@ -50,15 +50,19 @@ public class Engine {
     ArrayList<Avatar> ghost;
 
     /** Turn on/off lighting. */
-    boolean lighting = true;
+    boolean lighting = false;
 
-    /** Whether game is over or not */
+    /** Whether game is over or not. */
     private boolean gameOver;
+
+    /** Current Tile Being Pointed To. */
+    private TETile currTile = Tileset.FLOOR;
 
     /** Constructor for Engine Class. */
     public Engine() {
         hud = new HeadsUpDisplay(3, WIDTH, HEIGHT);
     }
+
 
     /** Constructor with seed for Engine Class.
      * @param seed the seed to be initialized with
@@ -178,10 +182,10 @@ public class Engine {
                     }
                     ArrayList<XYPosn> ghostPosn = new ArrayList<>();
                     for (Avatar g: ghost) {
-                        g.randomMove(seedRandom, finalMap.getWallObjs());
+                        g.randomMove(seedRandom, finalMap.getWallObjs(), player);
                         ghostPosn.add(g.getPosn());
                     }
-                    finalMap.updatePosn(player.getPosn(), ghostPosn);
+                    finalMap.updatePosn(player.getPosn(), ghostPosn, player);
                 }
             }
             if (gameInitialized && seedFinished) {
@@ -304,10 +308,10 @@ public class Engine {
                             player.move(c);
                             ArrayList<XYPosn> ghostPosn = new ArrayList<>();
                             for (Avatar g: ghost) {
-                                g.randomMove(seedRandom, finalMap.getWallObjs());
+                                g.randomMove(seedRandom, finalMap.getWallObjs(), player);
                                 ghostPosn.add(g.getPosn());
                             }
-                            finalMap.updatePosn(player.getPosn(), ghostPosn);
+                            finalMap.updatePosn(player.getPosn(), ghostPosn, player);
                         }
                     }
                     if (i == 10) {
@@ -352,7 +356,7 @@ public class Engine {
         for (int i = 0; i < numGhosts; i++) {
             ghost.add(new Avatar(world, Tileset.GHOST, ghostPosns.get(i)));
         }
-        finalMap.updatePosn(player.getPosn(), ghostPosns);
+        finalMap.updatePosn(player.getPosn(), ghostPosns, player);
     }
 
     void runWorldKeys() {
@@ -360,10 +364,10 @@ public class Engine {
             player.move(typed);
             ArrayList<XYPosn> ghostPosn = new ArrayList<>();
             for (Avatar g: ghost) {
-                g.randomMove(seedRandom, finalMap.getWallObjs());
+                g.randomMove(seedRandom, finalMap.getWallObjs(), player);
                 ghostPosn.add(g.getPosn());
             }
-            finalMap.updatePosn(player.getPosn(), ghostPosn);
+            finalMap.updatePosn(player.getPosn(), ghostPosn, player);
         }
     }
 
@@ -401,9 +405,17 @@ public class Engine {
         } else {
             ter.renderFrame(world);
         }
-        StdDraw.setPenColor(new Color(Color.yellow.getRed(), Color.yellow.getBlue(), Color.yellow.getGreen(), Color.yellow.getAlpha() - 70));
-        hud.update(player, ghost);
-        hud.changeKeys(finalMap.getKeys().size());
+        if (StdDraw.mouseY() < HEIGHT - 10) {
+            currTile = world[(int) Math.floor(StdDraw.mouseX())][(int) Math.floor(StdDraw.mouseY())];
+        }
+        hud.updateAll(  player,
+                        ghost,
+                        finalMap.getKeys().size(),
+                        finalMap.getPlayerLives(),
+                        finalMap.getDisplayString(),
+                        finalMap.getDisplayColor(),
+                        currTile
+                    );
         StdDraw.show();
     }
 

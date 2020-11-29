@@ -2,7 +2,10 @@ package byow.Core;
 
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
+import edu.princeton.cs.introcs.StdDraw;
+import edu.princeton.cs.introcs.Stopwatch;
 
+import java.awt.*;
 import java.util.*;
 
 public class Overlay {
@@ -23,6 +26,10 @@ public class Overlay {
     private boolean gameOver = true;
     private ArrayList<XYPosn> keyWhileLit;
     private boolean keyLit;
+    private int playerLives;
+    private String displayString;
+    private Color displayColor;
+    private Stopwatch sw;
 
     private final double LAMPFALLOFF = 1.8;
     private final double PLAYERFALLOFF = 1.2;
@@ -43,7 +50,11 @@ public class Overlay {
         luminosity = new double[width][height];
         lightState = new HashMap<>();
         lightChange = new HashMap<>();
+        sw = new Stopwatch();
         doorPosn = null;
+        playerLives = 3;
+        displayColor = Tileset.purpleColorBright;
+        displayString = "WELCOME TO THE MAZE. ESCAPE IF YOU DARE.";
 
         for (int i = 0; i < width; i += 1) {
             for (int j = 0; j < height; j += 1) {
@@ -76,12 +87,6 @@ public class Overlay {
         lightChange.put(7, 2 * LAMPFLICKERYNESS);
         lightChange.put(8, -LAMPFLICKERYNESS);
         lightChange.put(9, -LAMPFLICKERYNESS);
-
-        /* StringJoiner sj = new StringJoiner(System.lineSeparator());
-        for (double[] row : luminosity) {
-            sj.add(Arrays.toString(row));
-        }
-        System.out.println(sj.toString()); */
     }
 
     public ArrayList<XYPosn> addKeysRandPosn(int num) {
@@ -157,7 +162,7 @@ public class Overlay {
         ghostPosn = newPosn;
     }
 
-    public void updatePosn(XYPosn newPlayerPosn, ArrayList<XYPosn> newGhostPosn) {
+    public void updatePosn(XYPosn newPlayerPosn, ArrayList<XYPosn> newGhostPosn, Avatar player) {
         brighten(playerPosn, -70, PLAYERFALLOFF);
         updateGhostPosn(newGhostPosn);
         updatePlayerPosn(newPlayerPosn);
@@ -169,17 +174,41 @@ public class Overlay {
                     keyWhileLit.add(k);
                 }
                 temp.remove(k);
+                displayString = "KEY COLLECTED. " + temp.size() + " KEYS REMAIN.";
+                displayColor = Color.yellow;
             }
         }
         keyPosn = temp;
         if ((doorPosn == null) && (keyPosn.size() == 0)) {
             doorPosn = addDoorRandPosn();
+            displayString = "YOU FOUND ALL THE KEYS. BUT CAN YOU FIND THE EXIT?";
+            displayColor = Tileset.purpleColorBright;
         }
 
         if (doorPosn != null) {
             if ((doorPosn.getX() == newPlayerPosn.getX()) && (doorPosn.getY() == newPlayerPosn.getY())) {
-                System.out.println("game over true!");
                 gameOver = true;
+                displayString = "WELL PLAYED. YOU ESCAPED IN " + sw.elapsedTime() + " SECONDS.";
+                displayColor = Color.white;
+            }
+        }
+
+        for (XYPosn g: ghostPosn) {
+            if (euclidean(g, playerPosn) < 1.2) {
+                player.changePosn(getFloors().get(RandomUtils.uniform(rand, getFloors().size())));
+                for (XYPosn g2 : ghostPosn) {
+                    if (euclidean(g2, player.getPosn()) < 3) {
+                        player.changePosn(getFloors().get(RandomUtils.uniform(rand, getFloors().size())));
+                        break;
+                    }
+                }
+                playerLives -= 1;
+                displayString = "YOU DIED. YOU HAVE " + playerLives + " LIVES LEFT.";
+                displayColor = Color.red;
+                if (playerLives <= 0) {
+                    displayString = "YOU FAILED TO ESCAPE THE MAZE. GAME OVER.";
+                    gameOver = true;
+                }
             }
         }
 
@@ -195,13 +224,28 @@ public class Overlay {
         return keyPosn;
     }
 
+    public ArrayList<XYPosn> getFloors() {
+        return tilePosn.get(Tileset.FLOOR);
+    }
+
+    public int getPlayerLives() {
+        return playerLives;
+    }
+
+    public String getDisplayString() {
+        return displayString;
+    }
+
+    public Color getDisplayColor() {
+        return displayColor;
+    }
+
     public void modulateLights(int ticks) {
         int randIndex = RandomUtils.uniform(rand2Flicker, lampPosn.size());
         XYPosn singLampPosn = lampPosn.get(randIndex);
         brighten(singLampPosn, lightChange.get(lightState.get(singLampPosn) % 10), LAMPFALLOFF);
         lightState.put(singLampPosn, lightState.get(singLampPosn) + 1);
         if (ticks % KEYDISPLAYTIME == 0) {
-            System.out.println(getKeys().toString());
             for (XYPosn k: keyPosn) {
                 addLuminosity(k, k, 100, 1000);
                 keyLit = true;

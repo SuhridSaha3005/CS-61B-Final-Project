@@ -92,26 +92,105 @@ public class Avatar {
         }
     }
 
-    static double distance(Avatar avatar1, Avatar avatar2) {
+    public static double distance(Avatar avatar1, Avatar avatar2) {
         return Math.sqrt(Math.pow(avatar1.position.getX() - avatar2.position.getX(), 2)
                 + Math.pow(avatar1.position.getY() - avatar2.position.getY(), 2));
     }
 
-    public void randomMove(Random rand, List<XYPosn> keyPosns) {
+    public void randomMove(Random rand, List<XYPosn> keyPosns, Avatar player) {
         XYPosn oldPos = position;
         ArrayList<String> keys = new ArrayList<>(List.of("w", "a", "s", "d"));
-        while (position == oldPos) {
-            if (keyPosns.contains(up())) {
-                keys.remove("w");
-            } else if (keyPosns.contains(down())) {
-                keys.remove("s");
-            } else if (keyPosns.contains(right())) {
-                keys.remove("d");
-            } else if (keyPosns.contains(left())) {
-                keys.remove("a");
-            }
-            move(keys.get(RandomUtils.uniform(rand, keys.size())).charAt(0));
+        if (keyPosns.contains(up())) {
+            keys.remove("w");
+        } else if (keyPosns.contains(down())) {
+            keys.remove("s");
+        } else if (keyPosns.contains(right())) {
+            keys.remove("d");
+        } else if (keyPosns.contains(left())) {
+            keys.remove("a");
         }
+
+        if (manhattan(position, player.getPosn()) < 8) {
+            if (RandomUtils.uniform(rand, 2) == 0) {
+                move(calcMinKey(keys, player).charAt(0));
+            } else {
+                move(keys.get(RandomUtils.uniform(rand, keys.size())).charAt(0));
+            }
+        }
+
+        if (position == oldPos) {
+            while (position == oldPos) {
+                move(keys.get(RandomUtils.uniform(rand, keys.size())).charAt(0));
+            }
+        }
+    }
+
+    public String calcMinKey(ArrayList<String> keys, Avatar player) {
+        double minim = Double.POSITIVE_INFINITY;
+        String bestChar = "";
+        for (String k: keys) {
+            switch (k) {
+                case "w":
+                    if (up() != null) {
+                        double dist = manhattan(up(), player.getPosn());
+                        if (dist < minim) {
+                            bestChar = "w";
+                            minim = dist;
+                        }
+                    }
+                    break;
+                case "a":
+                    if (left() != null) {
+                        double dist = manhattan(left(), player.getPosn());
+                        if (dist < minim) {
+                            bestChar = "a";
+                            minim = dist;
+                        }
+                    }
+                    break;
+                case "s":
+                    if (down() != null) {
+                        double dist = manhattan(down(), player.getPosn());
+                        if (dist < minim) {
+                            bestChar = "s";
+                            minim = dist;
+                        }
+                    }
+                    break;
+                case "d":
+                    if (right() != null) {
+                        double dist = manhattan(right(), player.getPosn());
+                        if (dist < minim) {
+                            bestChar = "d";
+                            minim = dist;
+                        }
+                    }
+                    break;
+            }
+        }
+        return bestChar;
+    }
+
+    private double manhattan(XYPosn source, XYPosn point) {
+        if ((source == null) || (point == null)) {
+            return Double.POSITIVE_INFINITY;
+        }
+        return (Math.abs(source.getX() - point.getX()) + Math.abs(source.getY() - point.getY()));
+    }
+
+
+    public void changePosn(XYPosn newPosn) {
+        world[position.getX()][position.getY()] = aboveTile;
+        aboveTile = world[newPosn.getX()][newPosn.getY()];
+        position = newPosn;
+        world[newPosn.getX()][newPosn.getY()] = appearance;
+        if (aboveTile.equals(Tileset.GHOST) || aboveTile.equals(Tileset.PLAYER) || aboveTile.equals(Tileset.KEY)) {
+            aboveTile = Tileset.FLOOR;
+        }
+    }
+
+    private double euclidean(XYPosn source, XYPosn point) {
+        return Math.sqrt(Math.pow((source.getX() - point.getX()), 2) + Math.pow((source.getY() - point.getY()), 2));
     }
 
     public XYPosn getPosn() {

@@ -113,7 +113,8 @@ public class Engine {
                     double w = WIDTH;
                     double h = HEIGHT;
                     StdDraw.setPenColor(Color.white);
-                    Font font2 = new Font("Arial", Font.ITALIC, 40);
+                    Font font = new Font("Arial", Font.PLAIN, 30);
+                    StdDraw.setFont(font);
                     StdDraw.text(w/2, h/2, "Seed: ");
                     StdDraw.show();
                 } else if (Character.isDigit(c) && gameInitialized) {
@@ -123,7 +124,8 @@ public class Engine {
                     double w = WIDTH;
                     double h = HEIGHT;
                     StdDraw.setPenColor(Color.white);
-                    Font font2 = new Font("Arial", Font.ITALIC, 40);
+                    Font font = new Font("Arial", Font.PLAIN, 30);
+                    StdDraw.setFont(font);
                     StdDraw.text(w/2, h/2, "Seed: " + randomSeed.toString());
                     StdDraw.show();
                 }
@@ -347,9 +349,11 @@ public class Engine {
         StdDraw.setYscale(0, h);
         StdDraw.enableDoubleBuffering();
         StdDraw.setPenColor(Color.white);
-        Font font1 = new Font("Arial", Font.BOLD, 60);
+        Font font1 = new Font("Arial", Font.BOLD, 40);
+        StdDraw.setFont(font1);
         StdDraw.text(w/2, 0.7*h, "MENU");
-        Font font2 = new Font("Arial", Font.ITALIC, 40);
+        Font font2 = new Font("Arial", Font.ITALIC, 30);
+        StdDraw.setFont(font2);
         StdDraw.text(w/2, h*0.55, "New Game(N)");
         StdDraw.text(w/2, h*0.5, "Load Game(L)");
         StdDraw.text(w/2, h*0.45, "Quit(Q)");

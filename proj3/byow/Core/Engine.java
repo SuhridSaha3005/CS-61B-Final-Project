@@ -85,6 +85,7 @@ public class Engine {
         gameKeys = new StringBuilder();
         boolean gameInitialized = false;
         boolean seedFinished = false;
+        boolean quit = false;
         boolean customize = false;
         int i,j;
         i = j = 0;
@@ -127,7 +128,9 @@ public class Engine {
                 }
                 if (c == 'l') {
                     world = interactWithInputString(SaveNLoad.loadGame());
-                } else if (c == 'q') {
+                } else if (c == ':') {
+                    quit = true;
+                } else if (quit && c == 'q') {
                     gameOver = true;
                     if (gameInitialized && seedFinished) {
                         SaveNLoad.saveGame(savedGame.toString());
@@ -386,7 +389,7 @@ public class Engine {
         StdDraw.text(w/2, h*0.575, "New Game(N)");
         StdDraw.text(w/2, h*0.525, "Load Game(L)");
         StdDraw.text(w/2, h*0.475, "Customize(C)");
-        StdDraw.text(w/2, h*0.425, "Quit(Q)");
+        StdDraw.text(w/2, h*0.425, "Quit(:Q)");
         StdDraw.show();
     }
 

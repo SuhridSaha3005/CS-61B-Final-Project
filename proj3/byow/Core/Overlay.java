@@ -185,6 +185,12 @@ public class Overlay {
 
     }
 
+    public ArrayList<XYPosn> getWallObjs() {
+        ArrayList<XYPosn> newList = new ArrayList<>(keyPosn);
+        newList.addAll(lampPosn);
+        return newList;
+    }
+
     public ArrayList<XYPosn> getKeys() {
         return keyPosn;
     }

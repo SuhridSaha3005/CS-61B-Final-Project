@@ -3,6 +3,8 @@ package byow.Core;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 public class Avatar {
@@ -95,11 +97,20 @@ public class Avatar {
                 + Math.pow(avatar1.position.getY() - avatar2.position.getY(), 2));
     }
 
-    public void randomMove(Random rand) {
+    public void randomMove(Random rand, List<XYPosn> keyPosns) {
         XYPosn oldPos = position;
+        ArrayList<String> keys = new ArrayList<>(List.of("w", "a", "s", "d"));
         while (position == oldPos) {
-            char[] keys = "wasd".toCharArray();
-            move(keys[RandomUtils.uniform(rand, 0, 4)]);
+            if (keyPosns.contains(up())) {
+                keys.remove("w");
+            } else if (keyPosns.contains(down())) {
+                keys.remove("s");
+            } else if (keyPosns.contains(right())) {
+                keys.remove("d");
+            } else if (keyPosns.contains(left())) {
+                keys.remove("a");
+            }
+            move(keys.get(RandomUtils.uniform(rand, keys.size())).charAt(0));
         }
     }
 

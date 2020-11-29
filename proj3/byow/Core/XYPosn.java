@@ -40,4 +40,10 @@ public class XYPosn {
                 + ", world=" + Arrays.toString(world)
                 + '}';
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        XYPosn other = (XYPosn) obj;
+        return ((this.getX() == other.getX()) && (this.getY() == other.getY()));
+    }
 }

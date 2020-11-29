@@ -178,7 +178,7 @@ public class Engine {
                     }
                     ArrayList<XYPosn> ghostPosn = new ArrayList<>();
                     for (Avatar g: ghost) {
-                        g.randomMove(seedRandom);
+                        g.randomMove(seedRandom, finalMap.getWallObjs());
                         ghostPosn.add(g.getPosn());
                     }
                     finalMap.updatePosn(player.getPosn(), ghostPosn);
@@ -304,7 +304,7 @@ public class Engine {
                             player.move(c);
                             ArrayList<XYPosn> ghostPosn = new ArrayList<>();
                             for (Avatar g: ghost) {
-                                g.randomMove(seedRandom);
+                                g.randomMove(seedRandom, finalMap.getWallObjs());
                                 ghostPosn.add(g.getPosn());
                             }
                             finalMap.updatePosn(player.getPosn(), ghostPosn);
@@ -332,7 +332,7 @@ public class Engine {
      */
     void createWorld() {
         int height = HEIGHT - 3;
-        int numGhosts = 2;
+        int numGhosts = 10;
 
 
         world = new TETile[WIDTH][height];
@@ -360,7 +360,7 @@ public class Engine {
             player.move(typed);
             ArrayList<XYPosn> ghostPosn = new ArrayList<>();
             for (Avatar g: ghost) {
-                g.randomMove(seedRandom);
+                g.randomMove(seedRandom, finalMap.getWallObjs());
                 ghostPosn.add(g.getPosn());
             }
             finalMap.updatePosn(player.getPosn(), ghostPosn);

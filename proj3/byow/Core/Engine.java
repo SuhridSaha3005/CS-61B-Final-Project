@@ -249,7 +249,7 @@ public class Engine {
         boolean quit = false;
         for (char c : input.toCharArray()) {
             if (c == 'l') {
-                loadAndInteractWithKeyboard(SaveNLoad.loadGame());
+                interactWithInputString(SaveNLoad.loadGame());
             }
             if (c == ':') {
                 quit = true;

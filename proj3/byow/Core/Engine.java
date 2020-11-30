@@ -4,6 +4,8 @@ import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
+import org.junit.Assert;
+import org.junit.Assert.*;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -240,7 +242,6 @@ public class Engine {
      */
     public TETile[][] interactWithInputString(String input) {
         input = input.toLowerCase();
-        gameOver = false;
         StringBuilder savedGame = new StringBuilder();
         StringBuilder randomSeed = new StringBuilder();
         gameKeys = new StringBuilder();
@@ -248,6 +249,8 @@ public class Engine {
         boolean seedFinished = false;
         boolean quit = false;
         for (char c : input.toCharArray()) {
+            System.out.println(c);
+            System.out.println(quit);
             if (c == 'l') {
                 interactWithInputString(SaveNLoad.loadGame());
             }
@@ -259,7 +262,7 @@ public class Engine {
                         throw new IllegalArgumentException("No keys (w,a,s,d) pressed for game");
                     }
                     SaveNLoad.saveGame(savedGame.toString());
-                    gameOver = true;
+                    quit = false;
                 } else {
                     throw new IllegalArgumentException("Invalid key");
                 }
@@ -529,7 +532,8 @@ public class Engine {
 
     public static void main(String[] args) {
         Engine e = new Engine();
-        // e.loadAndInteractWithKeyboard("n123saww:qlwsdddd");
-        e.interactWithKeyboard();
+        Engine e2 = new Engine();
+        Assert.assertArrayEquals(e.interactWithInputString("n123saww:qlwsdddd"), e2.interactWithInputString("n123sawwwsdddd"));
+        // e.interactWithKeyboard();
     }
 }

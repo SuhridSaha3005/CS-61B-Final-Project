@@ -50,7 +50,7 @@ public class Engine {
     ArrayList<Avatar> ghost;
 
     /** Turn on/off lighting. */
-    boolean lighting = true;
+    boolean lighting = false;
 
     /** Whether game is over or not. */
     private boolean gameOver;
@@ -175,26 +175,26 @@ public class Engine {
                     StdDraw.show();
                 }
                 if (gameInitialized && seedFinished) {
-                    player.move(c);
-                    ArrayList<XYPosn> ghostPosn = new ArrayList<>();
                     if ("wasdf".contains(Character.toString(c))) {
                         savedGame.append(c);
                         gameKeys.append(c);
+                        player.move(c);
                         if (c == 'f') {
                             finalMap.toggleFlashlight();
                         }
+                        ArrayList<XYPosn> ghostPosn = new ArrayList<>();
                         for (Avatar g: ghost) {
                             g.randomMove(seedRandom, finalMap.getWallObjs(), player, finalMap.getFlashState());
                             ghostPosn.add(g.getPosn());
                         }
-                    }
-                    finalMap.updatePosn(player.getPosn(), ghostPosn, player);
-                    if (finalMap.isGameOver()) {
-                        render();
-                        StdDraw.pause(3000);
-                        startGame();
-                        playGame();
-                        return;
+                        finalMap.updatePosn(player.getPosn(), ghostPosn, player);
+                        if (finalMap.isGameOver()) {
+                            render();
+                            StdDraw.pause(3000);
+                            startGame();
+                            playGame();
+                            return;
+                        }
                     }
                 }
             }
@@ -265,7 +265,7 @@ public class Engine {
                     throw new IllegalArgumentException("Invalid key");
                 }
             }
-            if ("nwasd".contains(Character.toString(c)) || Character.isDigit(c)) {
+            if ("nwasdf".contains(Character.toString(c)) || Character.isDigit(c)) {
                 savedGame.append(c);
                 if (quit) {
                     throw new IllegalArgumentException("Invalid key");
@@ -383,6 +383,9 @@ public class Engine {
     void runWorldKeys() {
         for (char typed : gameKeys.toString().toCharArray()) {
             player.move(typed);
+            if (typed == 'f') {
+                finalMap.toggleFlashlight();
+            }
             ArrayList<XYPosn> ghostPosn = new ArrayList<>();
             for (Avatar g: ghost) {
                 g.randomMove(seedRandom, finalMap.getWallObjs(), player, finalMap.getFlashState());

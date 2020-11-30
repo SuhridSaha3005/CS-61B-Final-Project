@@ -6,7 +6,6 @@ import byow.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
 
 import java.awt.*;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -131,7 +130,7 @@ public class Engine {
                     }
                 }
                 if (c == 'l') {
-                    world = interactWithInputString(SaveNLoad.loadGame());
+                    world = loadAndInteractWithKeyboard(SaveNLoad.loadGame());
                 } else if (c == ':') {
                     quit = true;
                 } else if (quit && c == 'q') {
@@ -219,16 +218,16 @@ public class Engine {
      * interactWithKeyboard.
      *
      * Recall that strings ending in ":q" should cause the game to quite save. For example,
-     * if we do interactWithInputString("n123sss:q"), we expect the game to run the first
+     * if we do loadAndInteractWithKeyboard("n123sss:q"), we expect the game to run the first
      * 7 commands (n123sss) and then quit and save. If we then do
-     * interactWithInputString("l"), we should be back in the exact same state.
+     * loadAndInteractWithKeyboard("l"), we should be back in the exact same state.
      *
      * In other words, both of these calls:
-     *   - interactWithInputString("n123sss:q")
-     *   - interactWithInputString("lww")
+     *   - loadAndInteractWithKeyboard("n123sss:q")
+     *   - loadAndInteractWithKeyboard("lww")
      *
      * should yield the exact same world state as:
-     *   - interactWithInputString("n123sssww")
+     *   - loadAndInteractWithKeyboard("n123sssww")
      * // Fill out this method so that it run the engine using the input
      * // passed in as an argument, and return a 2D tile representation of the
      * // world that would have been drawn if the same inputs had been given
@@ -250,7 +249,71 @@ public class Engine {
         boolean quit = false;
         for (char c : input.toCharArray()) {
             if (c == 'l') {
-                interactWithInputString(SaveNLoad.loadGame());
+                loadAndInteractWithKeyboard(SaveNLoad.loadGame());
+            }
+            if (c == ':') {
+                quit = true;
+            } else if (c == 'q') {
+                if (quit && gameInitialized && seedFinished) {
+                    if (gameKeys.length() == 0) {
+                        throw new IllegalArgumentException("No keys (w,a,s,d) pressed for game");
+                    }
+                    SaveNLoad.saveGame(savedGame.toString());
+                    gameOver = true;
+                } else {
+                    throw new IllegalArgumentException("Invalid key");
+                }
+            }
+            if ("nwasdf".contains(Character.toString(c)) || Character.isDigit(c)) {
+                savedGame.append(c);
+                if (quit) {
+                    throw new IllegalArgumentException("Invalid key");
+                }
+                if (c == 'n') {
+                    if (gameInitialized) {
+                        throw new IllegalArgumentException("Invalid key");
+                    }
+                    gameInitialized = true;
+                } else if (Character.isDigit(c)) {
+                    if (seedFinished) {
+                        throw new IllegalArgumentException("Invalid key");
+                    } else {
+                        randomSeed.append(c);
+                    }
+                } else {
+                    if (c == 's') {
+                        seedFinished = true;
+                        givenSeed = Long.parseLong(randomSeed.toString());
+                        seedRandom = new Random(givenSeed);
+                    }
+                    if (seedFinished) {
+                        gameKeys.append(c);
+                    } else {
+                        throw new IllegalArgumentException("Keys must begin with 's'");
+                    }
+                }
+            }
+        }
+        createWorld();
+        runWorldKeys();
+        return world;
+    }
+
+
+
+
+    public TETile[][] loadAndInteractWithKeyboard(String input) {
+        input = input.toLowerCase();
+        gameOver = false;
+        StringBuilder savedGame = new StringBuilder();
+        StringBuilder randomSeed = new StringBuilder();
+        gameKeys = new StringBuilder();
+        boolean gameInitialized = false;
+        boolean seedFinished = false;
+        boolean quit = false;
+        for (char c : input.toCharArray()) {
+            if (c == 'l') {
+                loadAndInteractWithKeyboard(SaveNLoad.loadGame());
             }
             if (c == ':') {
                 quit = true;
@@ -466,7 +529,7 @@ public class Engine {
 
     public static void main(String[] args) {
         Engine e = new Engine();
-        // e.interactWithInputString("n123saww:qlwsdddd");
+        // e.loadAndInteractWithKeyboard("n123saww:qlwsdddd");
         e.interactWithKeyboard();
     }
 }

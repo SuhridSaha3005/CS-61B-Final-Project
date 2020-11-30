@@ -2,9 +2,7 @@ package byow.Core;
 import byow.TileEngine.Tileset;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.nio.file.FileAlreadyExistsException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -280,7 +278,7 @@ public class MapMakerTest {
     @Test
     public void sanityInputStringTest() throws FileNotFoundException {
         Engine e1 = new Engine();
-        e1.interactWithInputString("n123s");
+        e1.loadAndInteractWithKeyboard("n123s");
         assertEquals(123, e1.getSeed());
         Random r = new Random(123);
         assertEquals(r.nextInt(), e1.getSeedRandom().nextInt());
@@ -302,7 +300,7 @@ public class MapMakerTest {
         }
         MapMaker m = new MapMaker(e2.getSeedRandom(), e2.getWorld(), Engine.WIDTH, Engine.HEIGHT);
         m.makeMap();
-        e1.interactWithInputString("n123s");
+        e1.loadAndInteractWithKeyboard("n123s");
         assertEquals(e1.getSeed(), e2.getSeed());
         assertArrayEquals(e1.createWorld(), m.getWorld());
     } */
@@ -310,8 +308,8 @@ public class MapMakerTest {
     public static void makeMapFinal() throws FileNotFoundException {
         Engine e = new Engine();
         Engine e2 = new Engine();
-        e.interactWithInputString("n123s");
-        e2.interactWithInputString("n5197880843569031643s");
+        e.loadAndInteractWithKeyboard("n123s");
+        e2.loadAndInteractWithKeyboard("n5197880843569031643s");
         /* assertArrayEquals(e.createWorld(), e2.createWorld()); */
         e.initialize();
         e.render();

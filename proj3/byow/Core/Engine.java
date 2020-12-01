@@ -96,7 +96,7 @@ public class Engine {
         i = j = 0;
         while (!gameOver) {
             if (StdDraw.hasNextKeyTyped()) {
-                char c = StdDraw.nextKeyTyped();
+                char c = Character.toLowerCase(StdDraw.nextKeyTyped());
                 if (c == 'c') {
                     customize = true;
                     StdDraw.clear(Color.BLACK);
@@ -140,6 +140,8 @@ public class Engine {
                     if (gameInitialized && seedFinished) {
                         SaveNLoad.saveGame(savedGame.toString());
                     }
+                } else if (quit && c != 'q') {
+                    quit = false;
                 } else if (c == 's') {
                     if (randomSeed.length() == 0) {
                         throw new IllegalArgumentException("No seed provided");
@@ -373,12 +375,19 @@ public class Engine {
                 i = j = 0;
                 while (!gameOver) {
                     if (StdDraw.hasNextKeyTyped()) {
-                        char c = StdDraw.nextKeyTyped();
-                        if (c == 'q') {
-                            gameOver = true;
-                            if (gameInitialized && seedFinished) {
-                                SaveNLoad.saveGame(savedGame.toString());
+                        char c = Character.toLowerCase(StdDraw.nextKeyTyped());
+                        if (quit) {
+                            if (c == 'q') {
+                                gameOver = true;
+                                if (gameInitialized && seedFinished) {
+                                    SaveNLoad.saveGame(savedGame.toString());
+                                }
+                            } else {
+                                quit = false;
                             }
+                        }
+                        if (c == ':') {
+                            quit = true;
                         }
                         if ("wasdf".contains(Character.toString(c))) {
                             savedGame.append(c);
@@ -533,9 +542,9 @@ public class Engine {
 
     public static void main(String[] args) {
         Engine e = new Engine();
-        Engine e2 = new Engine();
-        e.interactWithInputString("n123saww:q");
-        Assert.assertArrayEquals(e.interactWithInputString("lwsdddd"), e2.interactWithInputString("n123sawwwsdddd"));
-        // e.interactWithKeyboard();
+        //Engine e2 = new Engine();
+        //e.interactWithInputString("n123saww:q");
+        //Assert.assertArrayEquals(e.interactWithInputString("lwsdddd"), e2.interactWithInputString("n123sawwwsdddd"));
+        e.interactWithKeyboard();
     }
 }

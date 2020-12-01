@@ -49,7 +49,7 @@ public class Engine {
     ArrayList<Avatar> ghost;
 
     /** Turn on/off lighting. */
-    boolean lighting = false;
+    boolean lighting = true;
 
     /** Whether game is over or not. */
     private boolean gameOver;
@@ -81,6 +81,58 @@ public class Engine {
         playGame();
     }
 
+    private boolean drawCustomize() {
+        StdDraw.clear(Color.BLACK);
+        double w = WIDTH;
+        double h = HEIGHT;
+        StdDraw.setFont(new Font("Arial", Font.PLAIN, 30));
+        StdDraw.setPenColor(Color.white);
+        StdDraw.text(w / 2, 0.575 * h, "White(W): ☺");
+        StdDraw.setPenColor(Color.blue);
+        StdDraw.text(w / 2, 0.525 * h, "Blue(B): ☺");
+        StdDraw.setPenColor(Color.green);
+        StdDraw.text(w / 2, 0.475 * h, "Green(G): ☺");
+        StdDraw.setPenColor(Color.yellow);
+        StdDraw.text(w / 2, 0.425 * h, "Exit(E)");
+        StdDraw.show();
+        return true;
+    }
+
+    private boolean doCustomize(char c) {
+        boolean customize = true;
+        if (c == 'w') {
+            playerTile = Tileset.newTextColor(playerTile, Color.WHITE);
+            customize = false;
+            interactWithKeyboard();
+        } else if (c == 'b') {
+            playerTile = Tileset.newTextColor(playerTile, Color.BLUE);
+            customize = false;
+            interactWithKeyboard();
+        } else if (c == 'g') {
+            playerTile = Tileset.newTextColor(playerTile, Color.GREEN);
+            customize = false;
+            interactWithKeyboard();
+        } else if (c == 'e') {
+            customize = false;
+            interactWithKeyboard();
+        }
+        return customize;
+    }
+
+    private void drawSeedFrame(String r) {
+        if (r == null) {
+            r = "";
+        }
+        StdDraw.clear(Color.BLACK);
+        double w = WIDTH;
+        double h = HEIGHT;
+        StdDraw.setPenColor(Color.white);
+        Font font = new Font("Arial", Font.PLAIN, 30);
+        StdDraw.setFont(font);
+        StdDraw.text(w / 2, h / 2, "Seed: " + r);
+        StdDraw.show();
+    }
+
     private void playGame() {
         gameOver = false;
         StringBuilder savedGame = new StringBuilder();
@@ -96,38 +148,10 @@ public class Engine {
             if (StdDraw.hasNextKeyTyped()) {
                 char c = Character.toLowerCase(StdDraw.nextKeyTyped());
                 if (c == 'c') {
-                    customize = true;
-                    StdDraw.clear(Color.BLACK);
-                    double w = WIDTH;
-                    double h = HEIGHT;
-                    StdDraw.setFont(new Font("Arial", Font.PLAIN, 30));
-                    StdDraw.setPenColor(Color.white);
-                    StdDraw.text(w / 2, 0.575 * h, "White(W): ☺");
-                    StdDraw.setPenColor(Color.blue);
-                    StdDraw.text(w / 2, 0.525 * h, "Blue(B): ☺");
-                    StdDraw.setPenColor(Color.green);
-                    StdDraw.text(w / 2, 0.475 * h, "Green(G): ☺");
-                    StdDraw.setPenColor(Color.yellow);
-                    StdDraw.text(w / 2, 0.425 * h, "Exit(E)");
-                    StdDraw.show();
+                    customize = drawCustomize();
                 }
                 if (customize) {
-                    if (c == 'w') {
-                        playerTile = Tileset.newTextColor(playerTile, Color.WHITE);
-                        customize = false;
-                        interactWithKeyboard();
-                    } else if (c == 'b') {
-                        playerTile = Tileset.newTextColor(playerTile, Color.BLUE);
-                        customize = false;
-                        interactWithKeyboard();
-                    } else if (c == 'g') {
-                        playerTile = Tileset.newTextColor(playerTile, Color.GREEN);
-                        customize = false;
-                        interactWithKeyboard();
-                    } else if (c == 'e') {
-                        customize = false;
-                        interactWithKeyboard();
-                    }
+                    customize = doCustomize(c);
                 }
                 if (c == 'l') {
                     world = loadAndInteractWithKeyboard(SaveNLoad.loadGame());
@@ -155,49 +179,19 @@ public class Engine {
                 } else if (c == 'n') {
                     gameInitialized = true;
                     savedGame.append(c);
-                    StdDraw.clear(Color.BLACK);
-                    double w = WIDTH;
-                    double h = HEIGHT;
-                    StdDraw.setPenColor(Color.white);
-                    Font font = new Font("Arial", Font.PLAIN, 30);
-                    StdDraw.setFont(font);
-                    StdDraw.text(w / 2, h / 2, "Seed: ");
-                    StdDraw.show();
+                    drawSeedFrame(null);
                 } else if (Character.isDigit(c) && gameInitialized) {
                     randomSeed.append(c);
                     savedGame.append(c);
-                    StdDraw.clear(Color.BLACK);
-                    double w = WIDTH;
-                    double h = HEIGHT;
-                    StdDraw.setPenColor(Color.white);
-                    Font font = new Font("Arial", Font.PLAIN, 30);
-                    StdDraw.setFont(font);
-                    StdDraw.text(w / 2, h / 2, "Seed: " + randomSeed.toString());
-                    StdDraw.show();
+                    drawSeedFrame(randomSeed.toString());
                 }
                 if (gameInitialized && seedFinished) {
                     if ("wasdf".contains(Character.toString(c))) {
                         savedGame.append(c);
                         gameKeys.append(c);
                         player.move(c);
-                        if (c == 'f') {
-                            finalMap.toggleFlashlight();
-                        }
-                        ArrayList<XYPosn> ghostPosn = new ArrayList<>();
-                        for (Avatar g: ghost) {
-                            g.randomMove(seedRandom,
-                                    finalMap.getWallObjs(),
-                                    player,
-                                    finalMap.getFlashState());
-                            ghostPosn.add(g.getPosn());
-                        }
-                        finalMap.updatePosn(player.getPosn(), ghostPosn, player);
-                        if (finalMap.isGameOver()) {
-                            render();
-                            StdDraw.pause(3000);
-                            startGame();
-                            playGame();
-                            return;
+                        if (!updateOverlay(c)) {
+                            break;
                         }
                     }
                 }
@@ -214,6 +208,29 @@ public class Engine {
         }
         StdDraw.clear(Color.BLACK);
         StdDraw.show();
+    }
+
+    public boolean updateOverlay(char c) {
+        if (c == 'f') {
+            finalMap.toggleFlashlight();
+        }
+        ArrayList<XYPosn> ghostPosn = new ArrayList<>();
+        for (Avatar g: ghost) {
+            g.randomMove(seedRandom,
+                    finalMap.getWallObjs(),
+                    player,
+                    finalMap.getFlashState());
+            ghostPosn.add(g.getPosn());
+        }
+        finalMap.updatePosn(player.getPosn(), ghostPosn, player);
+        if (finalMap.isGameOver()) {
+            render();
+            StdDraw.pause(3000);
+            startGame();
+            playGame();
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -363,6 +380,11 @@ public class Engine {
                 }
             }
         }
+        return loadAndInteractWithKeyboardPt2(savedGame);
+    }
+
+    public TETile[][] loadAndInteractWithKeyboardPt2(StringBuilder savedGame) {
+        boolean quit = false;
         if (givenSeed != -1) {
             initialize();
             createWorld();
@@ -377,9 +399,7 @@ public class Engine {
                         if (quit) {
                             if (c == 'q') {
                                 gameOver = true;
-                                if (gameInitialized && seedFinished) {
-                                    SaveNLoad.saveGame(savedGame.toString());
-                                }
+                                SaveNLoad.saveGame(savedGame.toString());
                             } else {
                                 quit = false;
                             }
@@ -512,13 +532,12 @@ public class Engine {
                     [(int) Math.floor(StdDraw.mouseY())];
         }
         hud.updateAll(player,
-            ghost,
-            finalMap.getKeys().size(),
-            finalMap.getPlayerLives(),
-            finalMap.getDisplayString(),
-            finalMap.getDisplayColor(),
-            currTile
-            );
+                ghost,
+                finalMap.getKeys().size(),
+                finalMap.getPlayerLives(),
+                finalMap.getDisplayString(),
+                finalMap.getDisplayColor(),
+                currTile);
         StdDraw.show();
     }
 

@@ -100,7 +100,11 @@ public class Avatar {
                 + Math.pow(avatar1.position.getY() - avatar2.position.getY(), 2));
     }
 
-    public void randomMove(Random rand, List<XYPosn> keyPosns, Avatar player, boolean flashlightOn) {
+    public void randomMove(
+            Random rand,
+            List<XYPosn> keyPosns,
+            Avatar player,
+            boolean flashlightOn) {
         XYPosn oldPos = position;
         ArrayList<String> keys = new ArrayList<>(List.of("w", "a", "s", "d"));
         if (keyPosns.contains(up())) {

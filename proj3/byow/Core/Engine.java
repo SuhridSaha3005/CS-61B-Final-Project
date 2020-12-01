@@ -248,11 +248,12 @@ public class Engine {
         boolean gameInitialized = false;
         boolean seedFinished = false;
         boolean quit = false;
-        for (char c : input.toCharArray()) {
+        for (int i = 0; i < input.toCharArray().length; i += 1) {
+            char c = input.toCharArray()[i];
             System.out.println(c);
             System.out.println(quit);
             if (c == 'l') {
-                interactWithInputString(SaveNLoad.loadGame());
+                return interactWithInputString(SaveNLoad.loadGame() + input.substring(i + 1));
             }
             if (c == ':') {
                 quit = true;
@@ -533,7 +534,8 @@ public class Engine {
     public static void main(String[] args) {
         Engine e = new Engine();
         Engine e2 = new Engine();
-        Assert.assertArrayEquals(e.interactWithInputString("n123saww:qlwsdddd"), e2.interactWithInputString("n123sawwwsdddd"));
+        e.interactWithInputString("n123saww:q");
+        Assert.assertArrayEquals(e.interactWithInputString("lwsdddd"), e2.interactWithInputString("n123sawwwsdddd"));
         // e.interactWithKeyboard();
     }
 }

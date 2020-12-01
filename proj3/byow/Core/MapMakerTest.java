@@ -232,7 +232,8 @@ public class MapMakerTest {
         MapMaker m = new MapMaker(new Random(10), e.getWorld(), Engine.WIDTH, Engine.HEIGHT);
         XYPosn entry = new XYPosn(40, 30);
         assertTrue(m.getOrientation(entry) < 0);
-        System.out.println(m.getGenHelp().smallestRoomImpossible(entry, m.getOrientation(entry))); // should be false
+        System.out.println(
+                m.getGenHelp().smallestRoomImpossible(entry, m.getOrientation(entry)));
         entry = m.hallwayMaker(entry, 4, 0);
         entry = m.hallwayMaker(entry, 4, 90);
         System.out.println(entry.getX());
@@ -288,23 +289,6 @@ public class MapMakerTest {
         assertEquals(r.nextInt(), e1.getSeedRandom().nextInt());
     }
 
-    /* @Test
-    public void inputStringTestFinal() {
-        Engine e1 = new Engine();
-        Engine e2 = new Engine(123L);
-        e2.getWorld() = new TETile[e2.WIDTH][e2.HEIGHT];
-        for (int x = 0; x < e2.WIDTH; x += 1) {
-            for (int y = 0; y < e2.HEIGHT; y += 1) {
-                e2.getWorld()[x][y] = Tileset.NOTHING;
-            }
-        }
-        MapMaker m = new MapMaker(e2.getSeedRandom(), e2.getWorld(), Engine.WIDTH, Engine.HEIGHT);
-        m.makeMap();
-        e1.loadAndInteractWithKeyboard("n123s");
-        assertEquals(e1.getSeed(), e2.getSeed());
-        assertArrayEquals(e1.createWorld(), m.getWorld());
-    } */
-
     public static void makeMapFinal() throws FileNotFoundException {
         Engine e = new Engine();
         Engine e2 = new Engine();
@@ -315,7 +299,11 @@ public class MapMakerTest {
         e.render();
     }
 
-    public static void main(String[] args) throws FileNotFoundException{
+    public static void randomCheck() {
+        Random rand = new Random(123);
+    }
+
+    public static void main(String[] args) throws FileNotFoundException {
         // hallwayMakerTest();
         // hallwayScamTest();
         // hallwayLongestMakerTest();
@@ -328,6 +316,7 @@ public class MapMakerTest {
         // scamTest2();
         // smallestRoomImpossibleTest();
         // addMultiRoomSpringTest();
-        makeMapFinal();
+        // makeMapFinal();
+        randomCheck();
     }
 }

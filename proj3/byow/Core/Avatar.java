@@ -87,13 +87,16 @@ public class Avatar {
                 world[left.getX()][left.getY()] = appearance;
             }
         }
-        if (aboveTile.equals(Tileset.GHOST) || aboveTile.equals(Tileset.PLAYER) || aboveTile.equals(Tileset.KEY)) {
+        if (aboveTile.equals(Tileset.GHOST)
+                || aboveTile.equals(Tileset.PLAYER)
+                || aboveTile.equals(Tileset.KEY)) {
             aboveTile = Tileset.FLOOR;
         }
     }
 
     public static double distance(Avatar avatar1, Avatar avatar2) {
-        return Math.sqrt(Math.pow(avatar1.position.getX() - avatar2.position.getX(), 2)
+        return Math.sqrt(
+                Math.pow(avatar1.position.getX() - avatar2.position.getX(), 2)
                 + Math.pow(avatar1.position.getY() - avatar2.position.getY(), 2));
     }
 
@@ -111,7 +114,7 @@ public class Avatar {
         }
 
         if ((manhattan(position, player.getPosn()) < 8) && (flashlightOn)) {
-                move(calcMinKey(keys, player).charAt(0));
+            move(calcMinKey(keys, player).charAt(0));
         }
 
 
@@ -183,6 +186,8 @@ public class Avatar {
                         }
                     }
                     break;
+                default:
+                    break;
             }
         }
         return bestChar;
@@ -201,13 +206,17 @@ public class Avatar {
         aboveTile = world[newPosn.getX()][newPosn.getY()];
         position = newPosn;
         world[newPosn.getX()][newPosn.getY()] = appearance;
-        if (aboveTile.equals(Tileset.GHOST) || aboveTile.equals(Tileset.PLAYER) || aboveTile.equals(Tileset.KEY)) {
+        if (aboveTile.equals(Tileset.GHOST)
+                || aboveTile.equals(Tileset.PLAYER)
+                || aboveTile.equals(Tileset.KEY)) {
             aboveTile = Tileset.FLOOR;
         }
     }
 
     private double euclidean(XYPosn source, XYPosn point) {
-        return Math.sqrt(Math.pow((source.getX() - point.getX()), 2) + Math.pow((source.getY() - point.getY()), 2));
+        return Math.sqrt(
+                Math.pow((source.getX() - point.getX()), 2)
+                + Math.pow((source.getY() - point.getY()), 2));
     }
 
     public XYPosn getPosn() {

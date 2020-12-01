@@ -2,7 +2,6 @@ package byow.Core;
 
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
-import edu.princeton.cs.introcs.StdDraw;
 import edu.princeton.cs.introcs.Stopwatch;
 
 import java.awt.*;
@@ -76,7 +75,7 @@ public class Overlay {
         sw = new Stopwatch();
         doorPosn = null;
         playerLives = 3;
-        displayColor = Tileset.purpleColorBright;
+        displayColor = Tileset.getPurpleColorBright();
         displayString = "WELCOME TO THE MAZE. ATTEMPT ESCAPE IF YOU DARE.";
 
         for (int i = 0; i < width; i += 1) {
@@ -143,7 +142,9 @@ public class Overlay {
                 randIndex = RandomUtils.uniform(rand, oldTilePosn.size());
             }
         }
-        while (world[oldTilePosn.get(randIndex).getX()][oldTilePosn.get(randIndex).getY()] != oldTile) {
+        while (world
+                [oldTilePosn.get(randIndex).getX()]
+                [oldTilePosn.get(randIndex).getY()] != oldTile) {
             randIndex = RandomUtils.uniform(rand, oldTilePosn.size());
         }
         XYPosn replacePosn = oldTilePosn.get(randIndex);
@@ -163,7 +164,9 @@ public class Overlay {
         ArrayList<XYPosn> newObjPosn = new ArrayList<>();
         while (numReplace > 0) {
             int randIndex = RandomUtils.uniform(rand, oldTilePosn.size());
-            while (world[oldTilePosn.get(randIndex).getX()][oldTilePosn.get(randIndex).getY()] != oldTile) {
+            while (world
+                    [oldTilePosn.get(randIndex).getX()]
+                    [oldTilePosn.get(randIndex).getY()] != oldTile) {
                 randIndex = RandomUtils.uniform(rand, oldTilePosn.size());
             }
             if (!temp.contains(randIndex)) {
@@ -225,11 +228,12 @@ public class Overlay {
         if ((doorPosn == null) && (keyPosn.size() == 0)) {
             doorPosn = addDoorRandPosn();
             displayString = "YOU FOUND ALL THE KEYS. BUT CAN YOU FIND THE EXIT?";
-            displayColor = Tileset.purpleColorBright;
+            displayColor = Tileset.getPurpleColorBright();
         }
 
         if (doorPosn != null) {
-            if ((doorPosn.getX() == newPlayerPosn.getX()) && (doorPosn.getY() == newPlayerPosn.getY())) {
+            if ((doorPosn.getX() == newPlayerPosn.getX())
+                    && (doorPosn.getY() == newPlayerPosn.getY())) {
                 gameOver = true;
                 displayString = "WELL PLAYED. YOU ESCAPED IN " + sw.elapsedTime() + " SECONDS.";
                 displayColor = Color.white;
@@ -242,7 +246,8 @@ public class Overlay {
                 player.changePosn(getFloors().get(RandomUtils.uniform(rand, getFloors().size())));
                 for (XYPosn g2 : ghostPosn) {
                     if (euclidean(g2, player.getPosn()) < 3) {
-                        player.changePosn(getFloors().get(RandomUtils.uniform(rand, getFloors().size())));
+                        player.changePosn(getFloors().get(
+                                RandomUtils.uniform(rand, getFloors().size())));
                         break;
                     }
                 }
@@ -361,7 +366,10 @@ public class Overlay {
 
 
     private boolean validate(XYPosn point) {
-        return point.getX() >= 0 && point.getX() < world.length && point.getY() >= 0 && point.getY() < world[0].length;
+        return point.getX() >= 0
+                && point.getX() < world.length
+                && point.getY() >= 0
+                && point.getY() < world[0].length;
     }
 
     private void brighten(XYPosn sourcePosn, double wattage, double falloff) {
@@ -379,11 +387,14 @@ public class Overlay {
     }
 
     private double euclidean(XYPosn source, XYPosn point) {
-        return Math.sqrt(Math.pow((source.getX() - point.getX()), 2) + Math.pow((source.getY() - point.getY()), 2));
+        return Math.sqrt(
+                Math.pow((source.getX() - point.getX()), 2)
+                        + Math.pow((source.getY() - point.getY()), 2));
     }
 
     private void addLuminosity(XYPosn sourcePosn, XYPosn point, double wattage, double falloff) {
-        luminosity[point.getX()][point.getY()] += wattage / Math.max((Math.pow(euclidean(sourcePosn, point), falloff)), 1);
+        luminosity[point.getX()][point.getY()] +=
+                wattage / Math.max((Math.pow(euclidean(sourcePosn, point), falloff)), 1);
     }
 
     public boolean isGameOver() {
@@ -395,7 +406,8 @@ public class Overlay {
 
         for (int i = 0; i < width; i += 1) {
             for (int j = 0; j < height; j += 1) {
-                darkWorld[i][j] = Tileset.modTile(Math.max(Math.min(luminosity[i][j], 100), 0), world[i][j]);
+                darkWorld[i][j] = Tileset.modTile(
+                        Math.max(Math.min(luminosity[i][j], 100), 0), world[i][j]);
             }
         }
         return darkWorld;

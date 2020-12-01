@@ -1,7 +1,6 @@
 package byow.Core;
 
 
-import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
@@ -9,7 +8,6 @@ import edu.princeton.cs.introcs.StdDraw;
 import java.awt.*;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.List;
 
 public class HeadsUpDisplay {
     private int keys;
@@ -28,7 +26,7 @@ public class HeadsUpDisplay {
     }
 
     public void updateKeyAndDistance(Avatar player, ArrayList<Avatar> ghost) {
-        StdDraw.setPenColor(Tileset.purpleColorDark);
+        StdDraw.setPenColor(Tileset.getPurpleColorDark());
         Font font = new Font("Times New Roman", Font.BOLD, 15);
         StdDraw.setFont(font);
         double textHeight = height  - 1;
@@ -44,7 +42,7 @@ public class HeadsUpDisplay {
         Font font = new Font("Times New Roman", Font.BOLD, 20);
         StdDraw.setFont(font);
         double textHeight = height  - 1.5;
-        double textWidth = ( (double) width / 2);
+        double textWidth = ((double) width / 2);
         StdDraw.text(textWidth, textHeight, center);
         Font font2 = new Font("Monaco", Font.BOLD, 14);
         StdDraw.setFont(font2);
@@ -53,8 +51,8 @@ public class HeadsUpDisplay {
     private double getMinGhostDist(Avatar player, ArrayList<Avatar> ghosts) {
         double min = Double.POSITIVE_INFINITY;
         for (Avatar g: ghosts) {
-            if (Avatar.distance(player,g) < min) {
-                min = Avatar.distance(player,g);
+            if (Avatar.distance(player, g) < min) {
+                min = Avatar.distance(player, g);
             }
         }
         return min;
@@ -72,12 +70,18 @@ public class HeadsUpDisplay {
         currTile = tile;
     }
 
-    public void updateAll(Avatar player, ArrayList<Avatar> ghosts, int keyNum, int lifeNum, String center, Color color, TETile currTile) {
-        StdDraw.setPenColor(Tileset.purpleColorDark);
+    public void updateAll(Avatar player,
+                          ArrayList<Avatar> ghosts,
+                          int keyNum,
+                          int lifeNum,
+                          String center,
+                          Color color,
+                          TETile tile) {
+        StdDraw.setPenColor(Tileset.getPurpleColorDark());
         updateKeyAndDistance(player, ghosts);
         changeKeys(keyNum);
         changeLives(lifeNum);
-        changeTile(currTile);
+        changeTile(tile);
         updateMainString(center, color);
     }
 }

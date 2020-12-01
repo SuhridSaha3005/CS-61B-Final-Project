@@ -2,8 +2,6 @@ package byow.Core;
 
 import byow.TileEngine.TETile;
 
-import java.util.Arrays;
-
 public class XYPosn {
     private int x;
     private int y;
@@ -44,5 +42,10 @@ public class XYPosn {
     public boolean equals(Object obj) {
         XYPosn other = (XYPosn) obj;
         return ((this.getX() == other.getX()) && (this.getY() == other.getY()));
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

@@ -4,8 +4,6 @@ import byow.TileEngine.TERenderer;
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
-import org.junit.Assert;
-import org.junit.Assert.*;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -92,7 +90,7 @@ public class Engine {
         boolean seedFinished = false;
         boolean quit = false;
         boolean customize = false;
-        int i,j;
+        int i, j;
         i = j = 0;
         while (!gameOver) {
             if (StdDraw.hasNextKeyTyped()) {
@@ -104,13 +102,13 @@ public class Engine {
                     double h = HEIGHT;
                     StdDraw.setFont(new Font("Arial", Font.PLAIN, 30));
                     StdDraw.setPenColor(Color.white);
-                    StdDraw.text(w/2, 0.575*h, "White(W): ☺");
+                    StdDraw.text(w / 2, 0.575 * h, "White(W): ☺");
                     StdDraw.setPenColor(Color.blue);
-                    StdDraw.text(w/2, 0.525*h, "Blue(B): ☺");
+                    StdDraw.text(w / 2, 0.525 * h, "Blue(B): ☺");
                     StdDraw.setPenColor(Color.green);
-                    StdDraw.text(w/2, 0.475*h, "Green(G): ☺");
+                    StdDraw.text(w / 2, 0.475 * h, "Green(G): ☺");
                     StdDraw.setPenColor(Color.yellow);
-                    StdDraw.text(w/2, 0.425*h, "Exit(E)");
+                    StdDraw.text(w / 2, 0.425 * h, "Exit(E)");
                     StdDraw.show();
                 }
                 if (customize) {
@@ -163,7 +161,7 @@ public class Engine {
                     StdDraw.setPenColor(Color.white);
                     Font font = new Font("Arial", Font.PLAIN, 30);
                     StdDraw.setFont(font);
-                    StdDraw.text(w/2, h/2, "Seed: ");
+                    StdDraw.text(w / 2, h / 2, "Seed: ");
                     StdDraw.show();
                 } else if (Character.isDigit(c) && gameInitialized) {
                     randomSeed.append(c);
@@ -174,7 +172,7 @@ public class Engine {
                     StdDraw.setPenColor(Color.white);
                     Font font = new Font("Arial", Font.PLAIN, 30);
                     StdDraw.setFont(font);
-                    StdDraw.text(w/2, h/2, "Seed: " + randomSeed.toString());
+                    StdDraw.text(w / 2, h / 2, "Seed: " + randomSeed.toString());
                     StdDraw.show();
                 }
                 if (gameInitialized && seedFinished) {
@@ -187,7 +185,10 @@ public class Engine {
                         }
                         ArrayList<XYPosn> ghostPosn = new ArrayList<>();
                         for (Avatar g: ghost) {
-                            g.randomMove(seedRandom, finalMap.getWallObjs(), player, finalMap.getFlashState());
+                            g.randomMove(seedRandom,
+                                    finalMap.getWallObjs(),
+                                    player,
+                                    finalMap.getFlashState());
                             ghostPosn.add(g.getPosn());
                         }
                         finalMap.updatePosn(player.getPosn(), ghostPosn, player);
@@ -252,8 +253,6 @@ public class Engine {
         boolean quit = false;
         for (int i = 0; i < input.toCharArray().length; i += 1) {
             char c = input.toCharArray()[i];
-            System.out.println(c);
-            System.out.println(quit);
             if (c == 'l') {
                 return interactWithInputString(SaveNLoad.loadGame() + input.substring(i + 1));
             }
@@ -364,14 +363,13 @@ public class Engine {
                 }
             }
         }
-        // If you comment out this below part upto and including StdDraw.show(), the autograder stops complaining abt the StdDraw.
         if (givenSeed != -1) {
             initialize();
             createWorld();
             render();
             runWorldKeys();
             if (!gameOver) {
-                int i,j;
+                int i, j;
                 i = j = 0;
                 while (!gameOver) {
                     if (StdDraw.hasNextKeyTyped()) {
@@ -398,7 +396,10 @@ public class Engine {
                             }
                             ArrayList<XYPosn> ghostPosn = new ArrayList<>();
                             for (Avatar g: ghost) {
-                                g.randomMove(seedRandom, finalMap.getWallObjs(), player, finalMap.getFlashState());
+                                g.randomMove(seedRandom,
+                                        finalMap.getWallObjs(),
+                                        player,
+                                        finalMap.getFlashState());
                                 ghostPosn.add(g.getPosn());
                             }
                             finalMap.updatePosn(player.getPosn(), ghostPosn, player);
@@ -487,13 +488,13 @@ public class Engine {
         StdDraw.setPenColor(Color.white);
         Font font1 = new Font("Arial", Font.BOLD, 40);
         StdDraw.setFont(font1);
-        StdDraw.text(w/2, 0.75*h, "MENU");
+        StdDraw.text(w / 2, 0.75 * h, "MENU");
         Font font2 = new Font("Arial", Font.ITALIC, 30);
         StdDraw.setFont(font2);
-        StdDraw.text(w/2, h*0.575, "New Game(N)");
-        StdDraw.text(w/2, h*0.525, "Load Game(L)");
-        StdDraw.text(w/2, h*0.475, "Customize(C)");
-        StdDraw.text(w/2, h*0.425, "Quit(:Q)");
+        StdDraw.text(w / 2, h * 0.575, "New Game(N)");
+        StdDraw.text(w / 2, h * 0.525, "Load Game(L)");
+        StdDraw.text(w / 2, h * 0.475, "Customize(C)");
+        StdDraw.text(w / 2, h * 0.425, "Quit(:Q)");
         StdDraw.show();
     }
 
@@ -506,16 +507,18 @@ public class Engine {
             ter.renderFrame(world);
         }
         if (StdDraw.mouseY() < HEIGHT - 10) {
-            currTile = world[(int) Math.floor(StdDraw.mouseX())][(int) Math.floor(StdDraw.mouseY())];
+            currTile = world
+                    [(int) Math.floor(StdDraw.mouseX())]
+                    [(int) Math.floor(StdDraw.mouseY())];
         }
-        hud.updateAll(  player,
-                        ghost,
-                        finalMap.getKeys().size(),
-                        finalMap.getPlayerLives(),
-                        finalMap.getDisplayString(),
-                        finalMap.getDisplayColor(),
-                        currTile
-                    );
+        hud.updateAll(player,
+            ghost,
+            finalMap.getKeys().size(),
+            finalMap.getPlayerLives(),
+            finalMap.getDisplayString(),
+            finalMap.getDisplayColor(),
+            currTile
+            );
         StdDraw.show();
     }
 
@@ -538,13 +541,5 @@ public class Engine {
      */
     Random getSeedRandom() {
         return seedRandom;
-    }
-
-    public static void main(String[] args) {
-        Engine e = new Engine();
-        //Engine e2 = new Engine();
-        //e.interactWithInputString("n123saww:q");
-        //Assert.assertArrayEquals(e.interactWithInputString("lwsdddd"), e2.interactWithInputString("n123sawwwsdddd"));
-        e.interactWithKeyboard();
     }
 }

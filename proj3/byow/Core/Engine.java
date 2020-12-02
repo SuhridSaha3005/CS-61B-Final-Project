@@ -191,7 +191,7 @@ public class Engine {
                     }
                 } else if (quit && c != 'q') {
                     quit = false;
-                } else if (c == 's') {
+                } else if (gameInitialized && c == 's') {
                     if (randomSeed.length() == 0) {
                         throw new IllegalArgumentException("No seed provided");
                     }
@@ -394,7 +394,7 @@ public class Engine {
                         randomSeed.append(c);
                     }
                 } else {
-                    if (c == 's') {
+                    if (gameInitialized && c == 's') {
                         seedFinished = true;
                         givenSeed = Long.parseLong(randomSeed.toString());
                         seedRandom = new Random(givenSeed);

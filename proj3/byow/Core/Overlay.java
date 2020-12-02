@@ -57,7 +57,7 @@ public class Overlay {
     private final double PLAYERFALLOFF = 1.2;
     private final int LAMPFLICKERYNESS = 10;
     private final int KEYDISPLAYTIME = 1000;
-    private final int LAMPWATTAGE = 100;
+    private int LAMPWATTAGE = 100;
 
     /** Overlays objects in the world and adds color and lighting. */
     public Overlay(Random r, TETile[][] wrld, int w, int h) {
@@ -411,6 +411,10 @@ public class Overlay {
             }
         }
         return darkWorld;
+    }
+
+    public void changeWattage(int P) {
+        LAMPWATTAGE = P;
     }
 
 }

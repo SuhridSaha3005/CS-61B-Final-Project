@@ -63,11 +63,69 @@ public class Room {
         }
     }
 
+    private boolean checkAdjacent(XYPosn xy, TETile tile) {
+        boolean hasPath = false;
+        if (up(xy) != null) {
+            hasPath = (hasPath || (world[up(xy).getX()][up(xy).getY()].equals(tile)));
+        }
+        if (down(xy) != null) {
+            hasPath = (hasPath || (world[down(xy).getX()][down(xy).getY()].equals(tile)));
+        }
+        if (left(xy) != null) {
+            hasPath = (hasPath || (world[left(xy).getX()][left(xy).getY()].equals(tile)));
+        }
+        if (right(xy) != null) {
+            hasPath = (hasPath || (world[right(xy).getX()][right(xy).getY()].equals(tile)));
+        }
+        return hasPath;
+    }
+
+    private XYPosn up(XYPosn position) {
+        if (position.getY() + 1 == world[0].length) {
+            return null;
+        } else {
+            return new XYPosn(position.getX(), position.getY() + 1);
+        }
+    }
+
+    private XYPosn down(XYPosn position) {
+        if (position.getY() == 0) {
+            return null;
+        } else {
+            return new XYPosn(position.getX(), position.getY() - 1);
+        }
+    }
+
+    private XYPosn right(XYPosn position) {
+        if (position.getX() + 1 == world.length) {
+            return null;
+        } else {
+            return new XYPosn(position.getX() + 1, position.getY());
+        }
+    }
+
+    private XYPosn left(XYPosn position) {
+        if (position.getX() == 0) {
+            return null;
+        } else {
+            return new XYPosn(position.getX() - 1, position.getY());
+        }
+    }
+
     /** Gives a random non-corner wall for a hallway to shoot from.
      * @param rand random seed
      * @return random element from this.otherWalls
      */
     public XYPosn getRandomWall(Random rand) {
-        return otherWalls.get(RandomUtils.uniform(rand, 0, otherWalls.size() - 1));
+        int randIndex = RandomUtils.uniform(rand, 0, otherWalls.size() - 1);
+        int i = 0;
+        while (!checkAdjacent(otherWalls.get(randIndex), Tileset.NOTHING)) {
+            if (i > 500) {
+                break;
+            }
+            randIndex = RandomUtils.uniform(rand, 0, otherWalls.size() - 1);
+            i += 1;
+        }
+        return otherWalls.get(randIndex);
     }
 }

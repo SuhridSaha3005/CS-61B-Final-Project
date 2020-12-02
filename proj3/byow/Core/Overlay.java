@@ -2,28 +2,57 @@ package byow.Core;
 
 import byow.TileEngine.TETile;
 import byow.TileEngine.Tileset;
+import edu.princeton.cs.introcs.Stopwatch;
 
+import java.awt.*;
 import java.util.*;
 
+/** Handles and tracks the Game State and prepares display.
+ *
+ * Tracks the entire game state and combines everything
+ * for display, based on interactive inputs from Engine.
+ *
+ * Places and tracks player, ghosts, lamps, keys and door.
+ * Handles their lighting, flickering and changing state.
+ * Relays with Engine on Keyboard inputs and saves its effects on the game.
+ *
+ */
 public class Overlay {
+    /** Characteristics of World. */
+    private final Random rand;
     private final TETile[][] world;
     private final double[][] luminosity;
     private final int width;
     private final int height;
+
+    /** Object Positions in World. */
     private final HashMap<TETile, ArrayList<XYPosn>> tilePosn;
-    private final HashMap<XYPosn, Integer> lightState;
-    private final HashMap<Integer, Integer> lightChange;
+    private ArrayList<XYPosn> ghostPosn;
+    private ArrayList<XYPosn> lampPosn;
+    private ArrayList<XYPosn> keyPosn;
     private XYPosn playerPosn;
     private XYPosn doorPosn;
-    private ArrayList<XYPosn> ghostPosn;
-    private final ArrayList<XYPosn> lampPosn;
-    private ArrayList<XYPosn> keyPosn;
-    private final Random rand;
-    private final Random rand2Flicker = new Random();
-    private boolean gameOver = true;
-    private ArrayList<XYPosn> keyWhileLit;
-    private boolean keyLit;
 
+
+    /** Light/Flickering Handling Helpers. */
+    private final Random rand2Flicker = new Random();
+    private final HashMap<XYPosn, Integer> lightState;
+    private final HashMap<Integer, Integer> lightChange;
+    private boolean keyLit;
+    private boolean flashlightOn = true;
+    private ArrayList<XYPosn> keyWhileLit;
+
+    /** Gameplay Handling Helpers. */
+    private boolean gameOver = false;
+    private int playerLives;
+
+    /** HUD Handling Helpers. */
+    private String displayString;
+    private Color displayColor;
+    private final Stopwatch sw;
+
+
+    /** Variable Parameters. */
     private final double LAMPFALLOFF = 1.8;
     private final double PLAYERFALLOFF = 1.2;
     private final int LAMPFLICKERYNESS = 10;
@@ -43,7 +72,11 @@ public class Overlay {
         luminosity = new double[width][height];
         lightState = new HashMap<>();
         lightChange = new HashMap<>();
+        sw = new Stopwatch();
         doorPosn = null;
+        playerLives = 3;
+        displayColor = Tileset.getPurpleColorBright();
+        displayString = "WELCOME TO THE MAZE. ATTEMPT ESCAPE IF YOU DARE.";
 
         for (int i = 0; i < width; i += 1) {
             for (int j = 0; j < height; j += 1) {
@@ -76,12 +109,6 @@ public class Overlay {
         lightChange.put(7, 2 * LAMPFLICKERYNESS);
         lightChange.put(8, -LAMPFLICKERYNESS);
         lightChange.put(9, -LAMPFLICKERYNESS);
-
-        /* StringJoiner sj = new StringJoiner(System.lineSeparator());
-        for (double[] row : luminosity) {
-            sj.add(Arrays.toString(row));
-        }
-        System.out.println(sj.toString()); */
     }
 
     public ArrayList<XYPosn> addKeysRandPosn(int num) {
@@ -110,7 +137,14 @@ public class Overlay {
         }
         ArrayList<XYPosn> oldTilePosn = tilePosn.get(oldTile);
         int randIndex = RandomUtils.uniform(rand, oldTilePosn.size());
-        while (world[oldTilePosn.get(randIndex).getX()][oldTilePosn.get(randIndex).getY()] != oldTile) {
+        if (newTile.equals(Tileset.LOCKED_DOOR)) {
+            while (!checkAdjacent(oldTilePosn.get(randIndex), Tileset.FLOOR)) {
+                randIndex = RandomUtils.uniform(rand, oldTilePosn.size());
+            }
+        }
+        while (world
+                [oldTilePosn.get(randIndex).getX()]
+                [oldTilePosn.get(randIndex).getY()] != oldTile) {
             randIndex = RandomUtils.uniform(rand, oldTilePosn.size());
         }
         XYPosn replacePosn = oldTilePosn.get(randIndex);
@@ -130,7 +164,9 @@ public class Overlay {
         ArrayList<XYPosn> newObjPosn = new ArrayList<>();
         while (numReplace > 0) {
             int randIndex = RandomUtils.uniform(rand, oldTilePosn.size());
-            while (world[oldTilePosn.get(randIndex).getX()][oldTilePosn.get(randIndex).getY()] != oldTile) {
+            while (world
+                    [oldTilePosn.get(randIndex).getX()]
+                    [oldTilePosn.get(randIndex).getY()] != oldTile) {
                 randIndex = RandomUtils.uniform(rand, oldTilePosn.size());
             }
             if (!temp.contains(randIndex)) {
@@ -157,11 +193,26 @@ public class Overlay {
         ghostPosn = newPosn;
     }
 
-    public void updatePosn(XYPosn newPlayerPosn, ArrayList<XYPosn> newGhostPosn) {
-        brighten(playerPosn, -70, PLAYERFALLOFF);
+    public void toggleFlashlight() {
+        if (flashlightOn) {
+            brighten(playerPosn, -70, PLAYERFALLOFF);
+        } else {
+            brighten(playerPosn, 70, PLAYERFALLOFF);
+        }
+        flashlightOn = !flashlightOn;
+    }
+
+    public boolean getFlashState() {
+        return flashlightOn;
+    }
+
+    public void updatePosn(XYPosn newPlayerPosn, ArrayList<XYPosn> newGhostPosn, Avatar player) {
+        if (flashlightOn) {
+            brighten(playerPosn, -70, PLAYERFALLOFF);
+            brighten(newPlayerPosn, 70, PLAYERFALLOFF);
+        }
         updateGhostPosn(newGhostPosn);
         updatePlayerPosn(newPlayerPosn);
-        brighten(newPlayerPosn, 70, PLAYERFALLOFF);
         ArrayList<XYPosn> temp = (ArrayList<XYPosn>) keyPosn.clone();
         for (XYPosn k: keyPosn) {
             if ((k.getX() == newPlayerPosn.getX()) && (k.getY() == newPlayerPosn.getY())) {
@@ -169,20 +220,46 @@ public class Overlay {
                     keyWhileLit.add(k);
                 }
                 temp.remove(k);
+                displayString = "KEY COLLECTED. " + temp.size() + " KEYS REMAIN.";
+                displayColor = Color.yellow;
             }
         }
         keyPosn = temp;
         if ((doorPosn == null) && (keyPosn.size() == 0)) {
             doorPosn = addDoorRandPosn();
+            displayString = "YOU FOUND ALL THE KEYS. BUT CAN YOU FIND THE EXIT?";
+            displayColor = Tileset.getPurpleColorBright();
         }
 
         if (doorPosn != null) {
-            if ((doorPosn.getX() == newPlayerPosn.getX()) && (doorPosn.getY() == newPlayerPosn.getY())) {
-                System.out.println("game over true!");
+            if ((doorPosn.getX() == newPlayerPosn.getX())
+                    && (doorPosn.getY() == newPlayerPosn.getY())) {
+                gameOver = true;
+                displayString = "WELL PLAYED. YOU ESCAPED IN " + sw.elapsedTime() + " SECONDS.";
+                displayColor = Color.white;
                 gameOver = true;
             }
         }
 
+        for (XYPosn g: ghostPosn) {
+            if (euclidean(g, playerPosn) < 1.2) {
+                player.changePosn(getFloors().get(RandomUtils.uniform(rand, getFloors().size())));
+                for (XYPosn g2 : ghostPosn) {
+                    if (euclidean(g2, player.getPosn()) < 3) {
+                        player.changePosn(getFloors().get(
+                                RandomUtils.uniform(rand, getFloors().size())));
+                        break;
+                    }
+                }
+                playerLives -= 1;
+                displayString = "YOU DIED. YOU HAVE " + playerLives + " LIVES LEFT.";
+                displayColor = Color.red;
+                if (playerLives <= 0) {
+                    displayString = "YOU FAILED TO ESCAPE THE MAZE. GAME OVER.";
+                    gameOver = true;
+                }
+            }
+        }
     }
 
     public ArrayList<XYPosn> getWallObjs() {
@@ -195,13 +272,77 @@ public class Overlay {
         return keyPosn;
     }
 
+    public ArrayList<XYPosn> getFloors() {
+        return tilePosn.get(Tileset.FLOOR);
+    }
+
+    public int getPlayerLives() {
+        return playerLives;
+    }
+
+    public String getDisplayString() {
+        return displayString;
+    }
+
+    public Color getDisplayColor() {
+        return displayColor;
+    }
+
+    private boolean checkAdjacent(XYPosn xy, TETile tile) {
+        boolean hasPath = false;
+        if (up(xy) != null) {
+            hasPath = (hasPath || (world[up(xy).getX()][up(xy).getY()].equals(tile)));
+        }
+        if (down(xy) != null) {
+            hasPath = (hasPath || (world[down(xy).getX()][down(xy).getY()].equals(tile)));
+        }
+        if (left(xy) != null) {
+            hasPath = (hasPath || (world[left(xy).getX()][left(xy).getY()].equals(tile)));
+        }
+        if (right(xy) != null) {
+            hasPath = (hasPath || (world[right(xy).getX()][right(xy).getY()].equals(tile)));
+        }
+        return hasPath;
+    }
+
+    private XYPosn up(XYPosn position) {
+        if (position.getY() + 1 == world[0].length) {
+            return null;
+        } else {
+            return new XYPosn(position.getX(), position.getY() + 1, world);
+        }
+    }
+
+    private XYPosn down(XYPosn position) {
+        if (position.getY() == 0) {
+            return null;
+        } else {
+            return new XYPosn(position.getX(), position.getY() - 1, world);
+        }
+    }
+
+    private XYPosn right(XYPosn position) {
+        if (position.getX() + 1 == world.length) {
+            return null;
+        } else {
+            return new XYPosn(position.getX() + 1, position.getY(), world);
+        }
+    }
+
+    private XYPosn left(XYPosn position) {
+        if (position.getX() == 0) {
+            return null;
+        } else {
+            return new XYPosn(position.getX() - 1, position.getY(), world);
+        }
+    }
+
     public void modulateLights(int ticks) {
         int randIndex = RandomUtils.uniform(rand2Flicker, lampPosn.size());
         XYPosn singLampPosn = lampPosn.get(randIndex);
         brighten(singLampPosn, lightChange.get(lightState.get(singLampPosn) % 10), LAMPFALLOFF);
         lightState.put(singLampPosn, lightState.get(singLampPosn) + 1);
         if (ticks % KEYDISPLAYTIME == 0) {
-            System.out.println(getKeys().toString());
             for (XYPosn k: keyPosn) {
                 addLuminosity(k, k, 100, 1000);
                 keyLit = true;
@@ -225,7 +366,10 @@ public class Overlay {
 
 
     private boolean validate(XYPosn point) {
-        return point.getX() >= 0 && point.getX() < world.length && point.getY() >= 0 && point.getY() < world[0].length;
+        return point.getX() >= 0
+                && point.getX() < world.length
+                && point.getY() >= 0
+                && point.getY() < world[0].length;
     }
 
     private void brighten(XYPosn sourcePosn, double wattage, double falloff) {
@@ -243,11 +387,14 @@ public class Overlay {
     }
 
     private double euclidean(XYPosn source, XYPosn point) {
-        return Math.sqrt(Math.pow((source.getX() - point.getX()), 2) + Math.pow((source.getY() - point.getY()), 2));
+        return Math.sqrt(
+                Math.pow((source.getX() - point.getX()), 2)
+                        + Math.pow((source.getY() - point.getY()), 2));
     }
 
     private void addLuminosity(XYPosn sourcePosn, XYPosn point, double wattage, double falloff) {
-        luminosity[point.getX()][point.getY()] += wattage / Math.max((Math.pow(euclidean(sourcePosn, point), falloff)), 1);
+        luminosity[point.getX()][point.getY()] +=
+                wattage / Math.max((Math.pow(euclidean(sourcePosn, point), falloff)), 1);
     }
 
     public boolean isGameOver() {
@@ -259,7 +406,8 @@ public class Overlay {
 
         for (int i = 0; i < width; i += 1) {
             for (int j = 0; j < height; j += 1) {
-                darkWorld[i][j] = Tileset.modTile(Math.max(Math.min(luminosity[i][j], 100), 0), world[i][j]);
+                darkWorld[i][j] = Tileset.modTile(
+                        Math.max(Math.min(luminosity[i][j], 100), 0), world[i][j]);
             }
         }
         return darkWorld;

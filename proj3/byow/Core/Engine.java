@@ -6,7 +6,6 @@ import byow.TileEngine.Tileset;
 import edu.princeton.cs.introcs.StdDraw;
 
 import java.awt.*;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -52,13 +51,17 @@ public class Engine {
     /** Turn on/off lighting. */
     boolean lighting = true;
 
-    /** Whether game is over or not */
+    /** Whether game is over or not. */
     private boolean gameOver;
+
+    /** Current Tile Being Pointed To. */
+    private TETile currTile = Tileset.FLOOR;
 
     /** Constructor for Engine Class. */
     public Engine() {
         hud = new HeadsUpDisplay(3, WIDTH, HEIGHT);
     }
+
 
     /** Constructor with seed for Engine Class.
      * @param seed the seed to be initialized with
@@ -73,12 +76,64 @@ public class Engine {
      * This method should handle all inputs,
      * including inputs from the main menu.
      */
-    public void interactWithKeyboard() throws FileNotFoundException{
+    public void interactWithKeyboard() {
         startGame();
         playGame();
     }
 
-    private void playGame() throws FileNotFoundException {
+    private boolean drawCustomize() {
+        StdDraw.clear(Color.BLACK);
+        double w = WIDTH;
+        double h = HEIGHT;
+        StdDraw.setFont(new Font("Arial", Font.PLAIN, 30));
+        StdDraw.setPenColor(Color.white);
+        StdDraw.text(w / 2, 0.575 * h, "White(W): ☺");
+        StdDraw.setPenColor(Color.blue);
+        StdDraw.text(w / 2, 0.525 * h, "Blue(B): ☺");
+        StdDraw.setPenColor(Color.green);
+        StdDraw.text(w / 2, 0.475 * h, "Green(G): ☺");
+        StdDraw.setPenColor(Color.yellow);
+        StdDraw.text(w / 2, 0.425 * h, "Exit(E)");
+        StdDraw.show();
+        return true;
+    }
+
+    private boolean doCustomize(char c) {
+        boolean customize = true;
+        if (c == 'w') {
+            playerTile = Tileset.newTextColor(playerTile, Color.WHITE);
+            customize = false;
+            interactWithKeyboard();
+        } else if (c == 'b') {
+            playerTile = Tileset.newTextColor(playerTile, Color.BLUE);
+            customize = false;
+            interactWithKeyboard();
+        } else if (c == 'g') {
+            playerTile = Tileset.newTextColor(playerTile, Color.GREEN);
+            customize = false;
+            interactWithKeyboard();
+        } else if (c == 'e') {
+            customize = false;
+            interactWithKeyboard();
+        }
+        return customize;
+    }
+
+    private void drawSeedFrame(String r) {
+        if (r == null) {
+            r = "";
+        }
+        StdDraw.clear(Color.BLACK);
+        double w = WIDTH;
+        double h = HEIGHT;
+        StdDraw.setPenColor(Color.white);
+        Font font = new Font("Arial", Font.PLAIN, 30);
+        StdDraw.setFont(font);
+        StdDraw.text(w / 2, h / 2, "Seed: " + r);
+        StdDraw.show();
+    }
+
+    private void playGame() {
         gameOver = false;
         StringBuilder savedGame = new StringBuilder();
         StringBuilder randomSeed = new StringBuilder();
@@ -87,47 +142,19 @@ public class Engine {
         boolean seedFinished = false;
         boolean quit = false;
         boolean customize = false;
-        int i,j;
+        int i, j;
         i = j = 0;
         while (!gameOver) {
             if (StdDraw.hasNextKeyTyped()) {
-                char c = StdDraw.nextKeyTyped();
+                char c = Character.toLowerCase(StdDraw.nextKeyTyped());
                 if (c == 'c') {
-                    customize = true;
-                    StdDraw.clear(Color.BLACK);
-                    double w = WIDTH;
-                    double h = HEIGHT;
-                    StdDraw.setFont(new Font("Arial", Font.PLAIN, 30));
-                    StdDraw.setPenColor(Color.white);
-                    StdDraw.text(w/2, 0.575*h, "White(W): ☺");
-                    StdDraw.setPenColor(Color.blue);
-                    StdDraw.text(w/2, 0.525*h, "Blue(B): ☺");
-                    StdDraw.setPenColor(Color.green);
-                    StdDraw.text(w/2, 0.475*h, "Green(G): ☺");
-                    StdDraw.setPenColor(Color.yellow);
-                    StdDraw.text(w/2, 0.425*h, "Exit(E)");
-                    StdDraw.show();
+                    customize = drawCustomize();
                 }
                 if (customize) {
-                    if (c == 'w') {
-                        playerTile = Tileset.newTextColor(playerTile, Color.WHITE);
-                        customize = false;
-                        interactWithKeyboard();
-                    } else if (c == 'b') {
-                        playerTile = Tileset.newTextColor(playerTile, Color.BLUE);
-                        customize = false;
-                        interactWithKeyboard();
-                    } else if (c == 'g') {
-                        playerTile = Tileset.newTextColor(playerTile, Color.GREEN);
-                        customize = false;
-                        interactWithKeyboard();
-                    } else if (c == 'e') {
-                        customize = false;
-                        interactWithKeyboard();
-                    }
+                    customize = doCustomize(c);
                 }
                 if (c == 'l') {
-                    world = interactWithInputString(SaveNLoad.loadGame());
+                    world = loadAndInteractWithKeyboard(SaveNLoad.loadGame());
                 } else if (c == ':') {
                     quit = true;
                 } else if (quit && c == 'q') {
@@ -135,6 +162,8 @@ public class Engine {
                     if (gameInitialized && seedFinished) {
                         SaveNLoad.saveGame(savedGame.toString());
                     }
+                } else if (quit && c != 'q') {
+                    quit = false;
                 } else if (c == 's') {
                     if (randomSeed.length() == 0) {
                         throw new IllegalArgumentException("No seed provided");
@@ -150,38 +179,21 @@ public class Engine {
                 } else if (c == 'n') {
                     gameInitialized = true;
                     savedGame.append(c);
-                    StdDraw.clear(Color.BLACK);
-                    double w = WIDTH;
-                    double h = HEIGHT;
-                    StdDraw.setPenColor(Color.white);
-                    Font font = new Font("Arial", Font.PLAIN, 30);
-                    StdDraw.setFont(font);
-                    StdDraw.text(w/2, h/2, "Seed: ");
-                    StdDraw.show();
+                    drawSeedFrame(null);
                 } else if (Character.isDigit(c) && gameInitialized) {
                     randomSeed.append(c);
                     savedGame.append(c);
-                    StdDraw.clear(Color.BLACK);
-                    double w = WIDTH;
-                    double h = HEIGHT;
-                    StdDraw.setPenColor(Color.white);
-                    Font font = new Font("Arial", Font.PLAIN, 30);
-                    StdDraw.setFont(font);
-                    StdDraw.text(w/2, h/2, "Seed: " + randomSeed.toString());
-                    StdDraw.show();
+                    drawSeedFrame(randomSeed.toString());
                 }
                 if (gameInitialized && seedFinished) {
-                    player.move(c);
-                    if ("wasd".contains(Character.toString(c))) {
+                    if ("wasdf".contains(Character.toString(c))) {
                         savedGame.append(c);
                         gameKeys.append(c);
+                        player.move(c);
+                        if (!updateOverlay(c)) {
+                            break;
+                        }
                     }
-                    ArrayList<XYPosn> ghostPosn = new ArrayList<>();
-                    for (Avatar g: ghost) {
-                        g.randomMove(seedRandom, finalMap.getWallObjs());
-                        ghostPosn.add(g.getPosn());
-                    }
-                    finalMap.updatePosn(player.getPosn(), ghostPosn);
                 }
             }
             if (gameInitialized && seedFinished) {
@@ -198,6 +210,29 @@ public class Engine {
         StdDraw.show();
     }
 
+    public boolean updateOverlay(char c) {
+        if (c == 'f') {
+            finalMap.toggleFlashlight();
+        }
+        ArrayList<XYPosn> ghostPosn = new ArrayList<>();
+        for (Avatar g: ghost) {
+            g.randomMove(seedRandom,
+                    finalMap.getWallObjs(),
+                    player,
+                    finalMap.getFlashState());
+            ghostPosn.add(g.getPosn());
+        }
+        finalMap.updatePosn(player.getPosn(), ghostPosn, player);
+        if (finalMap.isGameOver()) {
+            render();
+            StdDraw.pause(3000);
+            startGame();
+            playGame();
+            return false;
+        }
+        return true;
+    }
+
     /**
      * Method used for autograding and testing your code. The input string will be a series
      * of characters (for example, "n123sswwdasdassadwas", "n123sss:q", "lwww". The engine should
@@ -205,16 +240,16 @@ public class Engine {
      * interactWithKeyboard.
      *
      * Recall that strings ending in ":q" should cause the game to quite save. For example,
-     * if we do interactWithInputString("n123sss:q"), we expect the game to run the first
+     * if we do loadAndInteractWithKeyboard("n123sss:q"), we expect the game to run the first
      * 7 commands (n123sss) and then quit and save. If we then do
-     * interactWithInputString("l"), we should be back in the exact same state.
+     * loadAndInteractWithKeyboard("l"), we should be back in the exact same state.
      *
      * In other words, both of these calls:
-     *   - interactWithInputString("n123sss:q")
-     *   - interactWithInputString("lww")
+     *   - loadAndInteractWithKeyboard("n123sss:q")
+     *   - loadAndInteractWithKeyboard("lww")
      *
      * should yield the exact same world state as:
-     *   - interactWithInputString("n123sssww")
+     *   - loadAndInteractWithKeyboard("n123sssww")
      * // Fill out this method so that it run the engine using the input
      * // passed in as an argument, and return a 2D tile representation of the
      * // world that would have been drawn if the same inputs had been given
@@ -225,18 +260,18 @@ public class Engine {
      * @param input the input string to feed to your program
      * @return the 2D TETile[][] representing the state of the world
      */
-    public TETile[][] interactWithInputString(String input) throws FileNotFoundException {
+    public TETile[][] interactWithInputString(String input) {
         input = input.toLowerCase();
-        gameOver = false;
         StringBuilder savedGame = new StringBuilder();
         StringBuilder randomSeed = new StringBuilder();
         gameKeys = new StringBuilder();
         boolean gameInitialized = false;
         boolean seedFinished = false;
         boolean quit = false;
-        for (char c : input.toCharArray()) {
+        for (int i = 0; i < input.toCharArray().length; i += 1) {
+            char c = input.toCharArray()[i];
             if (c == 'l') {
-                interactWithInputString(SaveNLoad.loadGame());
+                return interactWithInputString(SaveNLoad.loadGame() + input.substring(i + 1));
             }
             if (c == ':') {
                 quit = true;
@@ -246,12 +281,12 @@ public class Engine {
                         throw new IllegalArgumentException("No keys (w,a,s,d) pressed for game");
                     }
                     SaveNLoad.saveGame(savedGame.toString());
-                    gameOver = true;
+                    quit = false;
                 } else {
                     throw new IllegalArgumentException("Invalid key");
                 }
             }
-            if ("nwasd".contains(Character.toString(c)) || Character.isDigit(c)) {
+            if ("nwasdf".contains(Character.toString(c)) || Character.isDigit(c)) {
                 savedGame.append(c);
                 if (quit) {
                     throw new IllegalArgumentException("Invalid key");
@@ -281,33 +316,120 @@ public class Engine {
                 }
             }
         }
+        createWorld();
+        runWorldKeys();
+        return world;
+    }
+
+
+
+
+    public TETile[][] loadAndInteractWithKeyboard(String input) {
+        input = input.toLowerCase();
+        gameOver = false;
+        StringBuilder savedGame = new StringBuilder();
+        StringBuilder randomSeed = new StringBuilder();
+        gameKeys = new StringBuilder();
+        boolean gameInitialized = false;
+        boolean seedFinished = false;
+        boolean quit = false;
+        for (char c : input.toCharArray()) {
+            if (c == 'l') {
+                loadAndInteractWithKeyboard(SaveNLoad.loadGame());
+            }
+            if (c == ':') {
+                quit = true;
+            } else if (c == 'q') {
+                if (quit && gameInitialized && seedFinished) {
+                    if (gameKeys.length() == 0) {
+                        throw new IllegalArgumentException("No keys (w,a,s,d) pressed for game");
+                    }
+                    SaveNLoad.saveGame(savedGame.toString());
+                    gameOver = true;
+                } else {
+                    throw new IllegalArgumentException("Invalid key");
+                }
+            }
+            if ("nwasdf".contains(Character.toString(c)) || Character.isDigit(c)) {
+                savedGame.append(c);
+                if (quit) {
+                    throw new IllegalArgumentException("Invalid key");
+                }
+                if (c == 'n') {
+                    if (gameInitialized) {
+                        throw new IllegalArgumentException("Invalid key");
+                    }
+                    gameInitialized = true;
+                } else if (Character.isDigit(c)) {
+                    if (seedFinished) {
+                        throw new IllegalArgumentException("Invalid key");
+                    } else {
+                        randomSeed.append(c);
+                    }
+                } else {
+                    if (c == 's') {
+                        seedFinished = true;
+                        givenSeed = Long.parseLong(randomSeed.toString());
+                        seedRandom = new Random(givenSeed);
+                    }
+                    if (seedFinished) {
+                        gameKeys.append(c);
+                    } else {
+                        throw new IllegalArgumentException("Keys must begin with 's'");
+                    }
+                }
+            }
+        }
+        return loadAndInteractWithKeyboardPt2(savedGame);
+    }
+
+    public TETile[][] loadAndInteractWithKeyboardPt2(StringBuilder savedGame) {
+        boolean quit = false;
         if (givenSeed != -1) {
             initialize();
             createWorld();
             render();
             runWorldKeys();
             if (!gameOver) {
-                int i,j;
+                int i, j;
                 i = j = 0;
                 while (!gameOver) {
                     if (StdDraw.hasNextKeyTyped()) {
-                        char c = StdDraw.nextKeyTyped();
-                        if (c == 'q') {
-                            gameOver = true;
-                            if (gameInitialized && seedFinished) {
+                        char c = Character.toLowerCase(StdDraw.nextKeyTyped());
+                        if (quit) {
+                            if (c == 'q') {
+                                gameOver = true;
                                 SaveNLoad.saveGame(savedGame.toString());
+                            } else {
+                                quit = false;
                             }
                         }
-                        if ("wasd".contains(Character.toString(c))) {
+                        if (c == ':') {
+                            quit = true;
+                        }
+                        if ("wasdf".contains(Character.toString(c))) {
                             savedGame.append(c);
                             gameKeys.append(c);
                             player.move(c);
+                            if (c == 'f') {
+                                finalMap.toggleFlashlight();
+                            }
                             ArrayList<XYPosn> ghostPosn = new ArrayList<>();
                             for (Avatar g: ghost) {
-                                g.randomMove(seedRandom, finalMap.getWallObjs());
+                                g.randomMove(seedRandom,
+                                        finalMap.getWallObjs(),
+                                        player,
+                                        finalMap.getFlashState());
                                 ghostPosn.add(g.getPosn());
                             }
-                            finalMap.updatePosn(player.getPosn(), ghostPosn);
+                            finalMap.updatePosn(player.getPosn(), ghostPosn, player);
+                            if (finalMap.isGameOver()) {
+                                render();
+                                StdDraw.pause(3000);
+                                startGame();
+                                playGame();
+                                return null;
+                            }
                         }
                     }
                     if (i == 10) {
@@ -352,18 +474,21 @@ public class Engine {
         for (int i = 0; i < numGhosts; i++) {
             ghost.add(new Avatar(world, Tileset.GHOST, ghostPosns.get(i)));
         }
-        finalMap.updatePosn(player.getPosn(), ghostPosns);
+        finalMap.updatePosn(player.getPosn(), ghostPosns, player);
     }
 
     void runWorldKeys() {
         for (char typed : gameKeys.toString().toCharArray()) {
             player.move(typed);
+            if (typed == 'f') {
+                finalMap.toggleFlashlight();
+            }
             ArrayList<XYPosn> ghostPosn = new ArrayList<>();
             for (Avatar g: ghost) {
-                g.randomMove(seedRandom, finalMap.getWallObjs());
+                g.randomMove(seedRandom, finalMap.getWallObjs(), player, finalMap.getFlashState());
                 ghostPosn.add(g.getPosn());
             }
-            finalMap.updatePosn(player.getPosn(), ghostPosn);
+            finalMap.updatePosn(player.getPosn(), ghostPosn, player);
         }
     }
 
@@ -383,13 +508,13 @@ public class Engine {
         StdDraw.setPenColor(Color.white);
         Font font1 = new Font("Arial", Font.BOLD, 40);
         StdDraw.setFont(font1);
-        StdDraw.text(w/2, 0.75*h, "MENU");
+        StdDraw.text(w / 2, 0.75 * h, "MENU");
         Font font2 = new Font("Arial", Font.ITALIC, 30);
         StdDraw.setFont(font2);
-        StdDraw.text(w/2, h*0.575, "New Game(N)");
-        StdDraw.text(w/2, h*0.525, "Load Game(L)");
-        StdDraw.text(w/2, h*0.475, "Customize(C)");
-        StdDraw.text(w/2, h*0.425, "Quit(:Q)");
+        StdDraw.text(w / 2, h * 0.575, "New Game(N)");
+        StdDraw.text(w / 2, h * 0.525, "Load Game(L)");
+        StdDraw.text(w / 2, h * 0.475, "Customize(C)");
+        StdDraw.text(w / 2, h * 0.425, "Quit(:Q)");
         StdDraw.show();
     }
 
@@ -401,9 +526,18 @@ public class Engine {
         } else {
             ter.renderFrame(world);
         }
-        StdDraw.setPenColor(new Color(Color.yellow.getRed(), Color.yellow.getBlue(), Color.yellow.getGreen(), Color.yellow.getAlpha() - 70));
-        hud.update(player, ghost);
-        hud.changeKeys(finalMap.getKeys().size());
+        if (StdDraw.mouseY() < HEIGHT - 10) {
+            currTile = world
+                    [(int) Math.floor(StdDraw.mouseX())]
+                    [(int) Math.floor(StdDraw.mouseY())];
+        }
+        hud.updateAll(player,
+                ghost,
+                finalMap.getKeys().size(),
+                finalMap.getPlayerLives(),
+                finalMap.getDisplayString(),
+                finalMap.getDisplayColor(),
+                currTile);
         StdDraw.show();
     }
 
@@ -426,10 +560,5 @@ public class Engine {
      */
     Random getSeedRandom() {
         return seedRandom;
-    }
-
-    public static void main(String[] args) throws FileNotFoundException {
-        Engine e = new Engine();
-        e.interactWithKeyboard();
     }
 }

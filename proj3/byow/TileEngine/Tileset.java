@@ -17,8 +17,17 @@ import java.awt.Color;
  */
 
 public class Tileset {
-    private static Color purpleColorDark = new Color(Color.yellow.getRed(), Color.yellow.getBlue(), Color.yellow.getGreen(), Color.yellow.getAlpha() - 100);
-    private static Color purpleColorBright = new Color(Color.yellow.getRed(), Color.yellow.getBlue(), Color.yellow.getGreen(), Color.yellow.getAlpha() - 75);
+    private static Color purpleColorDark = new Color(
+            Color.yellow.getRed(),
+            Color.yellow.getBlue(),
+            Color.yellow.getGreen(),
+            Color.yellow.getAlpha() - 100);
+
+    private static Color purpleColorBright = new Color(
+            Color.yellow.getRed(),
+            Color.yellow.getBlue(),
+            Color.yellow.getGreen(),
+            Color.yellow.getAlpha() - 75);
 
     public static final TETile AVATAR = new TETile('@', Color.white, Color.black, "you");
     public static final TETile WALL = new TETile('#', new Color(216, 128, 128), Color.darkGray,
@@ -43,7 +52,11 @@ public class Tileset {
 
 
     public static TETile newTextColor(TETile tileType, Color c) {
-        return new TETile(tileType.character(), c, tileType.getBackgroundColor(), tileType.description());
+        return new TETile(
+                tileType.character(),
+                c,
+                tileType.getBackgroundColor(),
+                tileType.description());
     }
 
     public static TETile modTile(double a, TETile tileType) {
@@ -51,9 +64,23 @@ public class Tileset {
         Color text = tileType.getTextColor();
         Color bg = tileType.getBackgroundColor();
         return new TETile(tileType.character(),
-                new Color(text.getRed(), text.getGreen(), text.getBlue(), (int) ((text.getAlpha()) * alpha / 100)),
-                new Color(bg.getRed(), bg.getGreen(), bg.getBlue(), (int) ((bg.getAlpha()) * alpha / 100)),
+                new Color(text.getRed(),
+                        text.getGreen(),
+                        text.getBlue(),
+                        (int) ((text.getAlpha()) * alpha / 100)),
+                new Color(bg.getRed(),
+                        bg.getGreen(),
+                        bg.getBlue(),
+                        (int) ((bg.getAlpha()) * alpha / 100)),
                 tileType.description());
+    }
+
+    public static Color getPurpleColorDark() {
+        return purpleColorDark;
+    }
+
+    public static Color getPurpleColorBright() {
+        return purpleColorBright;
     }
 }
 

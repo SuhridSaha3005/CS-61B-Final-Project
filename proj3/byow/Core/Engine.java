@@ -48,6 +48,15 @@ public class Engine {
     /** Ghosts Instance List. */
     ArrayList<Avatar> ghost;
 
+    /** Number of ghosts in game */
+    int numGhosts = 10;
+
+    /** Change Overlay Lamp Wattage */
+    int LAMPWATTAGE = 100;
+
+    /** Player input for number of ghosts */
+    StringBuilder numGhostsTyped = new StringBuilder();
+
     /** Turn on/off lighting. */
     boolean lighting = true;
 
@@ -86,14 +95,18 @@ public class Engine {
         double w = WIDTH;
         double h = HEIGHT;
         StdDraw.setFont(new Font("Arial", Font.PLAIN, 30));
+        StdDraw.setPenColor(playerTile.getTextColor());
+        StdDraw.text(0.5 * w, 0.55 * h, "Appearance: ☺ (White- W, Blue- B, Green- G)");
         StdDraw.setPenColor(Color.white);
-        StdDraw.text(w / 2, 0.575 * h, "White(W): ☺");
-        StdDraw.setPenColor(Color.blue);
-        StdDraw.text(w / 2, 0.525 * h, "Blue(B): ☺");
-        StdDraw.setPenColor(Color.green);
-        StdDraw.text(w / 2, 0.475 * h, "Green(G): ☺");
-        StdDraw.setPenColor(Color.yellow);
-        StdDraw.text(w / 2, 0.425 * h, "Exit(E)");
+        StdDraw.text(0.5 * w, 0.5 * h, "No. of Ghosts: " + numGhosts + "(C- Return to Default)");
+        if (LAMPWATTAGE == 100) {
+            StdDraw.text(0.5 * w, 0.45 * h, "Lamp Wattage: Medium (H- High, M- Medium, L- Low)");
+        } else if (LAMPWATTAGE == 150) {
+            StdDraw.text(0.5 * w, 0.45 * h, "Lamp Wattage: High (H- High, M- Medium, L- Low)");
+        } else if (LAMPWATTAGE == 50) {
+            StdDraw.text(0.5 * w, 0.45 * h, "Lamp Wattage: Low (H- High, M- Medium, L- Low)");
+        }
+        StdDraw.text(0.5 * w, 0.4 * h, "Exit(E)");
         StdDraw.show();
         return true;
     }
@@ -102,19 +115,33 @@ public class Engine {
         boolean customize = true;
         if (c == 'w') {
             playerTile = Tileset.newTextColor(playerTile, Color.WHITE);
-            customize = false;
-            interactWithKeyboard();
+            drawCustomize();
         } else if (c == 'b') {
             playerTile = Tileset.newTextColor(playerTile, Color.BLUE);
-            customize = false;
-            interactWithKeyboard();
+            drawCustomize();
         } else if (c == 'g') {
             playerTile = Tileset.newTextColor(playerTile, Color.GREEN);
-            customize = false;
-            interactWithKeyboard();
+            drawCustomize();
         } else if (c == 'e') {
             customize = false;
             interactWithKeyboard();
+        } else if (Character.isDigit(c)) {
+            numGhostsTyped.append(c);
+            numGhosts = Integer.parseInt(numGhostsTyped.toString());
+            drawCustomize();
+        } else if (c == 'h') {
+            LAMPWATTAGE = 150;
+            drawCustomize();
+        } else if (c == 'l') {
+            LAMPWATTAGE = 50;
+            drawCustomize();
+        } else if (c == 'm') {
+            LAMPWATTAGE = 100;
+            drawCustomize();
+        } else if (c == 'c') {
+            numGhostsTyped = new StringBuilder();
+            numGhosts = 10;
+            drawCustomize();
         }
         return customize;
     }
@@ -147,13 +174,13 @@ public class Engine {
         while (!gameOver) {
             if (StdDraw.hasNextKeyTyped()) {
                 char c = Character.toLowerCase(StdDraw.nextKeyTyped());
-                if (c == 'c') {
+                if (!customize && c == 'c') {
                     customize = drawCustomize();
                 }
                 if (customize) {
                     customize = doCustomize(c);
                 }
-                if (c == 'l') {
+                if (!customize && c == 'l') {
                     world = loadAndInteractWithKeyboard(SaveNLoad.loadGame());
                 } else if (c == ':') {
                     quit = true;
@@ -454,8 +481,6 @@ public class Engine {
      */
     void createWorld() {
         int height = HEIGHT - 3;
-        int numGhosts = 10;
-
 
         world = new TETile[WIDTH][height];
         for (int x = 0; x < WIDTH; x += 1) {
@@ -468,6 +493,9 @@ public class Engine {
         map.makeMap();
 
         finalMap = new Overlay(seedRandom, world, WIDTH, height);
+        if (LAMPWATTAGE != 100) {
+            finalMap.changeWattage(LAMPWATTAGE);
+        }
         player = new Avatar(world, playerTile, finalMap.addPlayerRandPosn());
         ArrayList<XYPosn> ghostPosns = finalMap.addGhostRandPosn(numGhosts);
         ghost = new ArrayList<>();

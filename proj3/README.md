@@ -10,4 +10,4 @@ We designed a Pacman-like game with user-interface elements. Using our knowledge
 
 **Instructions**
 
-Run ***byow/Main.java*** to run the game
+Run ***byow/Core/Main.java*** to run the game
